@@ -1,7 +1,7 @@
 
 public class Logic {
 
-    public static void main(String[] args) {
+    public static void Logic(String[] args) {
         Entity player = new Entity(100, 5);
         Entity enemy1 = new Entity(15, 2);
         enemy1.ouchies(player.inflictWound());
