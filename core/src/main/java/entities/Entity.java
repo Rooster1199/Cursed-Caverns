@@ -2,6 +2,7 @@ package entities;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
@@ -20,10 +21,15 @@ public class Entity extends Actor {
     private Vector2 currentVelocity = new Vector2(0,0);
     private entityState state;
 
-    public Entity(Vector2 startPosition, World world)
+    int maxHealth;
+    int str;
+    int cHealth;
+    boolean living;
+
+    public Entity(Vector2 startPosition, World world, int health, int strength)
     {
         super();
-        spriteTexture = new Texture("idlePlayer_sheet2.png");
+        spriteTexture = new Texture("idlePlayer_sheet.png");
         entitysprite = new Sprite(spriteTexture);
 
         setBounds(startPosition.x, startPosition.y, entitysprite.getWidth(), entitysprite.getHeight());
@@ -34,6 +40,11 @@ public class Entity extends Actor {
         addListener(new FreeRoamingMovementListener(this));
 
         state = entityState.STANDING;
+
+        str = strength;
+        cHealth = health;
+        maxHealth = health;
+        living = true;
    }
 
     @Override
@@ -41,6 +52,22 @@ public class Entity extends Actor {
         super.act(delta);
 
         trackMovement(delta);
+    }
+
+    public TextureRegion[] animationSplicer(Texture texture, int COLS, int ROWS)
+    {
+        TextureRegion[][] tmp = TextureRegion.split(texture,
+                texture.getWidth() / COLS,
+                texture.getHeight() / ROWS);
+        TextureRegion[] walkFrames = new TextureRegion[COLS * ROWS];
+        int index = 0;
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                walkFrames[index++] = tmp[i][j];
+            }
+        }
+
+        return walkFrames;
     }
 
     public Body getBody() {
@@ -64,5 +91,30 @@ public class Entity extends Actor {
         // update state --> change animation
 
     }
+
+    public int ouchies(int damage) {
+        cHealth -= damage;
+        if (cHealth > maxHealth) {
+            cHealth = maxHealth;
+        } else if (cHealth <= 0)
+        {
+            cHealth = 0;
+            living = false;
+        }
+        return cHealth;
+    }
+
+    public int inflictWound() {
+        return 5 + str; //add real math
+    }
+
+    public int getCHealth() {
+        return cHealth;
+    }
+
+    public int getMaxHealth() { return maxHealth; }
+
+    public boolean isLiving() { return living; }
+
 
 }
