@@ -38,4 +38,6 @@ class Entity {
         return cHealth;
     }
 
+    public int getMaxHealth() { return maxHealth;}
+
 }
