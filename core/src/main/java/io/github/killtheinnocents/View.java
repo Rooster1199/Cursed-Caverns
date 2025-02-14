@@ -16,6 +16,9 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import entities.Entity;
 import helper.GameScreen;
+import jdk.internal.org.jline.terminal.TerminalBuilder;
+
+import java.util.*;
 
 import static helper.Constants.*;
 
@@ -61,8 +64,15 @@ public class View extends ScreenAdapter {
     private GameScreen dungeonScreen;
 
     // enemy
+    public Array<Entity> enemies1;
     public Array<Sprite> enemies;
-
+    int eVelocity = 5;
+    double EPLD;
+    double eStartD;
+    //double EPLS;
+    //double EPLA;
+    double xMod;
+    double yMod;
     public View(OrthographicCamera camera)
     {
         this.camera = camera;
@@ -114,6 +124,7 @@ public class View extends ScreenAdapter {
         healthBarAnimation = new Animation<TextureRegion>(.25f, player.animationSplicer(healthSheet,3, 6));
 
         enemies = new Array<>();
+        enemies1 = new Array<>();
         createEnemies();
     }
 
@@ -121,8 +132,9 @@ public class View extends ScreenAdapter {
 
         Texture enemyTexture = new Texture("wizardSheet.png");
         Sprite enemy = new Sprite(enemyTexture);
-
+        Entity enemy1 = new Entity(new Vector2(0,0),world,15,2,600,20);
         enemies.add(enemy);
+        enemies1.add(enemy1);
 
     }
 
@@ -202,7 +214,7 @@ public class View extends ScreenAdapter {
 
             for(Sprite enemy: enemies)
             {
-                enemy.draw(batch);
+                batch.draw(currentFrame,(int)(enemies1.get(0).geteX()),(int)(enemies1.get(0).geteY()),170,170);
             }
 
             batch.end();
@@ -237,6 +249,7 @@ public class View extends ScreenAdapter {
     // updates screen, handles key movements
     private void update()
     {
+        checkDistance();
         world.step(1 / 60f, 6, 2);
         cameraUpdate();
 
@@ -259,9 +272,8 @@ public class View extends ScreenAdapter {
 
     // key word
     private void input() {
-        float speed = 100f;
+        float speed = 300f;
         float time = Gdx.graphics.getDeltaTime();
-
         if (Gdx.input.isKeyPressed(Input.Keys.Q))
         {
             Gdx.app.exit();
@@ -277,40 +289,33 @@ public class View extends ScreenAdapter {
         } else if (currentScreen == Screen.SETTINGS && Gdx.input.isKeyPressed(Input.Keys.SPACE))
         {
             currentScreen = Screen.MAIN_GAME;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.UP))
-        {
-            PlayerY +=  time * speed;
-            body.applyForceToCenter(new Vector2(10,0), true);
-        } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN))
-        {
-            PlayerY -= time * speed;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.W))
-        {
-            PlayerY +=  time * speed;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.S))
-        {
-            PlayerY -= time * speed;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
-        {
-            PlayerX +=  time * speed;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
-        {
-            PlayerX -= time * speed;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.D))
-        {
-            PlayerX +=  time * speed;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.A))
-        {
-            PlayerX -= time * speed;
         } else if (Gdx.input.isKeyPressed(Input.Keys.R))
         {
             player.ouchies(1);
         }
+        else{
+            if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W))
+            {
+                PlayerY +=  time * speed;
+                body.applyForceToCenter(new Vector2(10,0), true);
+            }  if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
+                PlayerY -= time * speed;
+            }  if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
+                PlayerX += time * speed;
+            } if (Gdx.input.isKeyPressed(Input.Keys.LEFT)||Gdx.input.isKeyPressed(Input.Keys.A)) {
+                PlayerX -= time * speed;
+            }
+        }
     }
 
     private void logic() {
-        MathUtils.clamp(PlayerX, 0, Gdx.graphics.getWidth());
-        MathUtils.clamp(PlayerY, 0, Gdx.graphics.getHeight());
+        //PlayerX = MathUtils.clamp(PlayerX, 0, Gdx.graphics.getWidth());
+
+        //PlayerY = MathUtils.clamp(PlayerY, 0, Gdx.graphics.getHeight());
+        for(Entity e : enemies1){
+            //e.setX((float)MathUtils.clamp(e.geteX(),0,Gdx.graphics.getWidth()));
+            //e.setY((float)MathUtils.clamp(e.geteY(),0,Gdx.graphics.getHeight()));
+        }
 
         // Health Bar
         // Calculation: 17 - Math.floor(health lost / approximation)
@@ -326,6 +331,73 @@ public class View extends ScreenAdapter {
     @Override
     public void dispose() {
         font.dispose();
+    }
+
+
+    public void checkDistance(){
+
+        for (Entity enemy1: enemies1){
+            EPLD = Math.sqrt(((PlayerX-enemy1.getX())*(PlayerX-enemy1.getX()))+((PlayerY-enemy1.getY())*(PlayerY-enemy1.getY())));
+//            eStartD = Math.sqrt(((enemy1.getStartX()-enemy1.getX())*(enemy1.getStartX()-enemy1.getX()))+((enemy1.getStartY()-enemy1.getY())*(enemy1.getStartY()-enemy1.getY())));
+            int startYDiff = (int) Math.signum(enemy1.getStartY()-enemy1.getY());
+            int startXDiff = (int) Math.signum(enemy1.getStartX()-enemy1.getX());
+            int EPLXDiff = (int) Math.signum(PlayerX-enemy1.getX());
+            int EPLYDiff = (int)Math.signum(PlayerY-enemy1.getY());
+            //EPLS = (enemy1.getY()-PlayerY)/(enemy1.getX()-PlayerX);
+            //EPLA = Math.atan(EPLS);
+            if (EPLD <= 500) {
+                switch(EPLXDiff){
+                    case -1: {
+                        xMod = PlayerX-enemy1.getX();
+                        xMod = xMod/EPLD;
+                        xMod *= -1;
+                        System.out.println("x -1");
+                    }
+                    case 1: {
+                        xMod = PlayerX-enemy1.getX();
+                        xMod = xMod/EPLD;
+                        System.out.println("x 1");
+                    }
+                }
+                switch(EPLYDiff){
+                    case -1: {
+                        yMod = PlayerY-enemy1.getY();
+                        yMod = yMod/EPLD;
+                        yMod *= -1;
+                        System.out.println("y -1");
+                    }
+                    case 1: {
+                        yMod = PlayerY-enemy1.getY();
+                        yMod = yMod/EPLD;
+
+                        System.out.println("y 1");
+                    }
+                }
+                enemy1.modPos(xMod*eVelocity,eVelocity*yMod);
+            }
+            else{
+                switch (startXDiff){
+                }
+            }
+//            if(EPLD<=500){
+//                xMod = PlayerX-enemy1.getX();
+//                yMod = PlayerY-enemy1.getY();
+//                EPLD = Math.sqrt(xMod*xMod+yMod*yMod);
+//                xMod = xMod/EPLD;
+//                yMod = yMod/EPLD;
+//                //enemy1.modPos(eVelocity*Math.cos(EPLA)*Math.signum(PlayerX-enemy1.getX()),eVelocity*Math.sin(EPLA)*Math.signum(PlayerY-enemy1.getY()));
+//                enemy1.modPos(xMod*eVelocity,eVelocity*yMod);
+//                break;
+//            }
+//            else{
+//                xMod = enemy1.getStartX()-enemy1.getX();
+//                yMod = enemy1.getStartY()-enemy1.getY();
+//                eStartD = Math.sqrt((xMod*xMod)+(yMod*yMod));
+//                xMod = xMod/eStartD;
+//                yMod = yMod/eStartD;
+//                enemy1.modPos(xMod,yMod);
+//            }
+        }
     }
 
 }
