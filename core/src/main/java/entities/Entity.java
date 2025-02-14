@@ -8,7 +8,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import helper.Constants;
-import helper.PlayerAnimation;
+import helper.BodyCreator;
 
 import static helper.Constants.*;
 
@@ -26,15 +26,15 @@ public class Entity extends Actor {
     int cHealth;
     boolean living;
 
-    public Entity(Vector2 startPosition, World world, int health, int strength)
+    public Entity(Vector2 startPosition, World world, int health, int strength, String filename)
     {
         super();
-        spriteTexture = new Texture("idlePlayer_sheet.png");
+        spriteTexture = new Texture(filename);
         entitysprite = new Sprite(spriteTexture);
 
         setBounds(startPosition.x, startPosition.y, entitysprite.getWidth(), entitysprite.getHeight());
 
-        this.body = PlayerAnimation.createBody(PlayerX + 70, PlayerY + 50, 50, 50, false, world);
+        this.body = BodyCreator.createBody(PlayerX + 70, PlayerY + 50, 50, 50, false, world);
         this.body.setUserData(this);
 
         addListener(new FreeRoamingMovementListener(this));
@@ -116,5 +116,8 @@ public class Entity extends Actor {
 
     public boolean isLiving() { return living; }
 
+    public void moveBody() {
+        body.setLinearVelocity(currentVelocity.cpy().scl(speed));
+    }
 
 }

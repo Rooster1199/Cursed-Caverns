@@ -4,7 +4,7 @@ import com.badlogic.gdx.physics.box2d.*;
 
 import static helper.Constants.PPM;
 
-public class PlayerAnimation {
+public class BodyCreator {
 
     public static Body createBody(float x, float y, float width, float height, boolean isStatic, World world) {
         BodyDef bodydef = new BodyDef();
@@ -22,4 +22,5 @@ public class PlayerAnimation {
         shape.dispose();
         return body;
     }
+
 }

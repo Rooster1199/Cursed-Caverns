@@ -71,7 +71,7 @@ public class View extends ScreenAdapter {
         this.batch = new SpriteBatch();
 
         // Player + Health
-        player = new Entity( new Vector2(0, 0), this.world, 100, 100);
+        player = new Entity( new Vector2(0, 0), this.world, 100, 100, "idlePlayer_sheet.png");
         this.body = player.getBody();
         healthIndex = 0;
 
@@ -240,6 +240,8 @@ public class View extends ScreenAdapter {
         world.step(1 / 60f, 6, 2);
         cameraUpdate();
 
+        player.moveBody();
+
         batch.setProjectionMatrix(camera.combined);
 
 //        if (player.state == entityState.WALKING_N) {
@@ -322,6 +324,7 @@ public class View extends ScreenAdapter {
             currentScreen = Screen.GAME_OVER;
         }
     }
+
 
     @Override
     public void dispose() {
