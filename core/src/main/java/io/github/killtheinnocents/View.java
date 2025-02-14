@@ -132,7 +132,7 @@ public class View extends ScreenAdapter {
 
         Texture enemyTexture = new Texture("wizardSheet.png");
         Sprite enemy = new Sprite(enemyTexture);
-        Entity enemy1 = new Entity(new Vector2(0,0),world,15,2,600,20);
+        Entity enemy1 = new Entity(world,15,2,600,20);
         enemies.add(enemy);
         enemies1.add(enemy1);
 
@@ -141,6 +141,7 @@ public class View extends ScreenAdapter {
     @Override
     public void render(float delta)
     {
+        checkDistance();
         this.update();
         super.render(delta);
 
@@ -249,7 +250,6 @@ public class View extends ScreenAdapter {
     // updates screen, handles key movements
     private void update()
     {
-        checkDistance();
         world.step(1 / 60f, 6, 2);
         cameraUpdate();
 
@@ -292,8 +292,9 @@ public class View extends ScreenAdapter {
         } else if (Gdx.input.isKeyPressed(Input.Keys.R))
         {
             player.ouchies(1);
-        }
-        else{
+        } else if (Gdx.input.isKeyPressed(Input.Keys.P)) {
+            currentScreen = Screen.MAIN_GAME;
+        } else{
             if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W))
             {
                 PlayerY +=  time * speed;
@@ -335,68 +336,31 @@ public class View extends ScreenAdapter {
 
 
     public void checkDistance(){
+        eVelocity = 2;
+        for (Entity e: enemies1){
+            EPLD = Math.sqrt(((PlayerX - e.geteX())*(PlayerX - e.geteX())) + ((PlayerY - e.geteY())*(PlayerY - e.geteY())));
+            eStartD = Math.sqrt(((e.getStartX()-e.geteX())*(e.getStartX()-e.geteX())) + ((e.getStartY()-e.geteY())*(e.getStartY()-e.geteY())));
 
-        for (Entity enemy1: enemies1){
-            EPLD = Math.sqrt(((PlayerX-enemy1.getX())*(PlayerX-enemy1.getX()))+((PlayerY-enemy1.getY())*(PlayerY-enemy1.getY())));
-//            eStartD = Math.sqrt(((enemy1.getStartX()-enemy1.getX())*(enemy1.getStartX()-enemy1.getX()))+((enemy1.getStartY()-enemy1.getY())*(enemy1.getStartY()-enemy1.getY())));
-            int startYDiff = (int) Math.signum(enemy1.getStartY()-enemy1.getY());
-            int startXDiff = (int) Math.signum(enemy1.getStartX()-enemy1.getX());
-            int EPLXDiff = (int) Math.signum(PlayerX-enemy1.getX());
-            int EPLYDiff = (int)Math.signum(PlayerY-enemy1.getY());
-            //EPLS = (enemy1.getY()-PlayerY)/(enemy1.getX()-PlayerX);
-            //EPLA = Math.atan(EPLS);
-            if (EPLD <= 500) {
-                switch(EPLXDiff){
-                    case -1: {
-                        xMod = PlayerX-enemy1.getX();
-                        xMod = xMod/EPLD;
-                        xMod *= -1;
-                        System.out.println("x -1");
-                    }
-                    case 1: {
-                        xMod = PlayerX-enemy1.getX();
-                        xMod = xMod/EPLD;
-                        System.out.println("x 1");
-                    }
-                }
-                switch(EPLYDiff){
-                    case -1: {
-                        yMod = PlayerY-enemy1.getY();
-                        yMod = yMod/EPLD;
-                        yMod *= -1;
-                        System.out.println("y -1");
-                    }
-                    case 1: {
-                        yMod = PlayerY-enemy1.getY();
-                        yMod = yMod/EPLD;
-
-                        System.out.println("y 1");
-                    }
-                }
-                enemy1.modPos(xMod*eVelocity,eVelocity*yMod);
+            if(EPLD<=800){
+                xMod = PlayerX-e.geteX();
+                yMod = PlayerY-e.geteY();
+                xMod = xMod/EPLD;
+                yMod = yMod/EPLD;
+                //enemy1.modPos(eVelocity*Math.cos(EPLA)*Math.signum(PlayerX-enemy1.getX()),eVelocity*Math.sin(EPLA)*Math.signum(PlayerY-enemy1.getY()));
+                e.modPos(xMod*eVelocity,yMod*eVelocity);
             }
-            else{
-                switch (startXDiff){
+            else {
+                if(e.geteX() != e.getStartX() && e.geteY() != e.getStartY()){
+                xMod = e.getStartX() - e.geteX();
+                yMod = e.getStartY() - e.geteY();
+                xMod = xMod/eStartD;
+                yMod = yMod/eStartD;
+                System.out.println(xMod + ", " + yMod);
+                e.modPos(xMod*eVelocity,yMod*eVelocity);
                 }
             }
-//            if(EPLD<=500){
-//                xMod = PlayerX-enemy1.getX();
-//                yMod = PlayerY-enemy1.getY();
-//                EPLD = Math.sqrt(xMod*xMod+yMod*yMod);
-//                xMod = xMod/EPLD;
-//                yMod = yMod/EPLD;
-//                //enemy1.modPos(eVelocity*Math.cos(EPLA)*Math.signum(PlayerX-enemy1.getX()),eVelocity*Math.sin(EPLA)*Math.signum(PlayerY-enemy1.getY()));
-//                enemy1.modPos(xMod*eVelocity,eVelocity*yMod);
-//                break;
-//            }
-//            else{
-//                xMod = enemy1.getStartX()-enemy1.getX();
-//                yMod = enemy1.getStartY()-enemy1.getY();
-//                eStartD = Math.sqrt((xMod*xMod)+(yMod*yMod));
-//                xMod = xMod/eStartD;
-//                yMod = yMod/eStartD;
-//                enemy1.modPos(xMod,yMod);
-//            }
+            System.out.println(EPLD + ", " + e.geteX() + ", " +e.geteY()+ ", " + e.getStartX() + ", " + e.getStartY());
+
         }
     }
 

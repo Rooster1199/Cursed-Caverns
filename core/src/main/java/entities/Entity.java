@@ -48,7 +48,7 @@ public class Entity extends Actor {
         maxHealth = health;
         living = true;
    }
-    public Entity(Vector2 startPosition, World world, int health, int strength,int x, int y)
+    public Entity(World world, int health, int strength,int x, int y)
     {
         super();
         spriteTexture = new Texture("idlePlayer_sheet.png");
@@ -58,7 +58,7 @@ public class Entity extends Actor {
         eY = y;
         startY = y;
 
-        setBounds(startPosition.x, startPosition.y, entitysprite.getWidth(), entitysprite.getHeight());
+        setBounds(x,y, entitysprite.getWidth(), entitysprite.getHeight());
 
         this.body = PlayerAnimation.createBody(PlayerX + 70, PlayerY + 50, 50, 50, false, world);
         this.body.setUserData(this);
@@ -155,8 +155,8 @@ public class Entity extends Actor {
         return startY;
     }
     public void modPos(double xMod, double yMod){
-        eX += xMod;
-        eY += yMod;
+        eX = eX + xMod;
+        eY = eY + yMod;
     }
     public void setPlayer(){
         player = true;
