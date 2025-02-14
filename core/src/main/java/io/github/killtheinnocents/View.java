@@ -67,13 +67,15 @@ public class View extends ScreenAdapter {
     // enemy
     public Array<Entity> enemies1;
     public Array<Sprite> enemies;
-    int eVelocity = 5;
+    double eVelocity = 5;
     double EPLD;
     double eStartD;
     //double EPLS;
     //double EPLA;
     double xMod;
     double yMod;
+
+
     public View(OrthographicCamera camera)
     {
         this.camera = camera;
@@ -82,7 +84,7 @@ public class View extends ScreenAdapter {
         this.batch = new SpriteBatch();
 
         // Player + Health
-        player = new Entity( new Vector2(0, 0), this.world, 100, 100, "idlePlayer_sheet.png", STARTX, STARTY);
+        player = new Entity(this.world, 100, 100, "idlePlayer_sheet.png", STARTX, STARTY);
         this.body = player.getBody();
         healthIndex = 0;
 
@@ -149,6 +151,8 @@ public class View extends ScreenAdapter {
         logic();
         draw();
 
+        player.changeAnimation();
+
         if(currentScreen == Screen.INTRO && time > 150)
         {
             currentScreen = Screen.MAIN_GAME;
@@ -207,9 +211,10 @@ public class View extends ScreenAdapter {
             overlay.drawOverlay(this.batch);
             font.draw(batch, "ESC to settings", -200, -200);
 
-            // Get current frame of animation for the current stateTime
+            // Get current frame of player animation for the current stateTime
+            player.drawSprite(batch, stateTime);
+
             TextureRegion currentFrame = idleAnimation.getKeyFrame(stateTime, true);
-            batch.draw(currentFrame, player.geteX(), player.geteY(), 170, 170);
 
             TextureRegion[] healthFrame = healthBarAnimation.getKeyFrames();
             batch.draw(healthFrame[healthIndex], -1000, -850);
@@ -295,18 +300,22 @@ public class View extends ScreenAdapter {
             player.ouchies(1);
         } else if (Gdx.input.isKeyPressed(Input.Keys.P)) {
             currentScreen = Screen.MAIN_GAME;
-        } else{
+        } else if (currentScreen == Screen.MAIN_GAME){
             if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W))
             {
-                player.updatePositionY(1);
-            }  if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
-                player.updatePositionY(-1);
-            }  if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
-                player.updatePositionX(1);
-            } if (Gdx.input.isKeyPressed(Input.Keys.LEFT)||Gdx.input.isKeyPressed(Input.Keys.A)) {
-                player.updatePositionX(-1);
+                player.updatePosition(0, 1);
+            } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
+                player.updatePosition(0, -1);
+            } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
+                player.updatePosition(1, 0);
+            } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)||Gdx.input.isKeyPressed(Input.Keys.A)) {
+                player.updatePosition(-1, 0);
+            } else {
+                player.updatePosition(0, 0);
             }
+
         }
+
     }
 
     private void logic() {
@@ -336,7 +345,7 @@ public class View extends ScreenAdapter {
 
 
     public void checkDistance(){
-        eVelocity = 2;
+        eVelocity = 1.5;
         for (Entity e: enemies1){
             EPLD = Math.sqrt(((player.geteX() - e.geteX())*(player.geteX() - e.geteX())) + ((player.geteY() - e.geteY())*(player.geteY() - e.geteY())));
             eStartD = Math.sqrt(((e.getStartX()-e.geteX())*(e.getStartX()-e.geteX())) + ((e.getStartY()-e.geteY())*(e.getStartY()-e.geteY())));
@@ -347,7 +356,7 @@ public class View extends ScreenAdapter {
                 xMod = xMod/EPLD;
                 yMod = yMod/EPLD;
                 //enemy1.modPos(eVelocity*Math.cos(EPLA)*Math.signum(PlayerX-enemy1.getX()),eVelocity*Math.sin(EPLA)*Math.signum(PlayerY-enemy1.getY()));
-                e.modPos(xMod*eVelocity,yMod*eVelocity);
+                e.modPos((float) (xMod*eVelocity),(float) (yMod*eVelocity));
             }
             else {
                 if(e.geteX() != e.getStartX() && e.geteY() != e.getStartY()){
@@ -356,10 +365,10 @@ public class View extends ScreenAdapter {
                 xMod = xMod/eStartD;
                 yMod = yMod/eStartD;
                 System.out.println(xMod + ", " + yMod);
-                e.modPos(xMod*eVelocity,yMod*eVelocity);
+                e.modPos((float) (xMod*eVelocity),(float) (yMod*eVelocity));
                 }
             }
-            System.out.println(EPLD + ", " + e.geteX() + ", " +e.geteY()+ ", " + e.getStartX() + ", " + e.getStartY());
+            //System.out.println(EPLD + ", " + e.geteX() + ", " +e.geteY()+ ", " + e.getStartX() + ", " + e.getStartY());
 
         }
     }

@@ -11,24 +11,22 @@ public enum entityState {
 
     public String determineAnimation(Entity e) {
         switch (e.state) {
-            case STANDING:
-                return "STANDING";
             case WALKING_N:
-                return "WALKING_N";
+                return "_walkingN.png";
             case WALKING_S:
-                return "WALKING_S";
+                return "_walkingS.png";
             case WALKING_E:
-                return "WALKING_E";
+                return "_walkingE.png";
             case ATTACK_E:
-                return "ATTACK_E";
+                return "_attackE.png";
             case WALKING_W:
-                return "WALKING_W";
+                return "_walkingW.png";
             case ATTACK_W:
-                return "ATTACK_W";
+                return "_attackW.png";
             case HEAL:
-               return "HEAL";
+               return "_heal.png";
             default:
-                return "DEFAULT";
+                return "_standing.png";
         }
     }
 
