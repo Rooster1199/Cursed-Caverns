@@ -27,7 +27,7 @@ public class Entity extends Actor {
     int cHealth;
     boolean living;
     double eX; double eY; double startX; double startY;
-
+    Hitbox xHit; Hitbox yHit;
     public Entity(Vector2 startPosition, World world, int health, int strength)
     {
         super();
@@ -47,6 +47,10 @@ public class Entity extends Actor {
         cHealth = health;
         maxHealth = health;
         living = true;
+        eX = PlayerX;
+        eY = PlayerY;
+        xHit = new Hitbox(eX);
+        yHit = new Hitbox(eY);
    }
     public Entity(World world, int health, int strength,int x, int y)
     {
@@ -57,6 +61,8 @@ public class Entity extends Actor {
         startX = x;
         eY = y;
         startY = y;
+        xHit = new Hitbox(eX);
+        yHit = new Hitbox(eY);
 
         setBounds(x,y, entitysprite.getWidth(), entitysprite.getHeight());
 
@@ -156,7 +162,9 @@ public class Entity extends Actor {
     }
     public void modPos(double xMod, double yMod){
         eX = eX + xMod;
+        xHit.update(eX);
         eY = eY + yMod;
+        yHit.update(eY);
     }
     public void setPlayer(){
         player = true;
@@ -166,4 +174,15 @@ public class Entity extends Actor {
         return player;
 
     }
+    public Hitbox getxHit(){
+        return xHit;
+    }
+    public Hitbox getyHit(){
+        return yHit;
+    }
+    public void forceHUpdate(double x, double y){
+        yHit.update(y);
+        xHit.update(x);
+    }
+
 }
