@@ -28,7 +28,7 @@ public class Entity extends Actor {
     int str;
     int cHealth;
     boolean living;
-    float eX; float eY; double startX; double startY;
+    float eX; float eY; double startX; double startY; // was double before, change back if issue!
 
     public Entity(Vector2 startPosition, World world, int health, int strength, String filename)
     {
@@ -50,8 +50,7 @@ public class Entity extends Actor {
         maxHealth = health;
         living = true;
    }
-
-    public Entity(Vector2 startPosition, World world, int health, int strength, String filename, int x, int y)
+    public Entity(World world, int health, int strength,String filename, int x, int y)
     {
         super();
         spriteTexture = new Texture(filename);
@@ -61,7 +60,7 @@ public class Entity extends Actor {
         eY = y;
         startY = y;
 
-        setBounds(startPosition.x, startPosition.y, entitysprite.getWidth(), entitysprite.getHeight());
+        setBounds(x,y, entitysprite.getWidth(), entitysprite.getHeight());
 
         this.body = BodyCreator.createBody(STARTX + 70, STARTY + 50, 50, 50, false, world);
         this.body.setUserData(this);
@@ -177,9 +176,9 @@ public class Entity extends Actor {
     public double getStartY(){
         return startY;
     }
-    public void modPos(double xMod, double yMod){
-        eX += xMod;
-        eY += yMod;
+    public void modPos(float xMod, float yMod){
+        eX = eX + xMod;
+        eY = eY + yMod;
     }
     public void setPlayer(){
         player = true;
@@ -187,5 +186,6 @@ public class Entity extends Actor {
     }
     public boolean isPlayer(){
         return player;
+
     }
 }
