@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.Array;
 import entities.Entity;
 import helper.GameScreen;
 import jdk.internal.org.jline.terminal.TerminalBuilder;
+import entities.entityState.*;
 
 import java.util.*;
 
@@ -81,7 +82,7 @@ public class View extends ScreenAdapter {
         this.batch = new SpriteBatch();
 
         // Player + Health
-        player = new Entity( new Vector2(0, 0), this.world, 100, 100, "idlePlayer_sheet.png");
+        player = new Entity( new Vector2(0, 0), this.world, 100, 100, "idlePlayer_sheet.png", STARTX, STARTY);
         this.body = player.getBody();
         healthIndex = 0;
 
@@ -132,7 +133,7 @@ public class View extends ScreenAdapter {
 
         Texture enemyTexture = new Texture("wizardSheet.png");
         Sprite enemy = new Sprite(enemyTexture);
-        Entity enemy1 = new Entity(new Vector2(0,0),world,15,2,600,20);
+        Entity enemy1 = new Entity(new Vector2(0,0),world,15,2, "idlePlayer_sheet.png", 600,20);
         enemies.add(enemy);
         enemies1.add(enemy1);
 
@@ -207,7 +208,7 @@ public class View extends ScreenAdapter {
 
             // Get current frame of animation for the current stateTime
             TextureRegion currentFrame = idleAnimation.getKeyFrame(stateTime, true);
-            batch.draw(currentFrame, PlayerX, PlayerY, 170, 170);
+            batch.draw(currentFrame, player.geteX(), player.geteY(), 170, 170);
 
             TextureRegion[] healthFrame = healthBarAnimation.getKeyFrames();
             batch.draw(healthFrame[healthIndex], -1000, -850);
@@ -253,8 +254,6 @@ public class View extends ScreenAdapter {
         world.step(1 / 60f, 6, 2);
         cameraUpdate();
 
-        player.moveBody();
-
         batch.setProjectionMatrix(camera.combined);
 
 //        if (player.state == entityState.WALKING_N) {
@@ -298,22 +297,19 @@ public class View extends ScreenAdapter {
         else{
             if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W))
             {
-                PlayerY +=  time * speed;
-                body.applyForceToCenter(new Vector2(10,0), true);
+                player.updatePositionY(1);
             }  if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
-                PlayerY -= time * speed;
+                player.updatePositionY(-1);
             }  if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
-                PlayerX += time * speed;
+                player.updatePositionX(1);
             } if (Gdx.input.isKeyPressed(Input.Keys.LEFT)||Gdx.input.isKeyPressed(Input.Keys.A)) {
-                PlayerX -= time * speed;
+                player.updatePositionX(-1);
             }
         }
     }
 
     private void logic() {
-        //PlayerX = MathUtils.clamp(PlayerX, 0, Gdx.graphics.getWidth());
 
-        //PlayerY = MathUtils.clamp(PlayerY, 0, Gdx.graphics.getHeight());
         for(Entity e : enemies1){
             //e.setX((float)MathUtils.clamp(e.geteX(),0,Gdx.graphics.getWidth()));
             //e.setY((float)MathUtils.clamp(e.geteY(),0,Gdx.graphics.getHeight()));
@@ -340,37 +336,37 @@ public class View extends ScreenAdapter {
     public void checkDistance(){
 
         for (Entity enemy1: enemies1){
-            EPLD = Math.sqrt(((PlayerX-enemy1.getX())*(PlayerX-enemy1.getX()))+((PlayerY-enemy1.getY())*(PlayerY-enemy1.getY())));
+            EPLD = Math.sqrt(((player.geteX()-enemy1.getX())*(player.geteX()-enemy1.getX()))+((player.geteY()-enemy1.getY())*(player.geteY()-enemy1.getY())));
 //            eStartD = Math.sqrt(((enemy1.getStartX()-enemy1.getX())*(enemy1.getStartX()-enemy1.getX()))+((enemy1.getStartY()-enemy1.getY())*(enemy1.getStartY()-enemy1.getY())));
             int startYDiff = (int) Math.signum(enemy1.getStartY()-enemy1.getY());
             int startXDiff = (int) Math.signum(enemy1.getStartX()-enemy1.getX());
-            int EPLXDiff = (int) Math.signum(PlayerX-enemy1.getX());
-            int EPLYDiff = (int)Math.signum(PlayerY-enemy1.getY());
+            int EPLXDiff = (int) Math.signum(player.geteX()-enemy1.getX());
+            int EPLYDiff = (int)Math.signum(player.geteY()-enemy1.getY());
             //EPLS = (enemy1.getY()-PlayerY)/(enemy1.getX()-PlayerX);
             //EPLA = Math.atan(EPLS);
             if (EPLD <= 500) {
                 switch(EPLXDiff){
                     case -1: {
-                        xMod = PlayerX-enemy1.getX();
+                        xMod = player.geteX()-enemy1.getX();
                         xMod = xMod/EPLD;
                         xMod *= -1;
                         System.out.println("x -1");
                     }
                     case 1: {
-                        xMod = PlayerX-enemy1.getX();
+                        xMod = player.geteX()-enemy1.getX();
                         xMod = xMod/EPLD;
                         System.out.println("x 1");
                     }
                 }
                 switch(EPLYDiff){
                     case -1: {
-                        yMod = PlayerY-enemy1.getY();
+                        yMod = player.geteY()-enemy1.getY();
                         yMod = yMod/EPLD;
                         yMod *= -1;
                         System.out.println("y -1");
                     }
                     case 1: {
-                        yMod = PlayerY-enemy1.getY();
+                        yMod = player.geteY()-enemy1.getY();
                         yMod = yMod/EPLD;
 
                         System.out.println("y 1");

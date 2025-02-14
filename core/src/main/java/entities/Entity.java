@@ -1,15 +1,16 @@
 package entities;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import helper.BodyCreator;
 import helper.Constants;
-import helper.BodyCreator;
 
 import static helper.Constants.*;
 
@@ -20,14 +21,14 @@ public class Entity extends Actor {
     private Texture spriteTexture;
     public float speed = 5 * TILE_SIZE;
     private Vector2 currentVelocity = new Vector2(0,0);
-    private entityState state;
+    public entityState state;
     boolean player;
 
     int maxHealth;
     int str;
     int cHealth;
     boolean living;
-    double eX; double eY; double startX; double startY;
+    float eX; float eY; double startX; double startY;
 
     public Entity(Vector2 startPosition, World world, int health, int strength, String filename)
     {
@@ -37,7 +38,7 @@ public class Entity extends Actor {
 
         setBounds(startPosition.x, startPosition.y, entitysprite.getWidth(), entitysprite.getHeight());
 
-        this.body = BodyCreator.createBody(PlayerX + 70, PlayerY + 50, 50, 50, false, world);
+        this.body = BodyCreator.createBody(STARTX + 70, STARTY + 50, 50, 50, false, world);
         this.body.setUserData(this);
 
         addListener(new FreeRoamingMovementListener(this));
@@ -50,10 +51,10 @@ public class Entity extends Actor {
         living = true;
    }
 
-    public Entity(Vector2 startPosition, World world, int health, int strength,int x, int y)
+    public Entity(Vector2 startPosition, World world, int health, int strength, String filename, int x, int y)
     {
         super();
-        spriteTexture = new Texture("idlePlayer_sheet.png");
+        spriteTexture = new Texture(filename);
         entitysprite = new Sprite(spriteTexture);
         eX = x;
         startX = x;
@@ -62,7 +63,7 @@ public class Entity extends Actor {
 
         setBounds(startPosition.x, startPosition.y, entitysprite.getWidth(), entitysprite.getHeight());
 
-        this.body = BodyCreator.createBody(PlayerX + 70, PlayerY + 50, 50, 50, false, world);
+        this.body = BodyCreator.createBody(STARTX + 70, STARTY + 50, 50, 50, false, world);
         this.body.setUserData(this);
 
         addListener(new FreeRoamingMovementListener(this));
@@ -81,6 +82,26 @@ public class Entity extends Actor {
 
         trackMovement(delta);
     }
+
+    public void updatePositionX(int factor)
+    {
+        float speed = 300f;
+        float time = Gdx.graphics.getDeltaTime();
+
+        eX += factor * speed * time;
+        eX = MathUtils.clamp(eX,  Gdx.graphics.getWidth() / -2, 807);
+
+    }
+
+    public void updatePositionY(int factor)
+    {
+        float speed = 300f;
+        float time = Gdx.graphics.getDeltaTime();
+
+        eY += factor * speed * time;
+        eY = MathUtils.clamp(eY,  -540, 350);
+    }
+
 
     public TextureRegion[] animationSplicer(Texture texture, int COLS, int ROWS)
     {
@@ -144,10 +165,10 @@ public class Entity extends Actor {
 
     public boolean isLiving() { return living; }
 
-    public double geteX(){
+    public float geteX(){
         return eX;
     }
-    public double geteY(){
+    public float geteY(){
         return eY;
     }
     public double getStartX(){
@@ -166,6 +187,5 @@ public class Entity extends Actor {
     }
     public boolean isPlayer(){
         return player;
-
     }
 }

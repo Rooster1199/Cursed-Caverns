@@ -9,6 +9,29 @@ public enum entityState {
     HEAL,
     ;
 
+    public String determineAnimation(Entity e) {
+        switch (e.state) {
+            case STANDING:
+                return "STANDING";
+            case WALKING_N:
+                return "WALKING_N";
+            case WALKING_S:
+                return "WALKING_S";
+            case WALKING_E:
+                return "WALKING_E";
+            case ATTACK_E:
+                return "ATTACK_E";
+            case WALKING_W:
+                return "WALKING_W";
+            case ATTACK_W:
+                return "ATTACK_W";
+            case HEAL:
+               return "HEAL";
+            default:
+                return "DEFAULT";
+        }
+    }
+
     public Vector2 calculateDirection()
     {
         // multiple cases not supported in java 8!!
