@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/killtheinnocents-TheGame-.iml" filepath="$PROJECT_DIR$/.idea/modules/killtheinnocents-TheGame-.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/killtheinnocents-TheGame-.core.iml" filepath="$PROJECT_DIR$/.idea/modules/core/killtheinnocents-TheGame-.core.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/killtheinnocents-TheGame-.core.main.iml" filepath="$PROJECT_DIR$/.idea/modules/core/killtheinnocents-TheGame-.core.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/killtheinnocents-TheGame-.core.test.iml" filepath="$PROJECT_DIR$/.idea/modules/core/killtheinnocents-TheGame-.core.test.iml" />

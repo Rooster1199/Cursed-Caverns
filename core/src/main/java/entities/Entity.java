@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import helper.BodyCreator;
 import helper.Constants;
 import helper.BodyCreator;
 
@@ -20,11 +21,13 @@ public class Entity extends Actor {
     public float speed = 5 * TILE_SIZE;
     private Vector2 currentVelocity = new Vector2(0,0);
     private entityState state;
+    boolean player;
 
     int maxHealth;
     int str;
     int cHealth;
     boolean living;
+    double eX; double eY; double startX; double startY;
 
     public Entity(Vector2 startPosition, World world, int health, int strength, String filename)
     {
@@ -46,6 +49,31 @@ public class Entity extends Actor {
         maxHealth = health;
         living = true;
    }
+
+    public Entity(Vector2 startPosition, World world, int health, int strength,int x, int y)
+    {
+        super();
+        spriteTexture = new Texture("idlePlayer_sheet.png");
+        entitysprite = new Sprite(spriteTexture);
+        eX = x;
+        startX = x;
+        eY = y;
+        startY = y;
+
+        setBounds(startPosition.x, startPosition.y, entitysprite.getWidth(), entitysprite.getHeight());
+
+        this.body = BodyCreator.createBody(PlayerX + 70, PlayerY + 50, 50, 50, false, world);
+        this.body.setUserData(this);
+
+        addListener(new FreeRoamingMovementListener(this));
+
+        state = entityState.STANDING;
+
+        str = strength;
+        cHealth = health;
+        maxHealth = health;
+        living = true;
+    }
 
     @Override
     public void act(float delta) {
@@ -116,8 +144,28 @@ public class Entity extends Actor {
 
     public boolean isLiving() { return living; }
 
-    public void moveBody() {
-        body.setLinearVelocity(currentVelocity.cpy().scl(speed));
+    public double geteX(){
+        return eX;
     }
+    public double geteY(){
+        return eY;
+    }
+    public double getStartX(){
+        return startX;
+    }
+    public double getStartY(){
+        return startY;
+    }
+    public void modPos(double xMod, double yMod){
+        eX += xMod;
+        eY += yMod;
+    }
+    public void setPlayer(){
+        player = true;
 
+    }
+    public boolean isPlayer(){
+        return player;
+
+    }
 }
