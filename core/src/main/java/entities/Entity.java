@@ -58,6 +58,7 @@ public class Entity extends Actor {
     boolean living;
     double eX; double eY; double startX; double startY; // was double before, change back if issue!
     int facX; int facY;
+    Hitbox xHit; Hitbox yHit;
 
     public Entity(Vector2 startPosition, World world, int health, int strength, String filename_prefix, boolean isPlayer)
     {
@@ -78,6 +79,8 @@ public class Entity extends Actor {
         cHealth = health;
         maxHealth = health;
         living = true;
+        xHit = new Hitbox(eX);
+        yHit = new Hitbox(eY);
    }
     public Entity(World world, int health, int strength, String filename_prefix, int x, int y, boolean isPlayer)
     {
@@ -91,6 +94,8 @@ public class Entity extends Actor {
         startY = y;
         facX = 0;
         facY = 0;
+        xHit = new Hitbox(eX);
+        yHit = new Hitbox(eY);
 
         setBounds(x,y, allSprites[0].getWidth(), allSprites[0].getHeight());
 
@@ -278,11 +283,24 @@ public class Entity extends Actor {
     }
     public void modPos(float xMod, float yMod){
         eX = eX + xMod;
+        xHit.update(eX);
         eY = eY + yMod;
+        yHit.update(eY);
     }
 
     public boolean isPlayer(){
         return player;
 
     }
+    public Hitbox getxHit(){
+        return xHit;
+    }
+    public Hitbox getyHit(){
+        return yHit;
+    }
+    public void forceHUpdate(double x, double y){
+        yHit.update(y);
+        xHit.update(x);
+    }
+
 }
