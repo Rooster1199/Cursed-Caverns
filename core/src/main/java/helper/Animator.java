@@ -24,7 +24,7 @@ public abstract class Animator implements ApplicationListener {
     public void AnimationCreate() {
 
         // Load the sprite sheet as a Texture
-        idleAnimationSheet = new Texture(Gdx.files.internal("idlePLayer_sheet.png"));
+        idleAnimationSheet = new Texture(Gdx.files.internal("player_STANDING.png"));
 
         // Use the split utility method to create a 2D array of TextureRegions. This is
         // possible because this sprite sheet contains frames of equal size and they are

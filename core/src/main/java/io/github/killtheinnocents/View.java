@@ -84,7 +84,7 @@ public class View extends ScreenAdapter {
         this.batch = new SpriteBatch();
 
         // Player + Health
-        player = new Entity(this.world, 100, 100, "idlePlayer_sheet.png", STARTX, STARTY);
+        player = new Entity(this.world, 100, 100, "player", STARTX, STARTY, true);
         this.body = player.getBody();
         healthIndex = 0;
 
@@ -114,7 +114,7 @@ public class View extends ScreenAdapter {
         //mapOverlay = new Texture("mapOverlay.png");
         //mapOverlaySprite = new Sprite(mapOverlay);
 
-        idleAnimationSheet = new Texture(Gdx.files.internal("idlePlayer_sheet.png"));
+        idleAnimationSheet = new Texture(Gdx.files.internal("player_STANDING.png"));
         idleAnimationSprite = new Sprite(idleAnimationSheet);
         idleAnimation = new Animation<TextureRegion>(.25f, player.animationSplicer(idleAnimationSheet,2, 2));
 
@@ -126,17 +126,13 @@ public class View extends ScreenAdapter {
         healthSprite = new Sprite(wizardSheet);
         healthBarAnimation = new Animation<TextureRegion>(.25f, player.animationSplicer(healthSheet,3, 6));
 
-        enemies = new Array<>();
         enemies1 = new Array<>();
         createEnemies();
     }
 
     private void createEnemies() {
 
-        Texture enemyTexture = new Texture("wizardSheet.png");
-        Sprite enemy = new Sprite(enemyTexture);
-        Entity enemy1 = new Entity(world,15,2, "idlePlayer_sheet.png", 600,20);
-        enemies.add(enemy);
+        Entity enemy1 = new Entity(world,15,2, "enemy", 600,20, false);
         enemies1.add(enemy1);
 
     }
@@ -214,14 +210,12 @@ public class View extends ScreenAdapter {
             // Get current frame of player animation for the current stateTime
             player.drawSprite(batch, stateTime);
 
-            TextureRegion currentFrame = idleAnimation.getKeyFrame(stateTime, true);
-
             TextureRegion[] healthFrame = healthBarAnimation.getKeyFrames();
             batch.draw(healthFrame[healthIndex], -1000, -850);
 
-            for(Sprite enemy: enemies)
+            for(Entity enemy: enemies1)
             {
-                batch.draw(currentFrame,(int)(enemies1.get(0).geteX()),(int)(enemies1.get(0).geteY()),170,170);
+                enemy.drawSprite(batch, stateTime);
             }
 
             batch.end();

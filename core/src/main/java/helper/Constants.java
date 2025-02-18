@@ -8,12 +8,23 @@ public class Constants {
     public static final int TILE_SIZE = 120;
     public static final int STARTX = -860;
     public static int STARTY = 20;
-    public static int[][] animationColsAndRows = {  {2,2}, // Standing
-                                                    {2,2}, // Walk N
-                                                    {2,2}, // Walk S
-                                                    {2,2}, // Walk E
-                                                    {2,2}, // Walk W
-                                                    {2,6}, // Attack E
-                                                    {2,6}}; // Attack W
+    public static int[][] playerColsAndRows = { {2,2}, // Standing
+                                                {2,3}, // Walk N
+                                                {2,3}, // Walk S
+                                                {2,2}, // Walk E
+                                                {2,3}, // Walk W
+                                                {3,3}, // Attack E
+                                                {3,3}, // ATTACK W
+                                                {4,5}  // HEAL
+                                             };
+    public static int[][] enemyColsAndRows = {  {2,2}, // Standing
+                                                {2,3}, // Walk N
+                                                {2,3}, // Walk S
+                                                {2,2}, // Walk E
+                                                {2,3}, // Walk W
+                                                {3,3}, // Attack E
+                                                {3,3}, // ATTACK W
+                                                {4,5}  // TO DO: DIE!
+                                            };
 
     }

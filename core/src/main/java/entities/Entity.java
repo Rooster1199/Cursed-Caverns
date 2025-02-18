@@ -19,27 +19,32 @@ import static helper.Constants.*;
 public class Entity extends Actor {
 
     // Sprites + Textures
+    private Animation<TextureRegion> currentAnimation;
     private Animation<TextureRegion> standingAnimation;
+    private Animation<TextureRegion> walkNAnimation;
+    private Animation<TextureRegion> walkEAnimation;
+    private Animation<TextureRegion> walkWAnimation;
+    private Animation<TextureRegion> walkSAnimation;
+    private Animation<TextureRegion> attackEAnimation;
+    private Animation<TextureRegion> attackWAnimation;
+    /*
     private Sprite standingSprite;
     private Texture standingTexture;
-    private Animation<TextureRegion> walkNAnimation;
     private Sprite walkNSprite;
     private Texture walkNTexture;
-    private Animation<TextureRegion> walkEAnimation;
     private Sprite walkESprite;
     private Texture walkETexture;
-    private Animation<TextureRegion> walkWAnimation;
     private Sprite walkWSprite;
     private Texture walkWTexture;
-    private Animation<TextureRegion> walkSAnimation;
     private Sprite walkSSprite;
     private Texture walkSTexture;
-    private Animation<TextureRegion> attackEAnimation;
     private Sprite attackESprite;
     private Texture attackETexture;
-    private Animation<TextureRegion> attackWAnimation;
     private Sprite attackWSprite;
-    private Texture attackWTexture;
+    private Texture attackWTexture; */
+    Texture[] allTextures = new Texture[8];
+    Sprite[] allSprites = new Sprite[8];
+    int animationIndex = 0;
 
     private Body body;
     public float speed = 5 * TILE_SIZE;
@@ -54,14 +59,13 @@ public class Entity extends Actor {
     double eX; double eY; double startX; double startY; // was double before, change back if issue!
     int facX; int facY;
 
-    public Entity(Vector2 startPosition, World world, int health, int strength, String filename_prefix)
+    public Entity(Vector2 startPosition, World world, int health, int strength, String filename_prefix, boolean isPlayer)
     {
         super();
-        initializeAllSprites(filename_prefix);
-        standingTexture = new Texture("libgdx.png");
-        standingSprite = new Sprite(standingTexture);
+        player = isPlayer;
+        initializeAllSprites();
 
-        setBounds(startPosition.x, startPosition.y, standingSprite.getWidth(), standingSprite.getHeight());
+        setBounds(startPosition.x, startPosition.y, allSprites[0].getWidth(), allSprites[0].getHeight());
 
         this.body = BodyCreator.createBody(STARTX + 70, STARTY + 50, 50, 50, false, world);
         this.body.setUserData(this);
@@ -75,12 +79,11 @@ public class Entity extends Actor {
         maxHealth = health;
         living = true;
    }
-    public Entity(World world, int health, int strength,String filename_prefix, int x, int y)
+    public Entity(World world, int health, int strength, String filename_prefix, int x, int y, boolean isPlayer)
     {
         super();
-        initializeAllSprites(filename_prefix);
-        standingTexture = new Texture("libgdx.png");
-        standingSprite = new Sprite(standingTexture);
+        player = isPlayer;
+        initializeAllSprites();
 
         eX = x;
         startX = x;
@@ -89,7 +92,7 @@ public class Entity extends Actor {
         facX = 0;
         facY = 0;
 
-        setBounds(x,y, standingSprite.getWidth(), standingSprite.getHeight());
+        setBounds(x,y, allSprites[0].getWidth(), allSprites[0].getHeight());
 
         this.body = BodyCreator.createBody(STARTX + 70, STARTY + 50, 50, 50, false, world);
         this.body.setUserData(this);
@@ -126,18 +129,42 @@ public class Entity extends Actor {
 
     }
 
-    public void initializeAllSprites(String filename_prefix) {
+    public void initializeAllSprites() {
+        String characterState = player ? "player" : "enemy";
+        System.out.println(characterState + " " + player);
+        int index = 0;
+
         for (entityState state : entityState.values()) {
-            System.out.println(state);
+            String filename = characterState + "_" + state + ".png";
+
+            if (characterState.equals("player") && state != entityState.DEATH) {
+                allTextures[index] = new Texture(filename);
+                allSprites[index] = new Sprite(allTextures[index]);
+
+//                System.out.println(allTextures[index]);
+//                System.out.println(allSprites[index]);
+                index++;
+
+            } else if (characterState.equals("enemy") && state != entityState.HEAL) {
+                allTextures[index] = new Texture(filename);
+                allSprites[index] = new Sprite(allTextures[index]);
+
+//                System.out.println(allTextures[index]);
+//                System.out.println(allSprites[index]);
+                index++;
+            }
+
         }
-        standingTexture = new Texture(Gdx.files.internal("idlePlayer_sheet.png"));
-        standingAnimation = new Animation<TextureRegion>(.25f, animationSplicer(standingTexture,2, 2));
+
+        currentAnimation =  new Animation<TextureRegion>(.25f, animationSplicer(allTextures[animationIndex],playerColsAndRows[animationIndex][0], playerColsAndRows[animationIndex][1]));
+
+        System.out.println(characterState + " " + allTextures[animationIndex]);
 
     }
 
     public void drawSprite(SpriteBatch batch, float stateTime)
     {
-        TextureRegion currentFrame = standingAnimation.getKeyFrame(stateTime, true);
+        TextureRegion currentFrame = currentAnimation.getKeyFrame(stateTime, true);
         batch.draw(currentFrame, (float) eX, (float) eY, 170, 170);
     }
 
@@ -183,7 +210,7 @@ public class Entity extends Actor {
     public void changeAnimation() {
         String animation = state.determineAnimation(this);
 
-        if (state != entityState.HEAL || state != entityState.ATTACK_E || state != entityState.ATTACK_W) {
+        if (state != entityState.HEAL || state != entityState.ATTACKE || state != entityState.ATTACKW || state != entityState.DEATH) {
             if ( facX == 0 && facY == 0)
             {
                 state = entityState.STANDING;
@@ -191,21 +218,23 @@ public class Entity extends Actor {
             {
                 if (facX > 0)
                 {
-                    state = entityState.WALKING_E;
+                    state = entityState.WALKE;
                 } else {
-                    state = entityState.WALKING_W;
+                    state = entityState.WALKW;
                 }
 
             } else if (facX == 0)
             {
                 if (facY > 0)
                 {
-                    state = entityState.WALKING_N;
+                    state = entityState.WALKN;
                 } else {
-                    state = entityState.WALKING_S;
+                    state = entityState.WALKS;
                 }
             }
         }
+
+        animationIndex = state.determineIndex(this);
 
         //System.out.println(animation);
 
@@ -251,9 +280,7 @@ public class Entity extends Actor {
         eX = eX + xMod;
         eY = eY + yMod;
     }
-    public void setPlayer(){
-        player = true;
-    }
+
     public boolean isPlayer(){
         return player;
 

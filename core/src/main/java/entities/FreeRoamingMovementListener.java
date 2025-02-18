@@ -19,16 +19,16 @@ public class FreeRoamingMovementListener extends InputListener {
 
     private entityState getPlayerState() {
         if (pressedKeyCodes.contains(Input.Keys.UP)) {
-            return entityState.WALKING_N;
+            return entityState.WALKN;
         } else if (pressedKeyCodes.contains(Input.Keys.DOWN))
         {
-            return entityState.WALKING_S;
+            return entityState.WALKS;
         } else if (pressedKeyCodes.contains(Input.Keys.RIGHT))
         {
-            return entityState.WALKING_E;
+            return entityState.WALKE;
         } else if (pressedKeyCodes.contains(Input.Keys.LEFT))
         {
-            return entityState.WALKING_W;
+            return entityState.WALKW;
         } else
         {
             return null;
