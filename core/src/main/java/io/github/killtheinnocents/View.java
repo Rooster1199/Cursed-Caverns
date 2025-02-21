@@ -21,6 +21,7 @@ import entities.Hitbox;
 import helper.GameScreen;
 import jdk.internal.org.jline.terminal.TerminalBuilder;
 import entities.entityState.*;
+import org.w3c.dom.Text;
 
 import java.util.*;
 
@@ -49,6 +50,10 @@ public class View extends ScreenAdapter {
     private Texture wizardSheet;
     private Sprite wizardSprite;
     private Animation<TextureRegion> mapAnimation;
+    private Texture settingSheet;
+    private Sprite settingSprite;
+    private Animation<TextureRegion> settingAnimation;
+    private TextureRegion[] settingFrames;
     private Texture mapSheet;
     private Sprite mapSprite;
     private TextureRegion[] mapFrames;
@@ -62,6 +67,7 @@ public class View extends ScreenAdapter {
     private float deltaTime;
     private float time;
     private float elapsedTime;
+    private float keyTime;
 
     //Health Bar
     private Animation<TextureRegion> healthBarAnimation;
@@ -72,6 +78,7 @@ public class View extends ScreenAdapter {
     private int healthIndex;
     private int deathIndex;
     private int mapIndex;
+    private int settingIndex;
 
     // Screens
     enum Screen {
@@ -143,6 +150,11 @@ public class View extends ScreenAdapter {
         settingsSheet = new Texture("settings_cog.png");
         settingsSprite = new Sprite(settingsSheet);
 
+        settingSheet = new Texture("settingsBG.png");
+        settingSprite = new Sprite(settingSheet);
+        settingAnimation = new Animation<TextureRegion>(2f, player.animationSplicer(settingSheet, 4, 4));
+        settingFrames = settingAnimation.getKeyFrames();
+
         mapSheet = new Texture("mapBG.png");
         mapSprite = new Sprite(mapSheet);
         mapAnimation = new Animation<TextureRegion>(2f, player.animationSplicer(mapSheet, 2, 4));
@@ -165,7 +177,9 @@ public class View extends ScreenAdapter {
 
         deathIndex = 0;
         mapIndex = 0;
+        settingIndex = 7;
         map = false;
+        keyTime = 0; ;
     }
 
     private void createEnemies() {
@@ -280,7 +294,6 @@ public class View extends ScreenAdapter {
             dungeonScreen.drawbg(this.batch);
 
             overlay.drawOverlay(this.batch);
-            font.draw(batch, "ESC to settings", -200, -200);
 
             // Get current frame of player animation for the current stateTime
             player.drawSprite(batch, stateTime);
@@ -331,14 +344,10 @@ public class View extends ScreenAdapter {
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
             batch.begin();
 
-            font.draw(batch, "Keys:", -250, -200);
-            font.draw(batch, "ESC to pause", -400, -300);
-            font.draw(batch, "SPACE to unpause", -400, -400);
-            font.draw(batch, "Q to exit", -400, -500);
-            font.draw(batch, "WASD/Arrows to move", -400, -600);
+            batch.draw(settingFrames[settingIndex], -WIDTH/2, -HEIGHT/2, WIDTH, HEIGHT);
+            System.out.println(settingIndex);
 
-            font.draw(batch, "SETTINGS:", -250, HEIGHT/ 2 - 100);
-            batch.draw(settingsSprite, 800, -800, 300, 300);
+            batch.draw(settingsSprite, 830, -830, 300, 300);
 
             batch.end();
         }
@@ -372,13 +381,16 @@ public class View extends ScreenAdapter {
 
     // key word
     private void input() {
+
+        keyTime++;
+
         if (Gdx.input.isKeyPressed(Input.Keys.Q))
         {
             Gdx.app.exit();
         } else if (currentScreen == Screen.MENU && Gdx.input.isKeyPressed(Input.Keys.SPACE))
         {
             currentScreen = Screen.INTRO;
-        } else if (currentScreen == Screen.GAME_OVER && Gdx.input.isKeyPressed(Input.Keys.ANY_KEY))
+        } else if (currentScreen == Screen.GAME_OVER && Gdx.input.isKeyPressed(Input.Keys.SPACE))
         {
             currentScreen = Screen.MENU;
         } else if (currentScreen == Screen.MAIN_GAME && Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
@@ -397,6 +409,14 @@ public class View extends ScreenAdapter {
             player.ouchies(1);
         } else if (Gdx.input.isKeyPressed(Input.Keys.P)) {
             currentScreen = Screen.MAIN_GAME;
+        } else if (currentScreen == Screen.SETTINGS && Gdx.input.isKeyPressed(Input.Keys.LEFT))
+        {
+            if (checkExecute(15))
+                settingIndex = (settingIndex <= 0) ? 0 : settingIndex - 1;
+        } else if (currentScreen == Screen.SETTINGS && Gdx.input.isKeyPressed(Input.Keys.RIGHT))
+        {
+            if (checkExecute(15))
+                settingIndex = (settingIndex >= 15) ? 15 : settingIndex + 1;
         } else if (currentScreen == Screen.MAIN_GAME){
             if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W))
             {
@@ -413,6 +433,17 @@ public class View extends ScreenAdapter {
             player.forceHUpdate(player.geteX(),player.geteY());
         }
 
+    }
+
+    private boolean checkExecute(int factor)
+    {
+
+        if (keyTime > factor)
+        {
+            keyTime = 0;
+            return true;
+        }
+        return false;
     }
 
     private void logic() {
