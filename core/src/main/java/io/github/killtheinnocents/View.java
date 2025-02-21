@@ -14,6 +14,8 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+//import com.github.tommyettinger.textratypist.FWSkin;
+//import com.badlogic.gdx.scenes.scene2d.ui.*;
 import entities.Entity;
 import entities.Hitbox;
 import helper.GameScreen;
@@ -36,34 +38,50 @@ public class View extends ScreenAdapter {
     //Font
     BitmapFont font;
     Texture font_texture;
+//    FWSkin fontSkin;
+//    TypingLabel typingLabel = new TypingLabel("Yippe!");
 
     // Assets
-    private Animation<TextureRegion> idleAnimation;
-    private Texture idleAnimationSheet;
-    private Sprite idleAnimationSprite;
+    private Animation<TextureRegion> executionAnimation;
+    private Texture executionSheet;
+    private Sprite executionSprite;
     private Animation<TextureRegion> wizardAnimation;
     private Texture wizardSheet;
     private Sprite wizardSprite;
+    private Animation<TextureRegion> mapAnimation;
+    private Texture mapSheet;
+    private Sprite mapSprite;
+    private TextureRegion[] mapFrames;
+    private Texture settingsSheet;
+    private Sprite settingsSprite;
+
+    // Logic Components
     float stateTime; // time for animation
     private Entity player;
     Body body;
     private float deltaTime;
     private float time;
+    private float elapsedTime;
 
     //Health Bar
     private Animation<TextureRegion> healthBarAnimation;
     private Texture healthSheet;
     private Sprite healthSprite;
+
+    // Animation Indexes
     private int healthIndex;
+    private int deathIndex;
+    private int mapIndex;
 
     // Screens
     enum Screen {
-        MENU, INTRO, MAIN_GAME, GAME_OVER, SETTINGS;
+        MENU, INTRO, MAP, MAIN_GAME, GAME_OVER, SETTINGS;
     }
-    Screen currentScreen = Screen.MENU;
+    public Screen currentScreen = Screen.MENU;
     private GameScreen overlay;
     private GameScreen homeScreen;
     private GameScreen dungeonScreen;
+    private GameScreen gameOverScreen;
 
     // enemy
     public Array<Entity> enemies1;
@@ -81,6 +99,8 @@ public class View extends ScreenAdapter {
     float yMax;
     float xMin;
     float xMax;
+    boolean map;
+
     public View(OrthographicCamera camera)
     {
         this.camera = camera;
@@ -89,7 +109,7 @@ public class View extends ScreenAdapter {
         this.batch = new SpriteBatch();
 
         // Player + Health
-        player = new Entity(this.world, 100, 100, "player", STARTX, STARTY, true);
+        player = new Entity(this.world, 100, 100, STARTX, STARTY, true);
         this.body = player.getBody();
         healthIndex = 0;
 
@@ -107,6 +127,7 @@ public class View extends ScreenAdapter {
         overlay = new GameScreen("mapOverlay.png");
         homeScreen = new GameScreen("home_screen.png");
         dungeonScreen = new GameScreen("dungeon_background.png");
+        gameOverScreen = new GameScreen("deathBg.png");
 
         create();
     }
@@ -119,13 +140,21 @@ public class View extends ScreenAdapter {
         //mapOverlay = new Texture("mapOverlay.png");
         //mapOverlaySprite = new Sprite(mapOverlay);
 
-        idleAnimationSheet = new Texture(Gdx.files.internal("player_STANDING.png"));
-        idleAnimationSprite = new Sprite(idleAnimationSheet);
-        idleAnimation = new Animation<TextureRegion>(.25f, player.animationSplicer(idleAnimationSheet,2, 2));
+        settingsSheet = new Texture("settings_cog.png");
+        settingsSprite = new Sprite(settingsSheet);
+
+        mapSheet = new Texture("mapBG.png");
+        mapSprite = new Sprite(mapSheet);
+        mapAnimation = new Animation<TextureRegion>(2f, player.animationSplicer(mapSheet, 2, 4));
+        mapFrames = mapAnimation.getKeyFrames();
+
+        executionSheet = new Texture("execution.png");
+        executionSprite = new Sprite(executionSheet);
+        executionAnimation = new Animation<TextureRegion>(2f, player.animationSplicer(executionSheet, 4, 7));
 
         wizardSheet = new Texture(Gdx.files.internal("wizardSheet.png"));
         wizardSprite = new Sprite(wizardSheet);
-        wizardAnimation = new Animation<TextureRegion>(.25f, player.animationSplicer(wizardSheet,2, 2));
+        wizardAnimation = new Animation<TextureRegion>(.5f, player.animationSplicer(wizardSheet,2, 2));
 
         healthSheet = new Texture(Gdx.files.internal("HealthBar.png"));
         healthSprite = new Sprite(wizardSheet);
@@ -133,11 +162,15 @@ public class View extends ScreenAdapter {
 
         enemies1 = new Array<>();
         createEnemies();
+
+        deathIndex = 0;
+        mapIndex = 0;
+        map = false;
     }
 
     private void createEnemies() {
 
-        Entity enemy1 = new Entity(world,15,2, "enemy", 600,20, false);
+        Entity enemy1 = new Entity(world,15,2,600,20, false);
         enemies1.add(enemy1);
 
     }
@@ -155,7 +188,7 @@ public class View extends ScreenAdapter {
 
         player.changeAnimation();
 
-        if(currentScreen == Screen.INTRO && time > 150)
+        if(currentScreen == Screen.INTRO && time > 500)
         {
             currentScreen = Screen.MAIN_GAME;
         } else if (currentScreen == Screen.INTRO)
@@ -174,34 +207,70 @@ public class View extends ScreenAdapter {
 
         stateTime += Gdx.graphics.getDeltaTime(); // Accumulate elapsed animation time
 
-        // render objects here
+        // MENU SCREEN
 
         if(currentScreen == Screen.MENU)
         {
             Gdx.gl.glClearColor(0,0,0,1);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
             batch.begin();
 
             homeScreen.drawbg(this.batch);
 
-            font.draw(batch, "[%$*!@#?]", -200, 100);
-            font.draw(batch, "home Screen", -150, 0);
+            font.draw(batch, "CURSED CAVERN", -200, 100);
             font.draw(batch, "Press Space to play", -525, -100);
 
             batch.end();
         }
+
+        // INTRO SCREEN
         else if(currentScreen == Screen.INTRO) {
 
             Gdx.gl.glClearColor(0,0,0,1);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
             batch.begin();
-            font.draw(batch, "wait! they don't love you like I love you... WAIT!", -200, 100);
+            font.draw(batch, "[*@&!^#$]", 200, 100);
+            font.draw(batch, "Oh! \n Welcome, Traveller...", 200, 100);
+            font.draw(batch, "A great evil has befallen our land", 200, 100);
+            font.draw(batch, "They hoard riches and steal our firstborns.", 200, 100);
+            font.draw(batch, "You, O dragon hearted one, are the only one who can vanquish our enemy.", 200, 100);
+            font.draw(batch, "Venture yonder into that cavern save us.", 200, 100);
+
+            font.draw(batch, "Press ESC to view settings", 200, 100);
+            font.draw(batch, "Space to continue", 200, 100);
 
             TextureRegion wizardFrame = wizardAnimation.getKeyFrame(stateTime, true);
-            batch.draw(wizardFrame, 0, 0, 500, 500);
+            batch.draw(wizardFrame, -1000, -600, 1200, 1200);
 
             batch.end();
         }
+
+        //MAP
+        else if (currentScreen == Screen.MAP) {
+            Gdx.gl.glClearColor(0,0,0,1);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+            batch.begin();
+
+            batch.draw(mapFrames[mapIndex], -WIDTH/2, -HEIGHT/2, WIDTH, HEIGHT);
+
+            if (elapsedTime > 45 && mapIndex < 7 && !map) {
+                mapIndex++;
+                map = true;
+            } else if (elapsedTime > 90) {
+                elapsedTime = 0;
+                map = false;
+                Gdx.gl.glClearColor(0,0,0,1);
+                Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+                currentScreen = Screen.MAIN_GAME;
+            }
+
+            elapsedTime++;
+
+            batch.end();
+        }
+
+        // MAIN GAME
         else if(currentScreen == Screen.MAIN_GAME) {
 
             Gdx.gl.glClearColor(0,0,0,1);
@@ -217,7 +286,7 @@ public class View extends ScreenAdapter {
             player.drawSprite(batch, stateTime);
 
             TextureRegion[] healthFrame = healthBarAnimation.getKeyFrames();
-            batch.draw(healthFrame[healthIndex], -1000, -850);
+            batch.draw(healthFrame[healthIndex], -1170, -905, 600, 300);
 
             for(Entity enemy: enemies1)
             {
@@ -226,25 +295,50 @@ public class View extends ScreenAdapter {
 
             batch.end();
 
-        } else if (currentScreen == Screen.GAME_OVER) {
+        }
+        // GAME OVER
+        else if (currentScreen == Screen.GAME_OVER) {
             Gdx.gl.glClearColor(0,0,0,1);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
             batch.begin();
 
-            font.draw(batch, "Game Over", 0, 0);
+            gameOverScreen.drawbg(this.batch);
+
+            font.draw(batch, "Game Over", -300, -300);
+
+            TextureRegion[] executionFrame = executionAnimation.getKeyFrames();
+            batch.draw(executionFrame[deathIndex], -600, -200, 1200, 600);
 
             batch.end();
-        } else if (currentScreen == Screen.SETTINGS) {
+
+            if (deathIndex >= 25)
+            {
+                System.out.println("FIX THIS");
+            }
+
+            if (elapsedTime > 15 && deathIndex < 27)
+            {
+                elapsedTime = 0;
+                deathIndex++;
+            }
+
+            elapsedTime++;
+
+        }
+        // SETTINGS
+        else if (currentScreen == Screen.SETTINGS) {
             Gdx.gl.glClearColor(0,0,0,1);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
             batch.begin();
 
-            font.draw(batch, "ESC to pause", -200, 0);
-            font.draw(batch, "SPACE to unpause", -200, -100);
-            font.draw(batch, "Q to exit", -200, -200);
-            font.draw(batch, "WASD/Arrows to move", -200, -300);
+            font.draw(batch, "Keys:", -250, -200);
+            font.draw(batch, "ESC to pause", -400, -300);
+            font.draw(batch, "SPACE to unpause", -400, -400);
+            font.draw(batch, "Q to exit", -400, -500);
+            font.draw(batch, "WASD/Arrows to move", -400, -600);
 
-            font.draw(batch, "Settings", 0, 100);
+            font.draw(batch, "SETTINGS:", -250, HEIGHT/ 2 - 100);
+            batch.draw(settingsSprite, 800, -800, 300, 300);
 
             batch.end();
         }
@@ -278,21 +372,24 @@ public class View extends ScreenAdapter {
 
     // key word
     private void input() {
-        float speed = 300f;
-        float time = Gdx.graphics.getDeltaTime();
         if (Gdx.input.isKeyPressed(Input.Keys.Q))
         {
             Gdx.app.exit();
         } else if (currentScreen == Screen.MENU && Gdx.input.isKeyPressed(Input.Keys.SPACE))
         {
             currentScreen = Screen.INTRO;
-        } else if (currentScreen == Screen.GAME_OVER && Gdx.input.isKeyPressed(Input.Keys.ENTER))
+        } else if (currentScreen == Screen.GAME_OVER && Gdx.input.isKeyPressed(Input.Keys.ANY_KEY))
         {
             currentScreen = Screen.MENU;
         } else if (currentScreen == Screen.MAIN_GAME && Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
         {
             currentScreen = Screen.SETTINGS;
-        } else if (currentScreen == Screen.SETTINGS && Gdx.input.isKeyPressed(Input.Keys.SPACE))
+        }
+        else if (currentScreen == Screen.MAIN_GAME && Gdx.input.isKeyPressed(Input.Keys.L))
+        {
+            currentScreen = Screen.MAP;
+        }
+        else if (currentScreen == Screen.SETTINGS && Gdx.input.isKeyPressed(Input.Keys.SPACE))
         {
             currentScreen = Screen.MAIN_GAME;
         } else if (Gdx.input.isKeyPressed(Input.Keys.R))
@@ -320,7 +417,6 @@ public class View extends ScreenAdapter {
 
     private void logic() {
         clamp(player,enemies1.get(0));
-
 
         for(Entity e : enemies1){
             e.setX((float)MathUtils.clamp(e.geteX(), (double) -Gdx.graphics.getWidth() /2, (double) Gdx.graphics.getWidth() /2));
@@ -371,9 +467,9 @@ public class View extends ScreenAdapter {
         }
     }
     public boolean checkOverlap(Hitbox h1, Hitbox h2){
-        System.out.println(h1.max >= h2.min && h2.max >= h1.min);
-        System.out.println(": ("+h1.min+", "+h1.max+")");
-        System.out.println(": ("+h2.min+", "+h2.max+")");
+//        System.out.println(h1.max >= h2.min && h2.max >= h1.min);
+//        System.out.println(": ("+h1.min+", "+h1.max+")");
+//        System.out.println(": ("+h2.min+", "+h2.max+")");
         return h1.max >= h2.min && h2.max >= h1.min;
     }
     public void clamp(Entity player, Entity enemy){
@@ -385,11 +481,11 @@ public class View extends ScreenAdapter {
         if (checkOverlap(player.getxHit(),enemy.getxHit())){
             if (player.geteY()>enemy.geteY()){
                 yMin= (float) (enemy.geteY()+bufferDistance);
-                PlayerY += bufferDistance;
+                player.updatePosition(0, (int) bufferDistance);
             }
             else if (player.geteY() <enemy.geteY()){
                 yMax= (float) (enemy.geteY()-bufferDistance);
-                PlayerY += bufferDistance;
+                player.updatePosition(0, (int) bufferDistance);
             }
         }
         else {
@@ -401,12 +497,11 @@ public class View extends ScreenAdapter {
         if (checkOverlap(player.getyHit(),enemy.getyHit())){
             if (player.geteX()>enemy.geteX()){
                 xMin= (float) (enemy.geteX() +bufferDistance);
-                PlayerX += bufferDistance;
+                player.updatePosition((int) bufferDistance, 0);
             }
             else if (player.geteX()<enemy.geteX()){
                 xMax= (float) (enemy.geteX() -bufferDistance);
-                PlayerX +=bufferDistance;
-
+                player.updatePosition((int) bufferDistance, 0);
 
             }
         }
@@ -415,11 +510,11 @@ public class View extends ScreenAdapter {
             xMax = (float) (Gdx.graphics.getWidth()) /2;
         }
 
-        System.out.println("X: ("+xMin+", "+xMax+")");
-        System.out.println("Y: ("+yMin+", "+yMax+")");
-        System.out.println("e: ("+enemy.geteX()+", "+enemy.geteY()+")");
-        System.out.println("p: ("+player.geteX()+", "+player.geteY()+")");
-        System.out.println();
+//        System.out.println("X: ("+xMin+", "+xMax+")");
+//        System.out.println("Y: ("+yMin+", "+yMax+")");
+//        System.out.println("e: ("+enemy.geteX()+", "+enemy.geteY()+")");
+//        System.out.println("p: ("+player.geteX()+", "+player.geteY()+")");
+//        System.out.println();
     }
 
 }

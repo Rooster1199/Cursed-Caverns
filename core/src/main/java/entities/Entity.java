@@ -45,6 +45,8 @@ public class Entity extends Actor {
     Texture[] allTextures = new Texture[8];
     Sprite[] allSprites = new Sprite[8];
     int animationIndex = 0;
+    int[][] colsAndRows;
+    float[] animationSpeed;
 
     private Body body;
     public float speed = 5 * TILE_SIZE;
@@ -60,18 +62,20 @@ public class Entity extends Actor {
     int facX; int facY;
     Hitbox xHit; Hitbox yHit;
 
-    public Entity(Vector2 startPosition, World world, int health, int strength, String filename_prefix, boolean isPlayer)
+    public Entity(Vector2 startPosition, World world, int health, int strength, boolean isPlayer)
     {
         super();
         player = isPlayer;
+        colsAndRows = player ? playerColsAndRows : enemyColsAndRows;
+        animationSpeed = player ? playerAnimationSpeed : enemyAnimationSpeed;
         initializeAllSprites();
 
         setBounds(startPosition.x, startPosition.y, allSprites[0].getWidth(), allSprites[0].getHeight());
 
-        this.body = BodyCreator.createBody(STARTX + 70, STARTY + 50, 50, 50, false, world);
-        this.body.setUserData(this);
-
-        addListener(new FreeRoamingMovementListener(this));
+//        this.body = BodyCreator.createBody(STARTX + 70, STARTY + 50, 50, 50, false, world);
+//        this.body.setUserData(this);
+//
+//        addListener(new FreeRoamingMovementListener(this));
 
         state = entityState.STANDING;
 
@@ -82,10 +86,12 @@ public class Entity extends Actor {
         xHit = new Hitbox(eX);
         yHit = new Hitbox(eY);
    }
-    public Entity(World world, int health, int strength, String filename_prefix, int x, int y, boolean isPlayer)
+    public Entity(World world, int health, int strength, int x, int y, boolean isPlayer)
     {
         super();
         player = isPlayer;
+        colsAndRows = player ? playerColsAndRows : enemyColsAndRows;
+        animationSpeed = player ? playerAnimationSpeed : enemyAnimationSpeed;
         initializeAllSprites();
 
         eX = x;
@@ -99,10 +105,10 @@ public class Entity extends Actor {
 
         setBounds(x,y, allSprites[0].getWidth(), allSprites[0].getHeight());
 
-        this.body = BodyCreator.createBody(STARTX + 70, STARTY + 50, 50, 50, false, world);
-        this.body.setUserData(this);
+//        this.body = BodyCreator.createBody(STARTX + 70, STARTY + 50, 50, 50, false, world);
+//        this.body.setUserData(this);
 
-        addListener(new FreeRoamingMovementListener(this));
+//        addListener(new FreeRoamingMovementListener(this));
 
         state = entityState.STANDING;
 
@@ -112,12 +118,6 @@ public class Entity extends Actor {
         living = true;
     }
 
-    @Override
-    public void act(float delta) {
-        super.act(delta);
-
-        trackMovement(delta);
-    }
 
     public void updatePosition(int factorX, int factorY)
     {
@@ -128,9 +128,9 @@ public class Entity extends Actor {
         facY = factorY;
 
         eX += factorX * speed * time;
-        eX = MathUtils.clamp(eX,  Gdx.graphics.getWidth() / -2, 807);
+        eX = MathUtils.clamp(eX,  Gdx.graphics.getWidth() / -2, 950);
         eY += factorY * speed * time;
-        eY = MathUtils.clamp(eY,  -540, 350);
+        eY = MathUtils.clamp(eY,  -600, 390);
 
     }
 
@@ -154,14 +154,15 @@ public class Entity extends Actor {
                 allTextures[index] = new Texture(filename);
                 allSprites[index] = new Sprite(allTextures[index]);
 
-//                System.out.println(allTextures[index]);
-//                System.out.println(allSprites[index]);
+                System.out.println(allTextures[index]);
+                System.out.println(allSprites[index]);
                 index++;
             }
 
+
         }
 
-        currentAnimation =  new Animation<TextureRegion>(.25f, animationSplicer(allTextures[animationIndex],playerColsAndRows[animationIndex][0], playerColsAndRows[animationIndex][1]));
+        currentAnimation =  new Animation<TextureRegion>(.25f, animationSplicer(allTextures[animationIndex],colsAndRows[animationIndex][0], colsAndRows[animationIndex][1]));
 
         System.out.println(characterState + " " + allTextures[animationIndex]);
 
@@ -240,6 +241,7 @@ public class Entity extends Actor {
         }
 
         animationIndex = state.determineIndex(this);
+        currentAnimation =  new Animation<TextureRegion>(animationSpeed[animationIndex], animationSplicer(allTextures[animationIndex],colsAndRows[animationIndex][0], colsAndRows[animationIndex][1]));
 
         //System.out.println(animation);
 
@@ -272,6 +274,7 @@ public class Entity extends Actor {
     public double geteX(){
         return eX;
     }
+
     public double geteY(){
         return eY;
     }

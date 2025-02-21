@@ -5,6 +5,10 @@ dependencies {
   api "com.badlogicgames.box2dlights:box2dlights:$box2dlightsVersion"
   api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
   api "com.badlogicgames.gdx:gdx:$gdxVersion"
+  // OLD VERSION
+  implementation "com.github.tommyettinger:textratypist:1.1.0:sources"
+  implementation "com.github.tommyettinger:regexodus:0.1.16:sources"
+  implementation "com.github.tommyettinger:freetypist:1.1.0"
 
   if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
