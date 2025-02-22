@@ -404,7 +404,7 @@ public class View extends ScreenAdapter {
         else if (currentScreen == Screen.SETTINGS && Gdx.input.isKeyPressed(Input.Keys.SPACE))
         {
             currentScreen = Screen.MAIN_GAME;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.R))
+        } else if (Gdx.input.isKeyPressed(Input.Keys.U))
         {
             player.ouchies(1);
         } else if (Gdx.input.isKeyPressed(Input.Keys.P)) {
@@ -427,7 +427,11 @@ public class View extends ScreenAdapter {
                 player.updatePosition(1, 0);
             } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)||Gdx.input.isKeyPressed(Input.Keys.A)) {
                 player.updatePosition(-1, 0);
-            } else {
+            } else if (Gdx.input.isKeyPressed(Input.Keys.R)) {
+                player.specialChangeAnimation("Attack");
+            } else if (Gdx.input.isKeyPressed(Input.Keys.H)) {
+                player.specialChangeAnimation("Heal");
+            }else {
                 player.updatePosition(0, 0);
             }
             player.forceHUpdate(player.geteX(),player.geteY());
