@@ -305,5 +305,9 @@ public class Entity extends Actor {
         yHit.update(y);
         xHit.update(x);
     }
+    public void setPos(double x, double y){
+        eX = x;
+        eY = y;
+    }
 
 }
