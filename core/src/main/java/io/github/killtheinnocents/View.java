@@ -13,9 +13,13 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 //import com.github.tommyettinger.textratypist.FWSkin;
 //import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.github.tommyettinger.textra.FWSkin;
+import com.github.tommyettinger.textra.Font;
+import com.github.tommyettinger.textra.TypingLabel;
 import entities.Entity;
 import entities.Hitbox;
 import helper.GameScreen;
@@ -38,9 +42,12 @@ public class View extends ScreenAdapter {
 
     //Font
     BitmapFont font;
+    Font mainFont;
     Texture font_texture;
-//    FWSkin fontSkin;
-//    TypingLabel typingLabel = new TypingLabel("Yippe!");
+    FWSkin fontSkin;
+    Skin skin;
+    TypingLabel typingLabel;
+    String[] introDialouge = {"[*@&!^#$]","Oh! \\n Welcome, Traveller...", "A great evil has befallen our land", "They hoard riches and steal our firstborns.", "You, O dragon hearted one, are the only one who can vanquish our enemy.", "Venture yonder into that cavern save us.", "Press ESC to view settings", "Space to continue" };
 
     // Assets
     private Animation<TextureRegion> executionAnimation;
@@ -79,6 +86,7 @@ public class View extends ScreenAdapter {
     private int deathIndex;
     private int mapIndex;
     private int settingIndex;
+    private int introIndex;
 
     // Screens
     enum Screen {
@@ -144,8 +152,6 @@ public class View extends ScreenAdapter {
 
         // sfx Gdx.audio.newSound(Gdx.files.internal(name));
         // music Gdx.audio.newMusic(Gdx.files.internal(name));
-        //mapOverlay = new Texture("mapOverlay.png");
-        //mapOverlaySprite = new Sprite(mapOverlay);
 
         settingsSheet = new Texture("settings_cog.png");
         settingsSprite = new Sprite(settingsSheet);
@@ -175,9 +181,16 @@ public class View extends ScreenAdapter {
         enemies1 = new Array<>();
         createEnemies();
 
+        // Font
+        //skin = new Skin(Gdx.files.internal("game_font.fnt"));
+        mainFont = new Font(new BitmapFont(Gdx.files.internal("game_font.fnt")));
+
+        // All these indexes!
         deathIndex = 0;
         mapIndex = 0;
         settingIndex = 7;
+        introIndex = 0;
+
         map = false;
         keyTime = 0; ;
     }
@@ -244,20 +257,22 @@ public class View extends ScreenAdapter {
             Gdx.gl.glClearColor(0,0,0,1);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
             batch.begin();
-            font.draw(batch, "[*@&!^#$]", 200, 100);
-            font.draw(batch, "Oh! \n Welcome, Traveller...", 200, 100);
-            font.draw(batch, "A great evil has befallen our land", 200, 100);
-            font.draw(batch, "They hoard riches and steal our firstborns.", 200, 100);
-            font.draw(batch, "You, O dragon hearted one, are the only one who can vanquish our enemy.", 200, 100);
-            font.draw(batch, "Venture yonder into that cavern save us.", 200, 100);
-
-            font.draw(batch, "Press ESC to view settings", 200, 100);
-            font.draw(batch, "Space to continue", 200, 100);
+//            font.draw(batch, "[*@&!^#$]", 200, 100);
+//            font.draw(batch, "Oh! \n Welcome, Traveller...", 200, 100);
+//            font.draw(batch, "A great evil has befallen our land", 200, 100);
+//            font.draw(batch, "They hoard riches and steal our firstborns.", 200, 100);
+//            font.draw(batch, "You, O dragon hearted one, are the only one who can vanquish our enemy.", 200, 100);
+//            font.draw(batch, "Venture yonder into that cavern save us.", 200, 100);
+//
+//            font.draw(batch, "Press ESC to view settings", 200, 100);
+//            font.draw(batch, "Space to continue", 200, 100);
 
             TextureRegion wizardFrame = wizardAnimation.getKeyFrame(stateTime, true);
             batch.draw(wizardFrame, -1000, -600, 1200, 1200);
 
             batch.end();
+
+            introIndex++;
         }
 
         //MAP
