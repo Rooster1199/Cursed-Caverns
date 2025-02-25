@@ -3,6 +3,7 @@ package io.github.killtheinnocents;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -29,6 +30,7 @@ import org.w3c.dom.Text;
 
 import java.util.*;
 
+import static com.badlogic.gdx.Gdx.audio;
 import static helper.Constants.*;
 
 public class View extends ScreenAdapter {
@@ -66,6 +68,11 @@ public class View extends ScreenAdapter {
     private TextureRegion[] mapFrames;
     private Texture settingsSheet;
     private Sprite settingsSprite;
+
+    // SOUND
+    Music music;
+    float musicVolume;
+    float sfxVolume;
 
     // Logic Components
     float stateTime; // time for animation
@@ -144,14 +151,20 @@ public class View extends ScreenAdapter {
         dungeonScreen = new GameScreen("dungeon_background.png");
         gameOverScreen = new GameScreen("deathBg.png");
 
+        // Volume
+        musicVolume = 0.5f;
+        sfxVolume = 0.5f;
+
         create();
     }
 
     public void create() {
-        // Assets
-
+        // Loading Assets
         // sfx Gdx.audio.newSound(Gdx.files.internal(name));
-        // music Gdx.audio.newMusic(Gdx.files.internal(name));
+        music = Gdx.audio.newMusic(Gdx.files.internal("MenuSong.wav"));
+        music.setVolume(musicVolume);
+        music.setLooping(true);
+        music.play();
 
         settingsSheet = new Texture("settings_cog.png");
         settingsSprite = new Sprite(settingsSheet);
@@ -184,6 +197,7 @@ public class View extends ScreenAdapter {
         // Font
         //skin = new Skin(Gdx.files.internal("game_font.fnt"));
         mainFont = new Font(new BitmapFont(Gdx.files.internal("game_font.fnt")));
+
 
         // All these indexes!
         deathIndex = 0;
@@ -266,6 +280,9 @@ public class View extends ScreenAdapter {
 //
 //            font.draw(batch, "Press ESC to view settings", 200, 100);
 //            font.draw(batch, "Space to continue", 200, 100);
+
+            typingLabel = new TypingLabel(introDialouge[0], mainFont);
+            typingLabel.draw(batch, 0);
 
             TextureRegion wizardFrame = wizardAnimation.getKeyFrame(stateTime, true);
             batch.draw(wizardFrame, -1000, -600, 1200, 1200);
@@ -360,7 +377,9 @@ public class View extends ScreenAdapter {
             batch.begin();
 
             batch.draw(settingFrames[settingIndex], -WIDTH/2, -HEIGHT/2, WIDTH, HEIGHT);
-            System.out.println(settingIndex);
+            music.setVolume(((float) settingIndex / 15 ));
+            System.out.println("Setting INdex" + settingIndex);
+            System.out.println("Volume" + ((float) settingIndex / 15 ));
 
             batch.draw(settingsSprite, 830, -830, 300, 300);
 
