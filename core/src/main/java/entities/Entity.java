@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import helper.BodyCreator;
 import helper.Constants;
+import io.github.killtheinnocents.View;
 
 import static helper.Constants.*;
 
@@ -53,8 +54,6 @@ public class Entity extends Actor {
     private Vector2 currentVelocity = new Vector2(0,0);
     public entityState state;
     boolean player;
-    boolean specialAnimation;
-    int Time = 0;
 
     int maxHealth;
     int str;
@@ -62,11 +61,23 @@ public class Entity extends Actor {
     boolean living;
     double eX; double eY; double startX; double startY; // was double before, change back if issue!
     int facX; int facY;
+    enum Facing{
+        NORTH,
+        SOUTH,
+        EAST,
+        WEST
+    }
+    Facing eDirection;
     Hitbox xHit; Hitbox yHit;
+    Hitbox xAttack; Hitbox yAttack;
+    double xSize; double ySize;
 
-    public Entity(Vector2 startPosition, World world, int health, int strength, boolean isPlayer)
+    public Entity(Vector2 startPosition, World world, int health, int strength, boolean isPlayer,String facing, double xS, double yS)
     {
         super();
+        getDirection(facing);
+        xSize = xS;
+        ySize = yS;
         player = isPlayer;
         colsAndRows = player ? playerColsAndRows : enemyColsAndRows;
         animationSpeed = player ? playerAnimationSpeed : enemyAnimationSpeed;
@@ -87,12 +98,15 @@ public class Entity extends Actor {
         living = true;
         xHit = new Hitbox(eX);
         yHit = new Hitbox(eY);
-        specialAnimation = false;
+        xAttack = new Hitbox(eX);
+        yAttack = new Hitbox(eY);
    }
-
-    public Entity(World world, int health, int strength, int x, int y, boolean isPlayer)
+    public Entity(World world, int health, int strength, int x, int y, boolean isPlayer,String facing, double xS, double yS)
     {
         super();
+        getDirection(facing);
+        xSize = xS;
+        ySize = yS;
         player = isPlayer;
         colsAndRows = player ? playerColsAndRows : enemyColsAndRows;
         animationSpeed = player ? playerAnimationSpeed : enemyAnimationSpeed;
@@ -106,6 +120,8 @@ public class Entity extends Actor {
         facY = 0;
         xHit = new Hitbox(eX);
         yHit = new Hitbox(eY);
+        xAttack = new Hitbox(eX);
+        yAttack = new Hitbox(eY);
 
         setBounds(x,y, allSprites[0].getWidth(), allSprites[0].getHeight());
 
@@ -120,7 +136,6 @@ public class Entity extends Actor {
         cHealth = health;
         maxHealth = health;
         living = true;
-        specialAnimation = false;
     }
 
 
@@ -177,16 +192,6 @@ public class Entity extends Actor {
     {
         TextureRegion currentFrame = currentAnimation.getKeyFrame(stateTime, true);
         batch.draw(currentFrame, (float) eX, (float) eY, 170, 170);
-
-        if (specialAnimation)
-        {
-            Time++;
-        }
-
-        if (Time > currentAnimation.getAnimationDuration())
-        {
-            specialAnimation = false;
-        }
     }
 
 
@@ -231,53 +236,34 @@ public class Entity extends Actor {
     public void changeAnimation() {
         String animation = state.determineAnimation(this);
 
-        if(!specialAnimation) {
-
-            if (state != entityState.HEAL || state != entityState.ATTACKE || state != entityState.ATTACKW || state != entityState.DEATH) {
-                if (facX == 0 && facY == 0) {
-                    state = entityState.STANDING;
-                } else if (facY == 0) {
-                    if (facX > 0) {
-                        state = entityState.WALKE;
-                    } else {
-                        state = entityState.WALKW;
-                    }
-
-                } else if (facX == 0) {
-                    if (facY > 0) {
-                        state = entityState.WALKN;
-                    } else {
-                        state = entityState.WALKS;
-                    }
-                }
-            }
-
-            animationIndex = state.determineIndex(this);
-            currentAnimation = new Animation<TextureRegion>(animationSpeed[animationIndex], animationSplicer(allTextures[animationIndex], colsAndRows[animationIndex][0], colsAndRows[animationIndex][1]));
-        }
-        //System.out.println(animation);
-
-    }
-
-    public void specialChangeAnimation(String modifier) {
-
-        if (!specialAnimation) {
-            if (modifier.equals("Attack")) {
-                if (facX < 0) {
-                    state = entityState.ATTACKW;
+        if (state != entityState.HEAL || state != entityState.ATTACKE || state != entityState.ATTACKW || state != entityState.DEATH) {
+            if ( facX == 0 && facY == 0)
+            {
+                state = entityState.STANDING;
+            } else if (facY == 0)
+            {
+                if (facX > 0)
+                {
+                    state = entityState.WALKE;
                 } else {
-                    state = entityState.ATTACKE;
+                    state = entityState.WALKW;
                 }
-            } else if (player) {
-                state = entityState.HEAL;
-            } else {
-                state = entityState.DEATH;
-            }
 
-            animationIndex = state.determineIndex(this);
-            currentAnimation = new Animation<TextureRegion>(animationSpeed[animationIndex], animationSplicer(allTextures[animationIndex], colsAndRows[animationIndex][0], colsAndRows[animationIndex][1]));
-            specialAnimation = true;
+            } else if (facX == 0)
+            {
+                if (facY > 0)
+                {
+                    state = entityState.WALKN;
+                } else {
+                    state = entityState.WALKS;
+                }
+            }
         }
+
+        animationIndex = state.determineIndex(this);
+        currentAnimation =  new Animation<TextureRegion>(animationSpeed[animationIndex], animationSplicer(allTextures[animationIndex],colsAndRows[animationIndex][0], colsAndRows[animationIndex][1]));
+
+        //System.out.println(animation);
 
     }
 
@@ -343,5 +329,52 @@ public class Entity extends Actor {
         eX = x;
         eY = y;
     }
+    public void getDirection(String direction){
+        switch (direction){
+            case "N":
+                eDirection = Facing.NORTH;
+                break;
+            case "S":
+                eDirection = Facing.SOUTH;
+                break;
+            case "E":
+                eDirection = Facing.EAST;
+                break;
+            case  "W":
+                eDirection = Facing.WEST;
+                break;
+        }
+    }
+    public Facing getFacing(){
+        return eDirection;
+    }
+    public void attackBox(){
+        switch (eDirection){
+            case NORTH:
+                xAttack.updateMod(eX,xSize/2);
+                yAttack.updateMod(eY+ySize,ySize/4);
+            case SOUTH:
+                xAttack.updateMod(eX,xSize/2);
+                yAttack.updateMod(eY-ySize,ySize/4);
+            case WEST:
+                xAttack.updateMod(eX-xSize,xSize/2);
+                yAttack.updateMod(eY+ySize/2,ySize/4);
+
+            case EAST:
+                xAttack.updateMod(eX+xSize,xSize/2);
+                yAttack.updateMod(eY+ySize/2,ySize/4);
+        }
+    }
+    public Hitbox getEAX(){return xAttack;}
+    public Hitbox getEAY(){return yAttack;}
+    public int getStrength(){return str;}
+    public void takeDamage(Entity enemy){
+        if(View.checkOverlap(enemy.getEAX(),xHit) && View.checkOverlap(enemy.getEAY(),yHit)){
+            cHealth-=enemy.getStrength();
+            if(cHealth>maxHealth){cHealth=maxHealth;}
+        }
+    }
+    public double getESX(){return xSize;}
+    public double getESY(){return ySize;}
 
 }
