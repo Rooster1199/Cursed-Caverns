@@ -515,7 +515,7 @@ public class View extends ScreenAdapter {
             EPLD = Math.sqrt(((player.geteX() - e.geteX())*(player.geteX() - e.geteX())) + ((player.geteY() - e.geteY())*(player.geteY() - e.geteY())));
             eStartD = Math.sqrt(((e.getStartX()-e.geteX())*(e.getStartX()-e.geteX())) + ((e.getStartY()-e.geteY())*(e.getStartY()-e.geteY())));
 
-            if(EPLD<=800){
+            if(EPLD>=200 && EPLD <=800){
                 xMod = player.geteX()-e.geteX();
                 yMod = player.geteY()-e.geteY();
                 xMod = xMod/EPLD;
@@ -523,7 +523,7 @@ public class View extends ScreenAdapter {
                 //enemy1.modPos(eVelocity*Math.cos(EPLA)*Math.signum(PlayerX-enemy1.getX()),eVelocity*Math.sin(EPLA)*Math.signum(PlayerY-enemy1.getY()));
                 e.modPos((float) (xMod*eVelocity),(float) (yMod*eVelocity));
             }
-            else {
+            else if(EPLD >=800){
                 if((!(e.geteX() >= e.getStartX()-10) || !(e.geteX() <= e.getStartX()+10)) || (!(e.geteY() >= e.getStartY()-10) || !(e.geteY() <= e.getStartY()+10))){
                 xMod = e.getStartX() - e.geteX();
                 yMod = e.getStartY() - e.geteY();
@@ -535,55 +535,68 @@ public class View extends ScreenAdapter {
 
         }
     }
+    public float getDistance(float x1, float x2){
+        return 0;
+    }
+    public double getOverlap(Hitbox h1, Hitbox h2){
+        return Math.abs(h2.max - h1.min);
+    }
     public boolean checkOverlap(Hitbox h1, Hitbox h2){
-//        System.out.println(h1.max >= h2.min && h2.max >= h1.min);
-//        System.out.println(": ("+h1.min+", "+h1.max+")");
-//        System.out.println(": ("+h2.min+", "+h2.max+")");
         return h1.max >= h2.min && h2.max >= h1.min;
     }
     public void clamp(Entity player, Entity enemy){
-        float bufferDistance = 50;
         xMin = (float) -(Gdx.graphics.getWidth()) /2;
         xMax = (float) (Gdx.graphics.getWidth()) /2;
         yMin = (float) -Gdx.graphics.getHeight() /2;
         yMax = (float) Gdx.graphics.getHeight()/2;
-        if (checkOverlap(player.getxHit(),enemy.getxHit())){
+        if (checkOverlap(player.getxHit(),enemy.getxHit()) && !(checkOverlap(player.getyHit(),enemy.getyHit()))){
             if (player.geteY()>enemy.geteY()){
-                yMin= (float) (enemy.geteY()+bufferDistance);
-                player.updatePosition(0, (int) bufferDistance);
+                yMin= (float) (enemy.geteY()+165);
             }
-            else if (player.geteY() <enemy.geteY()){
-                yMax= (float) (enemy.geteY()-bufferDistance);
-                player.updatePosition(0, (int) bufferDistance);
+            if (player.geteY()<enemy.geteY()){
+                yMax= (float) (enemy.geteY()-165);
+
+            }
+        }
+        else if (checkOverlap(player.getyHit(),enemy.getyHit()) && !(checkOverlap(player.getxHit(),enemy.getxHit()))){
+            if (player.geteX()>enemy.geteX()){
+                xMin= (float) enemy.geteX() +125;
+            }
+            if (player.geteX()<enemy.geteX()){
+                xMax= (float) enemy.geteX() -125;
+
+
+            }
+        }
+        else if (checkOverlap(player.getyHit(),enemy.getyHit()) && checkOverlap(player.getxHit(),enemy.getxHit())){
+            System.out.println("overlap");
+            if(getOverlap(player.getxHit(),enemy.getxHit())>getOverlap(player.getyHit(),enemy.getyHit())){
+                if (player.geteX()>enemy.geteX()){
+                    xMin= (float) enemy.geteX() +165;
+                }
+                if (player.geteX()<enemy.geteX()){
+                    xMax= (float) enemy.geteX() -165;
+
+                }
+            }
+            if(getOverlap(player.getxHit(),enemy.getxHit()) < getOverlap(player.getyHit(),enemy.getyHit())){
+                if (player.geteY()>enemy.geteY()){
+                    yMin= (float) (enemy.geteY()+125);
+                }
+                if (player.geteY()<enemy.geteY()){
+                    yMax= (float) (enemy.geteY()-125);
+
+                }
             }
         }
         else {
             yMin = (float) -Gdx.graphics.getHeight() /2;
             yMax = (float) Gdx.graphics.getHeight()/2;
-        }
-
-
-        if (checkOverlap(player.getyHit(),enemy.getyHit())){
-            if (player.geteX()>enemy.geteX()){
-                xMin= (float) (enemy.geteX() +bufferDistance);
-                player.updatePosition((int) bufferDistance, 0);
-            }
-            else if (player.geteX()<enemy.geteX()){
-                xMax= (float) (enemy.geteX() -bufferDistance);
-                player.updatePosition((int) bufferDistance, 0);
-
-            }
-        }
-        else {
             xMin = (float) -(Gdx.graphics.getWidth()) /2;
             xMax = (float) (Gdx.graphics.getWidth()) /2;
         }
+        player.setPos(MathUtils.clamp(player.geteX(), xMin, xMax),MathUtils.clamp(player.geteY(), yMin, yMax));
 
-//        System.out.println("X: ("+xMin+", "+xMax+")");
-//        System.out.println("Y: ("+yMin+", "+yMax+")");
-//        System.out.println("e: ("+enemy.geteX()+", "+enemy.geteY()+")");
-//        System.out.println("p: ("+player.geteX()+", "+player.geteY()+")");
-//        System.out.println();
     }
 
 }
