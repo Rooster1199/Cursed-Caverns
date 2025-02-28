@@ -376,7 +376,9 @@ public class Entity extends Actor {
         if(View.checkOverlap(xHit,enemy.getEAX()) || View.checkOverlap(enemy.getEAY(),yHit)){
 
             if(cHealth+enemy.getStrength()>maxHealth){cHealth=maxHealth;}
-            if(cHealth-enemy.getStrength()<=0){cHealth=0;}
+            if(cHealth-enemy.getStrength()<=0){
+                living = false;
+                cHealth=0;}
             else{cHealth-=enemy.getStrength();}
             }
     }

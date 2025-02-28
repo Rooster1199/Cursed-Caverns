@@ -179,7 +179,7 @@ public class View extends ScreenAdapter {
 
     private void createEnemies() {
 
-        Entity enemy1 = new Entity(world,15,99,600,20, false,"W",240,320);
+        Entity enemy1 = new Entity(world,15,2,600,20, false,"W",240,320);
         enemies1.add(enemy1);
 
     }
@@ -399,10 +399,11 @@ public class View extends ScreenAdapter {
         else if (currentScreen == Screen.SETTINGS && Gdx.input.isKeyPressed(Input.Keys.SPACE))
         {
             currentScreen = Screen.MAIN_GAME;
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.R))
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && currentScreen == Screen.MAIN_GAME)
         {
             for(Entity enemy : enemies1){
                 enemy.takeDamage(player);
+                System.out.println(enemy.getCHealth());
                 break;
             }
         } else if (Gdx.input.isKeyPressed(Input.Keys.P)) {
