@@ -1,5 +1,5 @@
 package io.github.killtheinnocents;
-
+import java.io.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
@@ -111,7 +111,7 @@ public class View extends ScreenAdapter {
         this.batch = new SpriteBatch();
 
         // Player + Health
-        player = new Entity(this.world, 100, 100, STARTX, STARTY, true,"E",240,320);
+        player = new Entity(this.world, 100, 5, STARTX, STARTY, true,"E",240,320);
         this.body = player.getBody();
         healthIndex = 0;
 
@@ -179,7 +179,7 @@ public class View extends ScreenAdapter {
 
     private void createEnemies() {
 
-        Entity enemy1 = new Entity(world,15,2,600,20, false,"W",240,320);
+        Entity enemy1 = new Entity(world,15,99,600,20, false,"W",240,320);
         enemies1.add(enemy1);
 
     }
@@ -399,9 +399,12 @@ public class View extends ScreenAdapter {
         else if (currentScreen == Screen.SETTINGS && Gdx.input.isKeyPressed(Input.Keys.SPACE))
         {
             currentScreen = Screen.MAIN_GAME;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.R))
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.R))
         {
-            player.ouchies(1);
+            for(Entity enemy : enemies1){
+                enemy.takeDamage(player);
+                break;
+            }
         } else if (Gdx.input.isKeyPressed(Input.Keys.P)) {
             currentScreen = Screen.MAIN_GAME;
         } else if (currentScreen == Screen.SETTINGS && Gdx.input.isKeyPressed(Input.Keys.LEFT))
@@ -417,15 +420,19 @@ public class View extends ScreenAdapter {
             {
                 player.updatePosition(0, 1);
                 player.getDirection("N");
+                player.attackBox();
             } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
                 player.updatePosition(0, -1);
                 player.getDirection("S");
+                player.attackBox();
             } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
                 player.updatePosition(1, 0);
                 player.getDirection("E");
+                player.attackBox();
             } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)||Gdx.input.isKeyPressed(Input.Keys.A)) {
                 player.updatePosition(-1, 0);
                 player.getDirection("W");
+                player.attackBox();
             } else {
                 player.updatePosition(0, 0);
             }
@@ -476,7 +483,7 @@ public class View extends ScreenAdapter {
             EPLD = Math.sqrt(((player.geteX() - e.geteX())*(player.geteX() - e.geteX())) + ((player.geteY() - e.geteY())*(player.geteY() - e.geteY())));
             eStartD = Math.sqrt(((e.getStartX()-e.geteX())*(e.getStartX()-e.geteX())) + ((e.getStartY()-e.geteY())*(e.getStartY()-e.geteY())));
 
-            if(EPLD>=200 && EPLD <=800){
+            if(EPLD>=150 && EPLD <=800){
                 xMod = player.geteX()-e.geteX();
                 yMod = player.geteY()-e.geteY();
                 xMod = xMod/EPLD;
@@ -524,11 +531,18 @@ public class View extends ScreenAdapter {
                         }
                     }
                 }
+
                 else{
                     e.getDirection("W");
                 }
+
                 e.modPos((float) (xMod*eVelocity),(float) (yMod*eVelocity));
 
+            }
+            if (EPLD <=200){
+                if (e.isAttackReady()){
+                    e.updateAttackTime();
+                    player.takeDamage(e);}
             }
 
         }
@@ -537,7 +551,7 @@ public class View extends ScreenAdapter {
         return 0;
     }
     public static double getOverlap(Hitbox h1, Hitbox h2){
-        return Math.abs(h2.max - h1.min);
+        return h2.max - h1.min;
     }
     public static boolean checkOverlap(Hitbox h1, Hitbox h2){
         return h1.max >= h2.min && h2.max >= h1.min;

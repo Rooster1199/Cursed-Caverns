@@ -1,5 +1,5 @@
 package entities;
-
+import java.io.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -55,6 +55,8 @@ public class Entity extends Actor {
     public entityState state;
     boolean player;
 
+    double lastAttackTime;
+
     int maxHealth;
     int str;
     int cHealth;
@@ -76,6 +78,7 @@ public class Entity extends Actor {
     {
         super();
         getDirection(facing);
+        updateAttackTime();
         xSize = xS;
         ySize = yS;
         player = isPlayer;
@@ -104,6 +107,7 @@ public class Entity extends Actor {
     public Entity(World world, int health, int strength, int x, int y, boolean isPlayer,String facing, double xS, double yS)
     {
         super();
+        updateAttackTime();
         getDirection(facing);
         xSize = xS;
         ySize = yS;
@@ -369,12 +373,20 @@ public class Entity extends Actor {
     public Hitbox getEAY(){return yAttack;}
     public int getStrength(){return str;}
     public void takeDamage(Entity enemy){
-        if(View.checkOverlap(enemy.getEAX(),xHit) && View.checkOverlap(enemy.getEAY(),yHit)){
-            cHealth-=enemy.getStrength();
-            if(cHealth>maxHealth){cHealth=maxHealth;}
-        }
+        if(View.checkOverlap(xHit,enemy.getEAX()) || View.checkOverlap(enemy.getEAY(),yHit)){
+
+            if(cHealth+enemy.getStrength()>maxHealth){cHealth=maxHealth;}
+            if(cHealth-enemy.getStrength()<=0){cHealth=0;}
+            else{cHealth-=enemy.getStrength();}
+            }
     }
     public double getESX(){return xSize;}
     public double getESY(){return ySize;}
-
+    public boolean isAttackReady(){
+        int attackCooldown = 3000;
+        return (System.currentTimeMillis() - lastAttackTime) > attackCooldown;
+    }
+    public void updateAttackTime(){
+        lastAttackTime = System.currentTimeMillis();
+    }
 }
