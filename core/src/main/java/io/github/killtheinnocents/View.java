@@ -3,6 +3,7 @@ package io.github.killtheinnocents;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,9 +14,13 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 //import com.github.tommyettinger.textratypist.FWSkin;
 //import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.github.tommyettinger.textra.FWSkin;
+import com.github.tommyettinger.textra.Font;
+import com.github.tommyettinger.textra.TypingLabel;
 import entities.Entity;
 import entities.Hitbox;
 import helper.GameScreen;
@@ -25,6 +30,7 @@ import org.w3c.dom.Text;
 
 import java.util.*;
 
+import static com.badlogic.gdx.Gdx.audio;
 import static helper.Constants.*;
 
 public class View extends ScreenAdapter {
@@ -38,9 +44,12 @@ public class View extends ScreenAdapter {
 
     //Font
     BitmapFont font;
+    Font mainFont;
     Texture font_texture;
-//    FWSkin fontSkin;
-//    TypingLabel typingLabel = new TypingLabel("Yippe!");
+    FWSkin fontSkin;
+    Skin skin;
+    TypingLabel typingLabel;
+    String[] introDialouge = {"[*@&!^#$]","Oh! \\n Welcome, Traveller...", "A great evil has befallen our land", "They hoard riches and steal our firstborns.", "You, O dragon hearted one, are the only one who can vanquish our enemy.", "Venture yonder into that cavern save us.", "Press ESC to view settings", "Space to continue" };
 
     // Assets
     private Animation<TextureRegion> executionAnimation;
@@ -59,6 +68,11 @@ public class View extends ScreenAdapter {
     private TextureRegion[] mapFrames;
     private Texture settingsSheet;
     private Sprite settingsSprite;
+
+    // SOUND
+    Music music;
+    float musicVolume;
+    float sfxVolume;
 
     // Logic Components
     float stateTime; // time for animation
@@ -79,6 +93,7 @@ public class View extends ScreenAdapter {
     private int deathIndex;
     private int mapIndex;
     private int settingIndex;
+    private int introIndex;
 
     // Screens
     enum Screen {
@@ -136,16 +151,20 @@ public class View extends ScreenAdapter {
         dungeonScreen = new GameScreen("dungeon_background.png");
         gameOverScreen = new GameScreen("deathBg.png");
 
+        // Volume
+        musicVolume = 0.5f;
+        sfxVolume = 0.5f;
+
         create();
     }
 
     public void create() {
-        // Assets
-
+        // Loading Assets
         // sfx Gdx.audio.newSound(Gdx.files.internal(name));
-        // music Gdx.audio.newMusic(Gdx.files.internal(name));
-        //mapOverlay = new Texture("mapOverlay.png");
-        //mapOverlaySprite = new Sprite(mapOverlay);
+        music = Gdx.audio.newMusic(Gdx.files.internal("MenuSong.wav"));
+        music.setVolume(musicVolume);
+        music.setLooping(true);
+        music.play();
 
         settingsSheet = new Texture("settings_cog.png");
         settingsSprite = new Sprite(settingsSheet);
@@ -175,9 +194,17 @@ public class View extends ScreenAdapter {
         enemies1 = new Array<>();
         createEnemies();
 
+        // Font
+        //skin = new Skin(Gdx.files.internal("game_font.fnt"));
+        mainFont = new Font(new BitmapFont(Gdx.files.internal("game_font.fnt")));
+
+
+        // All these indexes!
         deathIndex = 0;
         mapIndex = 0;
         settingIndex = 7;
+        introIndex = 0;
+
         map = false;
         keyTime = 0; ;
     }
@@ -244,20 +271,25 @@ public class View extends ScreenAdapter {
             Gdx.gl.glClearColor(0,0,0,1);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
             batch.begin();
-            font.draw(batch, "[*@&!^#$]", 200, 100);
-            font.draw(batch, "Oh! \n Welcome, Traveller...", 200, 100);
-            font.draw(batch, "A great evil has befallen our land", 200, 100);
-            font.draw(batch, "They hoard riches and steal our firstborns.", 200, 100);
-            font.draw(batch, "You, O dragon hearted one, are the only one who can vanquish our enemy.", 200, 100);
-            font.draw(batch, "Venture yonder into that cavern save us.", 200, 100);
+//            font.draw(batch, "[*@&!^#$]", 200, 100);
+//            font.draw(batch, "Oh! \n Welcome, Traveller...", 200, 100);
+//            font.draw(batch, "A great evil has befallen our land", 200, 100);
+//            font.draw(batch, "They hoard riches and steal our firstborns.", 200, 100);
+//            font.draw(batch, "You, O dragon hearted one, are the only one who can vanquish our enemy.", 200, 100);
+//            font.draw(batch, "Venture yonder into that cavern save us.", 200, 100);
+//
+//            font.draw(batch, "Press ESC to view settings", 200, 100);
+//            font.draw(batch, "Space to continue", 200, 100);
 
-            font.draw(batch, "Press ESC to view settings", 200, 100);
-            font.draw(batch, "Space to continue", 200, 100);
+            typingLabel = new TypingLabel(introDialouge[0], mainFont);
+            typingLabel.draw(batch, 0);
 
             TextureRegion wizardFrame = wizardAnimation.getKeyFrame(stateTime, true);
             batch.draw(wizardFrame, -1000, -600, 1200, 1200);
 
             batch.end();
+
+            introIndex++;
         }
 
         //MAP
@@ -345,7 +377,9 @@ public class View extends ScreenAdapter {
             batch.begin();
 
             batch.draw(settingFrames[settingIndex], -WIDTH/2, -HEIGHT/2, WIDTH, HEIGHT);
-            System.out.println(settingIndex);
+            music.setVolume(((float) settingIndex / 15 ));
+            System.out.println("Setting INdex" + settingIndex);
+            System.out.println("Volume" + ((float) settingIndex / 15 ));
 
             batch.draw(settingsSprite, 830, -830, 300, 300);
 
