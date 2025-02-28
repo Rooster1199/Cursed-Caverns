@@ -111,7 +111,7 @@ public class View extends ScreenAdapter {
         this.batch = new SpriteBatch();
 
         // Player + Health
-        player = new Entity(this.world, 100, 5, STARTX, STARTY, true,"E",240,320);
+        player = new Entity(this.world, 100, 5, STARTX, STARTY, true,"E",240,320, 1);
         this.body = player.getBody();
         healthIndex = 0;
 
@@ -179,7 +179,7 @@ public class View extends ScreenAdapter {
 
     private void createEnemies() {
 
-        Entity enemy1 = new Entity(world,15,2,600,20, false,"W",240,320);
+        Entity enemy1 = new Entity(world,15,2,600,20, false,"W",240,320, 1);
         enemies1.add(enemy1);
 
     }

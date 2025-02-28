@@ -74,37 +74,9 @@ public class Entity extends Actor {
     Hitbox xAttack; Hitbox yAttack;
     double xSize; double ySize;
 
-    public Entity(Vector2 startPosition, World world, int health, int strength, boolean isPlayer,String facing, double xS, double yS)
-    {
-        super();
-        getDirection(facing);
-        updateAttackTime();
-        xSize = xS;
-        ySize = yS;
-        player = isPlayer;
-        colsAndRows = player ? playerColsAndRows : enemyColsAndRows;
-        animationSpeed = player ? playerAnimationSpeed : enemyAnimationSpeed;
-        initializeAllSprites();
+    double entityHeight; double entityWidth;
 
-        setBounds(startPosition.x, startPosition.y, allSprites[0].getWidth(), allSprites[0].getHeight());
-
-//        this.body = BodyCreator.createBody(STARTX + 70, STARTY + 50, 50, 50, false, world);
-//        this.body.setUserData(this);
-//
-//        addListener(new FreeRoamingMovementListener(this));
-
-        state = entityState.STANDING;
-
-        str = strength;
-        cHealth = health;
-        maxHealth = health;
-        living = true;
-        xHit = new Hitbox(eX);
-        yHit = new Hitbox(eY);
-        xAttack = new Hitbox(eX);
-        yAttack = new Hitbox(eY);
-   }
-    public Entity(World world, int health, int strength, int x, int y, boolean isPlayer,String facing, double xS, double yS)
+    public Entity(World world, int health, int strength, int x, int y, boolean isPlayer,String facing, double xS, double yS, double sizeFactor)
     {
         super();
         updateAttackTime();
@@ -126,6 +98,9 @@ public class Entity extends Actor {
         yHit = new Hitbox(eY);
         xAttack = new Hitbox(eX);
         yAttack = new Hitbox(eY);
+
+        entityHeight = 100 * sizeFactor;
+        entityWidth = 100 * sizeFactor;
 
         setBounds(x,y, allSprites[0].getWidth(), allSprites[0].getHeight());
 
@@ -195,7 +170,7 @@ public class Entity extends Actor {
     public void drawSprite(SpriteBatch batch, float stateTime)
     {
         TextureRegion currentFrame = currentAnimation.getKeyFrame(stateTime, true);
-        batch.draw(currentFrame, (float) eX, (float) eY, 170, 170);
+        batch.draw(currentFrame, (float) eX, (float) eY, (float) entityWidth, (float) entityHeight);
     }
 
 
