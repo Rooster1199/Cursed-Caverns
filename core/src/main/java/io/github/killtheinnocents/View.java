@@ -204,11 +204,6 @@ public class View extends ScreenAdapter {
         }
     }
 
-    @Override
-    public void show()
-    {
-
-    }
 
     public void draw() {
 
@@ -432,6 +427,11 @@ public class View extends ScreenAdapter {
                 player.updatePosition(-1, 0);
                 player.getDirection("W");
                 player.attackBox();
+            } else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+                player.specialChangeAnimation("Attack");
+            } else if (Gdx.input.isKeyPressed(Input.Keys.H)) {
+                player.specialChangeAnimation("Heal");
+                player.ouchies(-5);
             } else {
                 player.updatePosition(0, 0);
             }

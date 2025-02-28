@@ -76,6 +76,9 @@ public class Entity extends Actor {
 
     double entityHeight; double entityWidth;
 
+    boolean specialAnimation;
+    int Time = 0;
+
     public Entity(World world, int health, int strength, int x, int y, boolean isPlayer,String facing, double xS, double yS, double sizeFactor)
     {
         super();
@@ -115,6 +118,7 @@ public class Entity extends Actor {
         cHealth = health;
         maxHealth = health;
         living = true;
+        specialAnimation = false;
     }
 
 
@@ -172,6 +176,17 @@ public class Entity extends Actor {
     {
         TextureRegion currentFrame = currentAnimation.getKeyFrame(stateTime, true);
         batch.draw(currentFrame, (float) eX, (float) eY, (float) entityWidth, (float) entityHeight);
+
+        if(specialAnimation)
+        {
+            Time++;
+        }
+
+        if (Time > currentAnimation.getAnimationDuration())
+        {
+            Time = 0;
+            specialAnimation = false;
+        }
     }
 
 
@@ -198,26 +213,25 @@ public class Entity extends Actor {
     public void changeAnimation() {
         //String animation = state.determineAnimation(this);
 
-        if (state != entityState.HEAL || state != entityState.ATTACKE || state != entityState.ATTACKW || state != entityState.DEATH) {
-            if ( facX == 0 && facY == 0)
-            {
-                state = entityState.STANDING;
-            } else if (facY == 0)
-            {
-                if (facX > 0)
-                {
-                    state = entityState.WALKE;
-                } else {
-                    state = entityState.WALKW;
-                }
+        if(!specialAnimation) {
 
-            } else if (facX == 0)
-            {
-                if (facY > 0)
-                {
-                    state = entityState.WALKN;
-                } else {
-                    state = entityState.WALKS;
+
+            if (state != entityState.HEAL || state != entityState.ATTACKE || state != entityState.ATTACKW || state != entityState.DEATH) {
+                if (facX == 0 && facY == 0) {
+                    state = entityState.STANDING;
+                } else if (facY == 0) {
+                    if (facX > 0) {
+                        state = entityState.WALKE;
+                    } else {
+                        state = entityState.WALKW;
+                    }
+
+                } else if (facX == 0) {
+                    if (facY > 0) {
+                        state = entityState.WALKN;
+                    } else {
+                        state = entityState.WALKS;
+                    }
                 }
             }
         }
@@ -226,6 +240,27 @@ public class Entity extends Actor {
         currentAnimation =  new Animation<TextureRegion>(animationSpeed[animationIndex], animationSplicer(allTextures[animationIndex],colsAndRows[animationIndex][0], colsAndRows[animationIndex][1]));
 
         //System.out.println(animation);
+
+    }
+
+    public void specialChangeAnimation(String modifier) {
+
+        if (!specialAnimation) {
+            if (modifier.equals("Attack")) {
+                if (facX < 0) {
+                    state = entityState.ATTACKW;
+                } else {
+                    state = entityState.ATTACKE;
+                }
+            } else if (player) {
+                state = entityState.HEAL;
+            } else {
+                state = entityState.DEATH;
+            }
+            animationIndex = state.determineIndex(this);
+            currentAnimation = new Animation<TextureRegion>(animationSpeed[animationIndex], animationSplicer(allTextures[animationIndex], colsAndRows[animationIndex][0], colsAndRows[animationIndex][1]));
+            specialAnimation = true;
+        }
 
     }
 
