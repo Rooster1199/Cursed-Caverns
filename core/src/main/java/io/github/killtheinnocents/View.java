@@ -1,9 +1,8 @@
 package io.github.killtheinnocents;
-
+import java.io.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -14,23 +13,13 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 //import com.github.tommyettinger.textratypist.FWSkin;
 //import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.github.tommyettinger.textra.FWSkin;
-import com.github.tommyettinger.textra.Font;
-import com.github.tommyettinger.textra.TypingLabel;
 import entities.Entity;
 import entities.Hitbox;
 import helper.GameScreen;
-import jdk.internal.org.jline.terminal.TerminalBuilder;
-import entities.entityState.*;
-import org.w3c.dom.Text;
 
-import java.util.*;
-
-import static com.badlogic.gdx.Gdx.audio;
 import static helper.Constants.*;
 
 public class View extends ScreenAdapter {
@@ -44,12 +33,9 @@ public class View extends ScreenAdapter {
 
     //Font
     BitmapFont font;
-    Font mainFont;
     Texture font_texture;
-    FWSkin fontSkin;
-    Skin skin;
-    TypingLabel typingLabel;
-    String[] introDialouge = {"[*@&!^#$]","Oh! \\n Welcome, Traveller...", "A great evil has befallen our land", "They hoard riches and steal our firstborns.", "You, O dragon hearted one, are the only one who can vanquish our enemy.", "Venture yonder into that cavern save us.", "Press ESC to view settings", "Space to continue" };
+//    FWSkin fontSkin;
+//    TypingLabel typingLabel = new TypingLabel("Yippe!");
 
     // Assets
     private Animation<TextureRegion> executionAnimation;
@@ -68,11 +54,6 @@ public class View extends ScreenAdapter {
     private TextureRegion[] mapFrames;
     private Texture settingsSheet;
     private Sprite settingsSprite;
-
-    // SOUND
-    Music music;
-    float musicVolume;
-    float sfxVolume;
 
     // Logic Components
     float stateTime; // time for animation
@@ -93,7 +74,6 @@ public class View extends ScreenAdapter {
     private int deathIndex;
     private int mapIndex;
     private int settingIndex;
-    private int introIndex;
 
     // Screens
     enum Screen {
@@ -131,7 +111,7 @@ public class View extends ScreenAdapter {
         this.batch = new SpriteBatch();
 
         // Player + Health
-        player = new Entity(this.world, 100, 100, STARTX, STARTY, true);
+        player = new Entity(this.world, 100, 5, STARTX, STARTY, true,"E",240,320, 1);
         this.body = player.getBody();
         healthIndex = 0;
 
@@ -151,20 +131,16 @@ public class View extends ScreenAdapter {
         dungeonScreen = new GameScreen("dungeon_background.png");
         gameOverScreen = new GameScreen("deathBg.png");
 
-        // Volume
-        musicVolume = 0.5f;
-        sfxVolume = 0.5f;
-
         create();
     }
 
     public void create() {
-        // Loading Assets
+        // Assets
+
         // sfx Gdx.audio.newSound(Gdx.files.internal(name));
-        music = Gdx.audio.newMusic(Gdx.files.internal("MenuSong.wav"));
-        music.setVolume(musicVolume);
-        music.setLooping(true);
-        music.play();
+        // music Gdx.audio.newMusic(Gdx.files.internal(name));
+        //mapOverlay = new Texture("mapOverlay.png");
+        //mapOverlaySprite = new Sprite(mapOverlay);
 
         settingsSheet = new Texture("settings_cog.png");
         settingsSprite = new Sprite(settingsSheet);
@@ -194,24 +170,16 @@ public class View extends ScreenAdapter {
         enemies1 = new Array<>();
         createEnemies();
 
-        // Font
-        //skin = new Skin(Gdx.files.internal("game_font.fnt"));
-        mainFont = new Font(new BitmapFont(Gdx.files.internal("game_font.fnt")));
-
-
-        // All these indexes!
         deathIndex = 0;
         mapIndex = 0;
         settingIndex = 7;
-        introIndex = 0;
-
         map = false;
         keyTime = 0; ;
     }
 
     private void createEnemies() {
 
-        Entity enemy1 = new Entity(world,15,2,600,20, false);
+        Entity enemy1 = new Entity(world,15,2,600,20, false,"W",240,320, 1);
         enemies1.add(enemy1);
 
     }
@@ -271,25 +239,20 @@ public class View extends ScreenAdapter {
             Gdx.gl.glClearColor(0,0,0,1);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
             batch.begin();
-//            font.draw(batch, "[*@&!^#$]", 200, 100);
-//            font.draw(batch, "Oh! \n Welcome, Traveller...", 200, 100);
-//            font.draw(batch, "A great evil has befallen our land", 200, 100);
-//            font.draw(batch, "They hoard riches and steal our firstborns.", 200, 100);
-//            font.draw(batch, "You, O dragon hearted one, are the only one who can vanquish our enemy.", 200, 100);
-//            font.draw(batch, "Venture yonder into that cavern save us.", 200, 100);
-//
-//            font.draw(batch, "Press ESC to view settings", 200, 100);
-//            font.draw(batch, "Space to continue", 200, 100);
+            font.draw(batch, "[*@&!^#$]", 200, 100);
+            font.draw(batch, "Oh! \n Welcome, Traveller...", 200, 100);
+            font.draw(batch, "A great evil has befallen our land", 200, 100);
+            font.draw(batch, "They hoard riches and steal our firstborns.", 200, 100);
+            font.draw(batch, "You, O dragon hearted one, are the only one who can vanquish our enemy.", 200, 100);
+            font.draw(batch, "Venture yonder into that cavern save us.", 200, 100);
 
-            typingLabel = new TypingLabel(introDialouge[0], mainFont);
-            typingLabel.draw(batch, 0);
+            font.draw(batch, "Press ESC to view settings", 200, 100);
+            font.draw(batch, "Space to continue", 200, 100);
 
             TextureRegion wizardFrame = wizardAnimation.getKeyFrame(stateTime, true);
             batch.draw(wizardFrame, -1000, -600, 1200, 1200);
 
             batch.end();
-
-            introIndex++;
         }
 
         //MAP
@@ -377,9 +340,7 @@ public class View extends ScreenAdapter {
             batch.begin();
 
             batch.draw(settingFrames[settingIndex], -WIDTH/2, -HEIGHT/2, WIDTH, HEIGHT);
-            music.setVolume(((float) settingIndex / 15 ));
-            System.out.println("Setting INdex" + settingIndex);
-            System.out.println("Volume" + ((float) settingIndex / 15 ));
+            System.out.println(settingIndex);
 
             batch.draw(settingsSprite, 830, -830, 300, 300);
 
@@ -438,9 +399,13 @@ public class View extends ScreenAdapter {
         else if (currentScreen == Screen.SETTINGS && Gdx.input.isKeyPressed(Input.Keys.SPACE))
         {
             currentScreen = Screen.MAIN_GAME;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.U))
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && currentScreen == Screen.MAIN_GAME)
         {
-            player.ouchies(1);
+            for(Entity enemy : enemies1){
+                enemy.takeDamage(player);
+                System.out.println(enemy.getCHealth());
+                break;
+            }
         } else if (Gdx.input.isKeyPressed(Input.Keys.P)) {
             currentScreen = Screen.MAIN_GAME;
         } else if (currentScreen == Screen.SETTINGS && Gdx.input.isKeyPressed(Input.Keys.LEFT))
@@ -455,17 +420,21 @@ public class View extends ScreenAdapter {
             if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W))
             {
                 player.updatePosition(0, 1);
+                player.getDirection("N");
+                player.attackBox();
             } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
                 player.updatePosition(0, -1);
+                player.getDirection("S");
+                player.attackBox();
             } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
                 player.updatePosition(1, 0);
+                player.getDirection("E");
+                player.attackBox();
             } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)||Gdx.input.isKeyPressed(Input.Keys.A)) {
                 player.updatePosition(-1, 0);
-            } else if (Gdx.input.isKeyPressed(Input.Keys.R)) {
-                player.specialChangeAnimation("Attack");
-            } else if (Gdx.input.isKeyPressed(Input.Keys.H)) {
-                player.specialChangeAnimation("Heal");
-            }else {
+                player.getDirection("W");
+                player.attackBox();
+            } else {
                 player.updatePosition(0, 0);
             }
             player.forceHUpdate(player.geteX(),player.geteY());
@@ -515,75 +484,132 @@ public class View extends ScreenAdapter {
             EPLD = Math.sqrt(((player.geteX() - e.geteX())*(player.geteX() - e.geteX())) + ((player.geteY() - e.geteY())*(player.geteY() - e.geteY())));
             eStartD = Math.sqrt(((e.getStartX()-e.geteX())*(e.getStartX()-e.geteX())) + ((e.getStartY()-e.geteY())*(e.getStartY()-e.geteY())));
 
-            if(EPLD<=800){
+            if(EPLD>=150 && EPLD <=800){
                 xMod = player.geteX()-e.geteX();
                 yMod = player.geteY()-e.geteY();
                 xMod = xMod/EPLD;
                 yMod = yMod/EPLD;
+                if(Math.abs(xMod)>Math.abs(yMod)){
+                    if(xMod>0){
+                        e.getDirection("E");
+                    }
+                    else if(xMod<0){
+                        e.getDirection("W");
+                    }
+                }
+                else if(Math.abs(xMod)<Math.abs(yMod)){
+                    if(yMod>0){
+                        e.getDirection("N");
+                    }
+                    else if(yMod<0){
+                        e.getDirection("S");
+                    }
+                }
                 //enemy1.modPos(eVelocity*Math.cos(EPLA)*Math.signum(PlayerX-enemy1.getX()),eVelocity*Math.sin(EPLA)*Math.signum(PlayerY-enemy1.getY()));
                 e.modPos((float) (xMod*eVelocity),(float) (yMod*eVelocity));
+
             }
-            else {
+            else if(EPLD >=800){
                 if((!(e.geteX() >= e.getStartX()-10) || !(e.geteX() <= e.getStartX()+10)) || (!(e.geteY() >= e.getStartY()-10) || !(e.geteY() <= e.getStartY()+10))){
                 xMod = e.getStartX() - e.geteX();
                 yMod = e.getStartY() - e.geteY();
                 xMod = xMod/eStartD;
                 yMod = yMod/eStartD;
-                e.modPos((float) (xMod*eVelocity),(float) (yMod*eVelocity));
+                    if(Math.abs(xMod)>Math.abs(yMod)){
+                        if(xMod>0){
+                            e.getDirection("E");
+                        }
+                        else if(xMod<0){
+                            e.getDirection("W");
+                        }
+                    }
+                    else if(Math.abs(xMod)<Math.abs(yMod)){
+                        if(yMod>0){
+                            e.getDirection("N");
+                        }
+                        else if(yMod<0){
+                            e.getDirection("S");
+                        }
+                    }
                 }
+
+                else{
+                    e.getDirection("W");
+                }
+
+                e.modPos((float) (xMod*eVelocity),(float) (yMod*eVelocity));
+
+            }
+            if (EPLD <=200){
+                if (e.isAttackReady()){
+                    e.updateAttackTime();
+                    player.takeDamage(e);}
             }
 
         }
     }
-    public boolean checkOverlap(Hitbox h1, Hitbox h2){
-//        System.out.println(h1.max >= h2.min && h2.max >= h1.min);
-//        System.out.println(": ("+h1.min+", "+h1.max+")");
-//        System.out.println(": ("+h2.min+", "+h2.max+")");
+    public float getDistance(float x1, float x2){
+        return 0;
+    }
+    public static double getOverlap(Hitbox h1, Hitbox h2){
+        return h2.max - h1.min;
+    }
+    public static boolean checkOverlap(Hitbox h1, Hitbox h2){
         return h1.max >= h2.min && h2.max >= h1.min;
     }
     public void clamp(Entity player, Entity enemy){
-        float bufferDistance = 50;
         xMin = (float) -(Gdx.graphics.getWidth()) /2;
         xMax = (float) (Gdx.graphics.getWidth()) /2;
         yMin = (float) -Gdx.graphics.getHeight() /2;
         yMax = (float) Gdx.graphics.getHeight()/2;
-        if (checkOverlap(player.getxHit(),enemy.getxHit())){
+        if (checkOverlap(player.getxHit(),enemy.getxHit()) && !(checkOverlap(player.getyHit(),enemy.getyHit()))){
             if (player.geteY()>enemy.geteY()){
-                yMin= (float) (enemy.geteY()+bufferDistance);
-                player.updatePosition(0, (int) bufferDistance);
+                yMin= (float) (enemy.geteY()+(enemy.getESY()/2));
             }
-            else if (player.geteY() <enemy.geteY()){
-                yMax= (float) (enemy.geteY()-bufferDistance);
-                player.updatePosition(0, (int) bufferDistance);
+            if (player.geteY()<enemy.geteY()){
+                yMax= (float) (enemy.geteY()-(enemy.getESY()/2));
+
+            }
+        }
+        else if (checkOverlap(player.getyHit(),enemy.getyHit()) && !(checkOverlap(player.getxHit(),enemy.getxHit()))){
+            if (player.geteX()>enemy.geteX()){
+                xMin= (float) (enemy.geteX() +(enemy.getESX()/2));
+            }
+            if (player.geteX()<enemy.geteX()){
+                xMax= (float) (enemy.geteX() -(enemy.getESX()/2));
+
+
+            }
+        }
+        else if (checkOverlap(player.getyHit(),enemy.getyHit()) && checkOverlap(player.getxHit(),enemy.getxHit())){
+            System.out.println("overlap");
+            if(getOverlap(player.getxHit(),enemy.getxHit())>getOverlap(player.getyHit(),enemy.getyHit())){
+                if (player.geteX()>enemy.geteX()){
+                    xMin= (float) (enemy.geteX() +(enemy.getESX()/2));
+                }
+                if (player.geteX()<enemy.geteX()){
+                    xMax= (float) (enemy.geteX() -(enemy.getESX()/2));
+
+                }
+            }
+            if(getOverlap(player.getxHit(),enemy.getxHit()) < getOverlap(player.getyHit(),enemy.getyHit())){
+                if (player.geteY()>enemy.geteY()){
+                    yMin= (float) (enemy.geteY()+(enemy.getESY()/2));
+                }
+                if (player.geteY()<enemy.geteY()){
+                    yMax= (float) (enemy.geteY()-(enemy.getESY()/2));
+
+                }
             }
         }
         else {
             yMin = (float) -Gdx.graphics.getHeight() /2;
             yMax = (float) Gdx.graphics.getHeight()/2;
-        }
-
-
-        if (checkOverlap(player.getyHit(),enemy.getyHit())){
-            if (player.geteX()>enemy.geteX()){
-                xMin= (float) (enemy.geteX() +bufferDistance);
-                player.updatePosition((int) bufferDistance, 0);
-            }
-            else if (player.geteX()<enemy.geteX()){
-                xMax= (float) (enemy.geteX() -bufferDistance);
-                player.updatePosition((int) bufferDistance, 0);
-
-            }
-        }
-        else {
             xMin = (float) -(Gdx.graphics.getWidth()) /2;
             xMax = (float) (Gdx.graphics.getWidth()) /2;
         }
+        player.setPos(MathUtils.clamp(player.geteX(), xMin, xMax),MathUtils.clamp(player.geteY(), yMin, yMax));
 
-//        System.out.println("X: ("+xMin+", "+xMax+")");
-//        System.out.println("Y: ("+yMin+", "+yMax+")");
-//        System.out.println("e: ("+enemy.geteX()+", "+enemy.geteY()+")");
-//        System.out.println("p: ("+player.geteX()+", "+player.geteY()+")");
-//        System.out.println();
     }
 
 }
