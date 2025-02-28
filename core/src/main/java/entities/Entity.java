@@ -258,8 +258,8 @@ public class Entity extends Actor {
                 state = entityState.DEATH;
             }
             animationIndex = state.determineIndex(this);
-            currentAnimation = new Animation<TextureRegion>(animationSpeed[animationIndex], animationSplicer(allTextures[animationIndex], colsAndRows[animationIndex][0], colsAndRows[animationIndex][1]));
             specialAnimation = true;
+            currentAnimation = new Animation<TextureRegion>(animationSpeed[animationIndex], animationSplicer(allTextures[animationIndex], colsAndRows[animationIndex][0], colsAndRows[animationIndex][1]));
         }
 
     }
