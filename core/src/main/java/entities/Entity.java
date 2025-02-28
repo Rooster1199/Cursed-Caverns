@@ -62,7 +62,7 @@ public class Entity extends Actor {
     int cHealth;
     boolean living;
     double eX; double eY; double startX; double startY; // was double before, change back if issue!
-    int facX; int facY;
+    float facX; float facY;
     enum Facing{
         NORTH,
         SOUTH,
@@ -118,7 +118,7 @@ public class Entity extends Actor {
     }
 
 
-    public void updatePosition(int factorX, int factorY)
+    public void updatePosition(float factorX, float factorY)
     {
         float speed = 300f;
         float time = Gdx.graphics.getDeltaTime();
@@ -127,10 +127,11 @@ public class Entity extends Actor {
         facY = factorY;
 
         eX += factorX * speed * time;
-        eX = MathUtils.clamp(eX,  Gdx.graphics.getWidth() / -2, 950);
+        eX = MathUtils.clamp(eX,  Gdx.graphics.getWidth() / -2, 460);
         eY += factorY * speed * time;
-        eY = MathUtils.clamp(eY,  -600, 390);
+        eY = MathUtils.clamp(eY,  -300, 200);
 
+        changeAnimation();
     }
 
     public void initializeAllSprites() {
@@ -194,26 +195,8 @@ public class Entity extends Actor {
         return this.body;
     }
 
-    private void trackMovement(float delta) {
-        float movement = delta * speed;
-        body.setLinearVelocity(currentVelocity.cpy().scl(movement));
-        this.setPosition(body.getPosition().x - TILE_SIZE / 2 / Constants.PPM, body.getPosition().y - TILE_SIZE / 2 / Constants.PPM);
-        // tile_size may not be the correct value here
-    }
-
-    void setStateAndVelocity(entityState newState, Vector2 newVelocity)
-    {
-        currentVelocity = newVelocity;
-        body.setLinearVelocity(currentVelocity);
-
-        state = newState;
-
-        // update state --> change animation
-
-    }
-
     public void changeAnimation() {
-        String animation = state.determineAnimation(this);
+        //String animation = state.determineAnimation(this);
 
         if (state != entityState.HEAL || state != entityState.ATTACKE || state != entityState.ATTACKW || state != entityState.DEATH) {
             if ( facX == 0 && facY == 0)
@@ -284,10 +267,16 @@ public class Entity extends Actor {
         return startY;
     }
     public void modPos(float xMod, float yMod){
+
+        facX = xMod - (float) eX;
+        facY = yMod - (float) eY;
+
         eX = eX + xMod;
         xHit.update(eX);
         eY = eY + yMod;
         yHit.update(eY);
+
+        changeAnimation();
     }
 
     public boolean isPlayer(){

@@ -195,8 +195,6 @@ public class View extends ScreenAdapter {
         logic();
         draw();
 
-        player.changeAnimation();
-
         if(currentScreen == Screen.INTRO && time > 500)
         {
             currentScreen = Screen.MAIN_GAME;
