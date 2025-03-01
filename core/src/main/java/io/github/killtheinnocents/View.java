@@ -206,7 +206,7 @@ public class View extends ScreenAdapter {
 
     private void createEnemies() {
 
-        Entity enemy1 = new Entity(world,15,2,600,20, false,"W",240,320, 1);
+        Entity enemy1 = new Entity(world,15,2,410,20, false,"W",240,320, 1);
         enemies1.add(enemy1);
 
     }
@@ -305,7 +305,7 @@ public class View extends ScreenAdapter {
             player.drawSprite(batch, stateTime);
 
             TextureRegion[] healthFrame = healthBarAnimation.getKeyFrames();
-            batch.draw(healthFrame[healthIndex], -1170, -905, 600, 300);
+            batch.draw(healthFrame[healthIndex], -580, -450, 300, 150);
 
             for(Entity enemy: enemies1)
             {
