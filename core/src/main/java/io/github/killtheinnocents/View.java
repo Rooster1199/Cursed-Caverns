@@ -264,7 +264,7 @@ public class View extends ScreenAdapter {
             typingLabel.draw(batch, 0);
 
             TextureRegion wizardFrame = wizardAnimation.getKeyFrame(stateTime, true);
-            batch.draw(wizardFrame, -100, -60, 500, 500);
+            batch.draw(wizardFrame, -500, -300, 600, 600);
 
             batch.end();
         }
