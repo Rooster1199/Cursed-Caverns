@@ -3,6 +3,7 @@ import java.io.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,9 +14,13 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 //import com.github.tommyettinger.textratypist.FWSkin;
 //import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.github.tommyettinger.textra.FWSkin;
+import com.github.tommyettinger.textra.Font;
+import com.github.tommyettinger.textra.TypingLabel;
 import entities.Entity;
 import entities.Hitbox;
 import helper.GameScreen;
@@ -33,9 +38,14 @@ public class View extends ScreenAdapter {
 
     //Font
     BitmapFont font;
+    Font mainFont;
     Texture font_texture;
-//    FWSkin fontSkin;
-//    TypingLabel typingLabel = new TypingLabel("Yippe!");
+    FWSkin fontSkin;
+    Skin skin;
+    TypingLabel typingLabel;
+    String[] introDialouge = {"[*@&!^#$]","Oh! \\n Welcome, Traveller...", "A great evil has befallen our land", "They hoard riches and steal our firstborns.", "You, O dragon hearted one, are the only one who can vanquish our enemy.", "Venture yonder into that cavern save us.", "Press ESC to view settings", "Space to continue" };
+    private int introIndex;
+
 
     // Assets
     private Animation<TextureRegion> executionAnimation;
@@ -54,6 +64,11 @@ public class View extends ScreenAdapter {
     private TextureRegion[] mapFrames;
     private Texture settingsSheet;
     private Sprite settingsSprite;
+
+    // SOUND
+    Music music;
+    float musicVolume;
+    float sfxVolume;
 
     // Logic Components
     float stateTime; // time for animation
@@ -80,6 +95,7 @@ public class View extends ScreenAdapter {
         MENU, INTRO, MAP, MAIN_GAME, GAME_OVER, SETTINGS;
     }
     public Screen currentScreen = Screen.MENU;
+    public Screen prevScreen = Screen.MENU;
     private GameScreen overlay;
     private GameScreen homeScreen;
     private GameScreen dungeonScreen;
@@ -119,7 +135,7 @@ public class View extends ScreenAdapter {
         Texture font_texture = new Texture("game_font.png");
         font_texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         font = new BitmapFont(Gdx.files.internal("game_font.fnt"), new TextureRegion(font_texture));
-        font.getData().setScale(3f);
+        font.getData().setScale(1f);
 
         stateTime = 0f;
         deltaTime = Gdx.graphics.getDeltaTime();
@@ -131,6 +147,10 @@ public class View extends ScreenAdapter {
         dungeonScreen = new GameScreen("dungeon_background.png");
         gameOverScreen = new GameScreen("deathBg.png");
 
+        // Volume
+        musicVolume = 0.5f;
+        sfxVolume = 0.5f;
+
         create();
     }
 
@@ -139,8 +159,11 @@ public class View extends ScreenAdapter {
 
         // sfx Gdx.audio.newSound(Gdx.files.internal(name));
         // music Gdx.audio.newMusic(Gdx.files.internal(name));
-        //mapOverlay = new Texture("mapOverlay.png");
-        //mapOverlaySprite = new Sprite(mapOverlay);
+
+        music = Gdx.audio.newMusic(Gdx.files.internal("MenuSong.wav"));
+        music.setVolume(musicVolume);
+        music.setLooping(true);
+        music.play();
 
         settingsSheet = new Texture("settings_cog.png");
         settingsSprite = new Sprite(settingsSheet);
@@ -167,12 +190,16 @@ public class View extends ScreenAdapter {
         healthSprite = new Sprite(wizardSheet);
         healthBarAnimation = new Animation<TextureRegion>(.25f, player.animationSplicer(healthSheet,3, 6));
 
+        mainFont = new Font(new BitmapFont(Gdx.files.internal("game_font.fnt")));
+
         enemies1 = new Array<>();
         createEnemies();
 
         deathIndex = 0;
         mapIndex = 0;
         settingIndex = 7;
+        introIndex = 0;
+
         map = false;
         keyTime = 0; ;
     }
@@ -232,18 +259,12 @@ public class View extends ScreenAdapter {
             Gdx.gl.glClearColor(0,0,0,1);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
             batch.begin();
-            font.draw(batch, "[*@&!^#$]", 200, 100);
-            font.draw(batch, "Oh! \n Welcome, Traveller...", 200, 100);
-            font.draw(batch, "A great evil has befallen our land", 200, 100);
-            font.draw(batch, "They hoard riches and steal our firstborns.", 200, 100);
-            font.draw(batch, "You, O dragon hearted one, are the only one who can vanquish our enemy.", 200, 100);
-            font.draw(batch, "Venture yonder into that cavern save us.", 200, 100);
 
-            font.draw(batch, "Press ESC to view settings", 200, 100);
-            font.draw(batch, "Space to continue", 200, 100);
+            typingLabel = new TypingLabel(introDialouge[0], mainFont);
+            typingLabel.draw(batch, 0);
 
             TextureRegion wizardFrame = wizardAnimation.getKeyFrame(stateTime, true);
-            batch.draw(wizardFrame, -1000, -600, 1200, 1200);
+            batch.draw(wizardFrame, -100, -60, 500, 500);
 
             batch.end();
         }
@@ -259,13 +280,10 @@ public class View extends ScreenAdapter {
             if (elapsedTime > 45 && mapIndex < 7 && !map) {
                 mapIndex++;
                 map = true;
-            } else if (elapsedTime > 90) {
-                elapsedTime = 0;
-                map = false;
-                Gdx.gl.glClearColor(0,0,0,1);
-                Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-                currentScreen = Screen.MAIN_GAME;
             }
+
+            if (mapIndex >= 7)
+                mapIndex = 6;
 
             elapsedTime++;
 
@@ -312,11 +330,6 @@ public class View extends ScreenAdapter {
 
             batch.end();
 
-            if (deathIndex >= 25)
-            {
-                System.out.println("FIX THIS");
-            }
-
             if (elapsedTime > 15 && deathIndex < 27)
             {
                 elapsedTime = 0;
@@ -333,7 +346,7 @@ public class View extends ScreenAdapter {
             batch.begin();
 
             batch.draw(settingFrames[settingIndex], -WIDTH/2, -HEIGHT/2, WIDTH, HEIGHT);
-            System.out.println(settingIndex);
+            music.setVolume(((float) settingIndex / 15 ));
 
             batch.draw(settingsSprite, 830, -830, 300, 300);
 
@@ -375,41 +388,51 @@ public class View extends ScreenAdapter {
         if (Gdx.input.isKeyPressed(Input.Keys.Q))
         {
             Gdx.app.exit();
-        } else if (currentScreen == Screen.MENU && Gdx.input.isKeyPressed(Input.Keys.SPACE))
-        {
-            currentScreen = Screen.INTRO;
-        } else if (currentScreen == Screen.GAME_OVER && Gdx.input.isKeyPressed(Input.Keys.SPACE))
-        {
-            currentScreen = Screen.MENU;
-        } else if (currentScreen == Screen.MAIN_GAME && Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
-        {
+        }
+        else if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             currentScreen = Screen.SETTINGS;
         }
-        else if (currentScreen == Screen.MAIN_GAME && Gdx.input.isKeyPressed(Input.Keys.L))
+        // MAP
+        else if (currentScreen == Screen.MAP)
         {
-            currentScreen = Screen.MAP;
+            if (elapsedTime > 90 && Gdx.input.isKeyPressed(Input.Keys.SPACE))
+                currentScreen = Screen.MAIN_GAME;
+            prevScreen = Screen.MAP;
         }
-        else if (currentScreen == Screen.SETTINGS && Gdx.input.isKeyPressed(Input.Keys.SPACE))
+        // MENU
+        else if (currentScreen == Screen.MENU)
         {
-            currentScreen = Screen.MAIN_GAME;
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && currentScreen == Screen.MAIN_GAME)
+            if (Gdx.input.isKeyPressed(Input.Keys.SPACE))
+                currentScreen = Screen.INTRO;
+            prevScreen = Screen.MENU;
+
+        }
+        // GAME OVER
+        else if (currentScreen == Screen.GAME_OVER)
         {
-            for(Entity enemy : enemies1){
-                enemy.takeDamage(player);
-                System.out.println(enemy.getCHealth());
-                break;
+            if (deathIndex >= 27 && Gdx.input.isKeyPressed(Input.Keys.SPACE))
+                currentScreen = Screen.MENU;
+            prevScreen = Screen.GAME_OVER;
+
+        }
+        // MAIN_GAME
+        else if (currentScreen == Screen.MAIN_GAME) {
+
+            prevScreen = Screen.MAIN_GAME;
+
+            if (Gdx.input.isKeyPressed(Input.Keys.L)) {
+                currentScreen = Screen.MAP;
+                elapsedTime = 0;
+                map = false;
             }
-        } else if (Gdx.input.isKeyPressed(Input.Keys.P)) {
-            currentScreen = Screen.MAIN_GAME;
-        } else if (currentScreen == Screen.SETTINGS && Gdx.input.isKeyPressed(Input.Keys.LEFT))
-        {
-            if (checkExecute(15))
-                settingIndex = (settingIndex <= 0) ? 0 : settingIndex - 1;
-        } else if (currentScreen == Screen.SETTINGS && Gdx.input.isKeyPressed(Input.Keys.RIGHT))
-        {
-            if (checkExecute(15))
-                settingIndex = (settingIndex >= 15) ? 15 : settingIndex + 1;
-        } else if (currentScreen == Screen.MAIN_GAME){
+            else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+                for (Entity enemy : enemies1) {
+                    enemy.takeDamage(player);
+                    System.out.println(enemy.getCHealth());
+                    break;
+                }
+            }
+
             if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W))
             {
                 player.updatePosition(0, 1);
@@ -436,7 +459,28 @@ public class View extends ScreenAdapter {
                 player.updatePosition(0, 0);
             }
             player.forceHUpdate(player.geteX(),player.geteY());
+
         }
+        // SETTINGS
+        else if (currentScreen == Screen.SETTINGS)
+        {
+            if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
+                if (checkExecute(5))
+                    currentScreen = prevScreen;
+            if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
+                if (checkExecute(15))
+                    settingIndex = (settingIndex <= 0) ? 0 : settingIndex - 1;
+            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
+                if (checkExecute(15))
+                    settingIndex = (settingIndex >= 15) ? 15 : settingIndex + 1;
+        }
+        // FOR DEVELOPMENT PURPOSES
+        else if (Gdx.input.isKeyPressed(Input.Keys.P)) {
+            currentScreen = Screen.MAIN_GAME;
+        }
+
+        System.out.println(currentScreen + "   :   " + prevScreen);
+
 
     }
 

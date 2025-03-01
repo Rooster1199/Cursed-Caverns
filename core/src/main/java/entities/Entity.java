@@ -77,7 +77,7 @@ public class Entity extends Actor {
     double entityHeight; double entityWidth;
 
     boolean specialAnimation;
-    int Time = 0;
+    float Time = 0;
 
     public Entity(World world, int health, int strength, int x, int y, boolean isPlayer,String facing, double xS, double yS, double sizeFactor)
     {
@@ -124,7 +124,7 @@ public class Entity extends Actor {
 
     public void updatePosition(float factorX, float factorY)
     {
-        float speed = 300f;
+        float speed = 160f;
         float time = Gdx.graphics.getDeltaTime();
 
         facX = factorX;
@@ -167,7 +167,6 @@ public class Entity extends Actor {
         }
 
         currentAnimation =  new Animation<TextureRegion>(.25f, animationSplicer(allTextures[animationIndex],colsAndRows[animationIndex][0], colsAndRows[animationIndex][1]));
-
         System.out.println(characterState + " " + allTextures[animationIndex]);
 
     }
@@ -179,14 +178,20 @@ public class Entity extends Actor {
 
         if(specialAnimation)
         {
-            Time++;
+            Time += animationSpeed[animationIndex] * .15f;
+            if (currentAnimation.isAnimationFinished(stateTime))
+            {
+                specialAnimation = false;
+            }
         }
-
-        if (Time > currentAnimation.getAnimationDuration())
+        /*
+        if (Time > (animationSpeed[animationIndex] * (colsAndRows[animationIndex][0]) * (colsAndRows[animationIndex][1] - 1)))
         {
             Time = 0;
+            animationIndex = 0;
             specialAnimation = false;
-        }
+        }*/
+
     }
 
 

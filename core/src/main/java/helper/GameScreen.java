@@ -23,8 +23,8 @@ public class GameScreen {
 
     public void drawbg(SpriteBatch batch) {
         backgroundSprite.draw(batch);
-        backgroundSprite.setPosition(-WIDTH / 2, -HEIGHT / 2);
-        backgroundSprite.setSize(WIDTH, HEIGHT);
+        backgroundSprite.setPosition(-WIDTH / 2 - 100, -HEIGHT / 2);
+        backgroundSprite.setSize((float) (WIDTH * 1.3), HEIGHT);
 
     }
 
