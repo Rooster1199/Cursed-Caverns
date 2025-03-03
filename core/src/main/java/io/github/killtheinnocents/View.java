@@ -95,7 +95,6 @@ public class View extends ScreenAdapter {
         MENU, INTRO, MAP, MAIN_GAME, GAME_OVER, SETTINGS;
     }
     public Screen currentScreen = Screen.MENU;
-    public Screen prevScreen = Screen.MENU;
     private GameScreen overlay;
     private GameScreen homeScreen;
     private GameScreen dungeonScreen;
@@ -397,14 +396,12 @@ public class View extends ScreenAdapter {
         {
             if (elapsedTime > 90 && Gdx.input.isKeyPressed(Input.Keys.SPACE))
                 currentScreen = Screen.MAIN_GAME;
-            prevScreen = Screen.MAP;
         }
         // MENU
         else if (currentScreen == Screen.MENU)
         {
             if (Gdx.input.isKeyPressed(Input.Keys.SPACE))
                 currentScreen = Screen.INTRO;
-            prevScreen = Screen.MENU;
 
         }
         // GAME OVER
@@ -412,13 +409,10 @@ public class View extends ScreenAdapter {
         {
             if (deathIndex >= 27 && Gdx.input.isKeyPressed(Input.Keys.SPACE))
                 currentScreen = Screen.MENU;
-            prevScreen = Screen.GAME_OVER;
 
         }
         // MAIN_GAME
         else if (currentScreen == Screen.MAIN_GAME) {
-
-            prevScreen = Screen.MAIN_GAME;
 
             if (Gdx.input.isKeyPressed(Input.Keys.L)) {
                 currentScreen = Screen.MAP;
@@ -464,9 +458,9 @@ public class View extends ScreenAdapter {
         // SETTINGS
         else if (currentScreen == Screen.SETTINGS)
         {
-            if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
+            if (Gdx.input.isKeyPressed(Input.Keys.SPACE))
                 if (checkExecute(5))
-                    currentScreen = prevScreen;
+                    currentScreen = Screen.MAIN_GAME;
             if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
                 if (checkExecute(15))
                     settingIndex = (settingIndex <= 0) ? 0 : settingIndex - 1;
@@ -478,8 +472,6 @@ public class View extends ScreenAdapter {
         else if (Gdx.input.isKeyPressed(Input.Keys.P)) {
             currentScreen = Screen.MAIN_GAME;
         }
-
-        System.out.println(currentScreen + "   :   " + prevScreen);
 
 
     }

@@ -138,6 +138,21 @@ public class Entity extends Actor {
         changeAnimation();
     }
 
+    public void modPos(float xMod, float yMod){
+
+        facX = xMod;
+        facY = yMod;
+
+        System.out.println(facX + "  :  " + facY);
+
+        eX = eX + xMod;
+        xHit.update(eX);
+        eY = eY + yMod;
+        yHit.update(eY);
+
+        changeAnimation();
+    }
+
     public void initializeAllSprites() {
         String characterState = player ? "player" : "enemy";
         System.out.println(characterState + " " + player);
@@ -220,25 +235,23 @@ public class Entity extends Actor {
 
         if(!specialAnimation) {
 
+            if (facX == 0 && facY == 0) {
+                state = entityState.STANDING;
+            } else if (facY == 0) {
+                if (facX > 0) {
+                    state = entityState.WALKE;
+                } else {
+                    state = entityState.WALKW;
+                }
 
-            if (state != entityState.HEAL || state != entityState.ATTACKE || state != entityState.ATTACKW || state != entityState.DEATH) {
-                if (facX == 0 && facY == 0) {
-                    state = entityState.STANDING;
-                } else if (facY == 0) {
-                    if (facX > 0) {
-                        state = entityState.WALKE;
-                    } else {
-                        state = entityState.WALKW;
-                    }
-
-                } else if (facX == 0) {
-                    if (facY > 0) {
-                        state = entityState.WALKN;
-                    } else {
-                        state = entityState.WALKS;
-                    }
+            } else if (facX == 0) {
+                if (facY > 0) {
+                    state = entityState.WALKN;
+                } else {
+                    state = entityState.WALKS;
                 }
             }
+
         }
 
         animationIndex = state.determineIndex(this);
@@ -305,18 +318,6 @@ public class Entity extends Actor {
     }
     public double getStartY(){
         return startY;
-    }
-    public void modPos(float xMod, float yMod){
-
-        facX = xMod - (float) eX;
-        facY = yMod - (float) eY;
-
-        eX = eX + xMod;
-        xHit.update(eX);
-        eY = eY + yMod;
-        yHit.update(eY);
-
-        changeAnimation();
     }
 
     public boolean isPlayer(){
