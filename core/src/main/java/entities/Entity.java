@@ -143,8 +143,6 @@ public class Entity extends Actor {
         facX = xMod;
         facY = yMod;
 
-        System.out.println(facX + "  :  " + facY);
-
         eX = eX + xMod;
         xHit.update(eX);
         eY = eY + yMod;
@@ -182,7 +180,6 @@ public class Entity extends Actor {
         }
 
         currentAnimation =  new Animation<TextureRegion>(.25f, animationSplicer(allTextures[animationIndex],colsAndRows[animationIndex][0], colsAndRows[animationIndex][1]));
-        System.out.println(characterState + " " + allTextures[animationIndex]);
 
     }
 
@@ -193,7 +190,7 @@ public class Entity extends Actor {
 
         if(specialAnimation)
         {
-            Time += animationSpeed[animationIndex] * .15f;
+            Time += animationSpeed[animationIndex] * .10f;
             if (currentAnimation.isAnimationFinished(stateTime))
             {
                 specialAnimation = false;
@@ -232,19 +229,18 @@ public class Entity extends Actor {
 
     public void changeAnimation() {
         //String animation = state.determineAnimation(this);
-
         if(!specialAnimation) {
 
-            if (facX == 0 && facY == 0) {
+            if (Math.abs(facX) < 0.01 && Math.abs(facY) < 0.01) {
                 state = entityState.STANDING;
-            } else if (facY == 0) {
+            } else if (Math.abs(facX) > Math.abs(facY)) {
                 if (facX > 0) {
                     state = entityState.WALKE;
                 } else {
                     state = entityState.WALKW;
                 }
 
-            } else if (facX == 0) {
+            } else if (Math.abs(facX) < Math.abs(facY)) {
                 if (facY > 0) {
                     state = entityState.WALKN;
                 } else {

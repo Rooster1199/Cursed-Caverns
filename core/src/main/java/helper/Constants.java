@@ -20,7 +20,7 @@ public class Constants {
     public static int[][] enemyColsAndRows = {  {2,2}, // Standing
                                                 {2,3}, // Walk N
                                                 {2,3}, // Walk S
-                                                {2,2}, // Walk E
+                                                {2,3}, // Walk E
                                                 {2,3}, // Walk W
                                                 {3,3}, // Attack E
                                                 {3,3}, // ATTACK W
