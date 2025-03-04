@@ -43,7 +43,28 @@ public class View extends ScreenAdapter {
     FWSkin fontSkin;
     Skin skin;
     TypingLabel typingLabel;
-    String[] introDialouge = {"[*@&!^#$]","Oh! \\n Welcome, Traveller...", "A great evil has befallen our land", "They hoard riches and steal our firstborns.", "You, O dragon hearted one, are the only one who can vanquish our enemy.", "Venture yonder into that cavern save us.", "Press ESC to view settings", "Space to continue" };
+    String[][] introDialouge = {
+        {"*", "*[@", "*[@&", "*[@&!", "*[@&!^", "*[@&!^#", "*[@&!^#$]"},
+
+        {"O", "Oh", "Oh!", "Oh! ", "Oh! \\n ",  "Oh! \\n We", "Oh! \\n Wel", "Oh! \\n Welc", "Oh! \\n Welco", "Oh! \\n Welcom", "Oh! \\n Welcome", "Oh! \\n Welcome,", "Oh! \\n Welcome, ", "Oh! \\n Welcome, T", "Oh! \\n Welcome, Tr", "Oh! \\n Welcome, Tra", "Oh! \\n Welcome, Trav", "Oh! \\n Welcome, Trave", "Oh! \\n Welcome, Travell", "Oh! \\n Welcome, Traveller", "Oh! \\n Welcome, Traveller.", "Oh! \\n Welcome, Traveller..", "Oh! \\n Welcome, Traveller..."},
+
+        {"A", "A ", "A g", "A gr", "A gre", "A grea", "A great", "A great ", "A great e", "A great ev", "A great evi", "A great evil", "A great evil ", "A great evil h", "A great evil ha", "A great evil has", "A great evil has ", "A great evil has b", "A great evil has be", "A great evil has bef", "A great evil has befa", "A great evil has befall", "A great evil has befallen", "A great evil has befallen ", "A great evil has befallen o", "A great evil has befallen ou", "A great evil has befallen our", "A great evil has befallen our ", "A great evil has befallen our l", "A great evil has befallen our la", "A great evil has befallen our lan", "A great evil has befallen our land"},
+
+        {"T", "Th", "The", "They", "They ", "They h", "They ho", "They hoo", "They hoar", "They hoard", "They hoard ", "They hoard r", "They hoard ri", "They hoard ric", "They hoard rich", "They hoard riches", "They hoard riches ", "They hoard riches a", "They hoard riches an", "They hoard riches and", "They hoard riches and ", "They hoard riches and s", "They hoard riches and st", "They hoard riches and ste", "They hoard riches and stea", "They hoard riches and steal", "They hoard riches and steal ", "They hoard riches and steal o", "They hoard riches and steal ou", "They hoard riches and steal our", "They hoard riches and steal our ", "They hoard riches and steal our f", "They hoard riches and steal our fi", "They hoard riches and steal our fir", "They hoard riches and steal our firs", "They hoard riches and steal our first", "They hoard riches and steal our firstb", "They hoard riches and steal our firstbo", "They hoard riches and steal our firstbor", "They hoard riches and steal our firstborn", "They hoard riches and steal our firstborns", "They hoard riches and steal our firstborns."},
+
+        {"Y", "Yo", "You", "You,", "You, ", "You, O", "You, O ", "You, O d", "You, O dr", "You, O dra", "You, O drag", "You, O drago", "You, O dragon", "You, O dragon ", "You, O dragon h", "You, O dragon he", "You, O dragon hea", "You, O dragon hear", "You, O dragon heart", "You, O dragon hearte", "You, O dragon hearted", "You, O dragon hearted ", "You, O dragon hearted o", "You, O dragon hearted on", "You, O dragon hearted one", "You, O dragon hearted one,", "You, O dragon hearted one, ", "You, O dragon hearted one, a", "You, O dragon hearted one, ar", "You, O dragon hearted one, are", "You, O dragon hearted one, are ", "You, O dragon hearted one, are t", "You, O dragon hearted one, are th", "You, O dragon hearted one, are the", "You, O dragon hearted one, are the ", "You, O dragon hearted one, are the o", "You, O dragon hearted one, are the on", "You, O dragon hearted one, are the only", "You, O dragon hearted one, are the only ", "You, O dragon hearted one, are the only o", "You, O dragon hearted one, are the only on", "You, O dragon hearted one, are the only one", "You, O dragon hearted one, are the only one ", "You, O dragon hearted one, are the only one w", "You, O dragon hearted one, are the only one wh", "You, O dragon hearted one, are the only one who", "You, O dragon hearted one, are the only one who ", "You, O dragon hearted one, are the only one who c", "You, O dragon hearted one, are the only one who ca", "You, O dragon hearted one, are the only one who can", "You, O dragon hearted one, are the only one who can ", "You, O dragon hearted one, are the only one who can v", "You, O dragon hearted one, are the only one who can va", "You, O dragon hearted one, are the only one who can van", "You, O dragon hearted one, are the only one who can vanq", "You, O dragon hearted one, are the only one who can vanqu", "You, O dragon hearted one, are the only one who can vanqui", "You, O dragon hearted one, are the only one who can vanquis", "You, O dragon hearted one, are the only one who can vanquish", "You, O dragon hearted one, are the only one who can vanquish ", "You, O dragon hearted one, are the only one who can vanquish o", "You, O dragon hearted one, are the only one who can vanquish ou", "You, O dragon hearted one, are the only one who can vanquish our", "You, O dragon hearted one, are the only one who can vanquish our ", "You, O dragon hearted one, are the only one who can vanquish our e", "You, O dragon hearted one, are the only one who can vanquish our en", "You, O dragon hearted one, are the only one who can vanquish our ene", "You, O dragon hearted one, are the only one who can vanquish our enem", "You, O dragon hearted one, are the only one who can vanquish our enemy", "You, O dragon hearted one, are the only one who can vanquish our enemy."},
+
+        {"V", "Ve", "Ven", "Vent", "Ventu", "Ventur", "Venture", "Venture ", "Venture y", "Venture yo", "Venture yon", "Venture yond", "Venture yonde", "Venture yonder", "Venture yonder ", "Venture yonder i", "Venture yonder in", "Venture yonder int", "Venture yonder into", "Venture yonder into ", "Venture yonder into t", "Venture yonder into th", "Venture yonder into tha", "Venture yonder into that", "Venture yonder into that ", "Venture yonder into that c", "Venture yonder into that ca", "Venture yonder into that cav", "Venture yonder into that cave", "Venture yonder into that cavern", "Venture yonder into that cavern ", "Venture yonder into that cavern s", "Venture yonder into that cavern sa", "Venture yonder into that cavern sav", "Venture yonder into that cavern save", "Venture yonder into that cavern save ", "Venture yonder into that cavern save u", "Venture yonder into that cavern save us", "Venture yonder into that cavern save us."},
+
+        {"P", "Pr", "Pre", "Pres", "Press", "Press ", "Press E", "Press ES", "Press ESC", "Press ESC ", "Press ESC t", "Press ESC to", "Press ESC to ", "Press ESC to v", "Press ESC to vi", "Press ESC to vie", "Press ESC to view", "Press ESC to view ", "Press ESC to view s", "Press ESC to view se", "Press ESC to view set", "Press ESC to view sett", "Press ESC to view setti", "Press ESC to view settin", "Press ESC to view setting", "Press ESC to view settings"},
+
+        {"S", "Sp", " Spa", "Spac", "Space", "Space ", "Space t", "Space to", "Space to ", "Space to c", "Space to co", "Space to con", "Space to cont", "Space to contin", "Space to continu", "Space to continue"}
+        };
+
+    int[] introIndicies = {7, 27, 31, 37, 53, 37, 27, 15};
+
+
+
     private int introIndex;
 
 
@@ -265,8 +286,8 @@ public class View extends ScreenAdapter {
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
             batch.begin();
 
-            typingLabel = new TypingLabel(introDialouge[0], mainFont);
-            typingLabel.draw(batch, 0);
+            typingLabel = new TypingLabel(introDialouge[0][0], mainFont);
+            typingLabel.draw(batch, 1);
 
             TextureRegion wizardFrame = wizardAnimation.getKeyFrame(stateTime, true);
             batch.draw(wizardFrame, -500, -300, 600, 600);
@@ -328,14 +349,16 @@ public class View extends ScreenAdapter {
 
             gameOverScreen.drawbg(this.batch);
 
-            font.draw(batch, "Game Over", -300, -300);
+            font.draw(batch, "Game Over", -80, -275);
+            font.draw(batch, "Press R to restart", -160, -350);
+
 
             TextureRegion[] executionFrame = executionAnimation.getKeyFrames();
-            batch.draw(executionFrame[deathIndex], -600, -200, 1200, 600);
+            batch.draw(executionFrame[deathIndex], -570, -200, 1100, 550);
 
             batch.end();
 
-            if (elapsedTime > 15 && deathIndex < 27)
+            if (elapsedTime > 10 && deathIndex < 26)
             {
                 elapsedTime = 0;
                 deathIndex++;
@@ -413,7 +436,7 @@ public class View extends ScreenAdapter {
         // GAME OVER
         else if (currentScreen == Screen.GAME_OVER)
         {
-            if (deathIndex >= 27 && Gdx.input.isKeyPressed(Input.Keys.SPACE))
+            if (Gdx.input.isKeyPressed(Input.Keys.R))
                 currentScreen = Screen.MENU;
 
         }
@@ -451,13 +474,19 @@ public class View extends ScreenAdapter {
                 player.getDirection("W");
                 player.attackBox();
             } else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-                player.specialChangeAnimation("Attack");
+                if (checkExecute(10))
+                    player.specialChangeAnimation("Attack");
             } else if (Gdx.input.isKeyPressed(Input.Keys.H)) {
-                player.specialChangeAnimation("Heal");
-                player.ouchies(-5);
+                if (checkExecute(10)) {
+                    player.specialChangeAnimation("Heal");
+                    player.ouchies(-5);
+                }
             } else {
                 player.updatePosition(0, 0);
             }
+
+            if (Gdx.input.isKeyPressed(Input.Keys.I))
+                player.ouchies(5);
             player.forceHUpdate(player.geteX(),player.geteY());
 
         }

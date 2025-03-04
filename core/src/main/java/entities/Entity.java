@@ -188,21 +188,19 @@ public class Entity extends Actor {
         TextureRegion currentFrame = currentAnimation.getKeyFrame(stateTime, true);
         batch.draw(currentFrame, (float) eX, (float) eY, (float) entityWidth, (float) entityHeight);
 
+        System.out.println(specialAnimation);
+
         if(specialAnimation)
         {
             Time += animationSpeed[animationIndex] * .10f;
-            if (currentAnimation.isAnimationFinished(stateTime))
-            {
-                specialAnimation = false;
-            }
         }
-        /*
+
         if (Time > (animationSpeed[animationIndex] * (colsAndRows[animationIndex][0]) * (colsAndRows[animationIndex][1] - 1)))
         {
             Time = 0;
-            animationIndex = 0;
+            //animationIndex = 0;
             specialAnimation = false;
-        }*/
+        }
 
     }
 
@@ -248,18 +246,17 @@ public class Entity extends Actor {
                 }
             }
 
+            animationIndex = state.determineIndex(this);
+            currentAnimation =  new Animation<TextureRegion>(animationSpeed[animationIndex], animationSplicer(allTextures[animationIndex],colsAndRows[animationIndex][0], colsAndRows[animationIndex][1]));
+
         }
-
-        animationIndex = state.determineIndex(this);
-        currentAnimation =  new Animation<TextureRegion>(animationSpeed[animationIndex], animationSplicer(allTextures[animationIndex],colsAndRows[animationIndex][0], colsAndRows[animationIndex][1]));
-
-        //System.out.println(animation);
 
     }
 
     public void specialChangeAnimation(String modifier) {
 
         if (!specialAnimation) {
+            specialAnimation = true;
             if (modifier.equals("Attack")) {
                 if (facX < 0) {
                     state = entityState.ATTACKW;
@@ -272,7 +269,6 @@ public class Entity extends Actor {
                 state = entityState.DEATH;
             }
             animationIndex = state.determineIndex(this);
-            specialAnimation = true;
             currentAnimation = new Animation<TextureRegion>(animationSpeed[animationIndex], animationSplicer(allTextures[animationIndex], colsAndRows[animationIndex][0], colsAndRows[animationIndex][1]));
         }
 
