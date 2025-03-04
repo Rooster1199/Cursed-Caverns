@@ -65,6 +65,9 @@ public class View extends ScreenAdapter {
     private Texture settingsSheet;
     private Sprite settingsSprite;
 
+    private Texture title;
+    private Sprite titleSprite;
+
     // SOUND
     Music music;
     float musicVolume;
@@ -164,6 +167,9 @@ public class View extends ScreenAdapter {
         music.setLooping(true);
         music.play();
 
+        title = new Texture("cursed_cavern.png");
+        titleSprite = new Sprite(title);
+
         settingsSheet = new Texture("settings_cog.png");
         settingsSprite = new Sprite(settingsSheet);
 
@@ -246,8 +252,8 @@ public class View extends ScreenAdapter {
 
             homeScreen.drawbg(this.batch);
 
-            font.draw(batch, "CURSED CAVERN", -200, 100);
-            font.draw(batch, "Press Space to play", -525, -100);
+            batch.draw(title, -350, 0, (256 * 3),  (128 * 3));
+            font.draw(batch, "Press Space to begin", -170, -350);
 
             batch.end();
         }
