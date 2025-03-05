@@ -1,5 +1,4 @@
 package entities;
-import java.io.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -11,8 +10,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import helper.BodyCreator;
-import helper.Constants;
 import io.github.killtheinnocents.View;
 
 import static helper.Constants.*;
@@ -21,28 +18,6 @@ public class Entity extends Actor {
 
     // Sprites + Textures
     private Animation<TextureRegion> currentAnimation;
-    private Animation<TextureRegion> standingAnimation;
-    private Animation<TextureRegion> walkNAnimation;
-    private Animation<TextureRegion> walkEAnimation;
-    private Animation<TextureRegion> walkWAnimation;
-    private Animation<TextureRegion> walkSAnimation;
-    private Animation<TextureRegion> attackEAnimation;
-    private Animation<TextureRegion> attackWAnimation;
-    /*
-    private Sprite standingSprite;
-    private Texture standingTexture;
-    private Sprite walkNSprite;
-    private Texture walkNTexture;
-    private Sprite walkESprite;
-    private Texture walkETexture;
-    private Sprite walkWSprite;
-    private Texture walkWTexture;
-    private Sprite walkSSprite;
-    private Texture walkSTexture;
-    private Sprite attackESprite;
-    private Texture attackETexture;
-    private Sprite attackWSprite;
-    private Texture attackWTexture; */
     Texture[] allTextures = new Texture[8];
     Sprite[] allSprites = new Sprite[8];
     int animationIndex = 0;
@@ -153,7 +128,6 @@ public class Entity extends Actor {
 
     public void initializeAllSprites() {
         String characterState = player ? "player" : "enemy";
-        System.out.println(characterState + " " + player);
         int index = 0;
 
         for (entityState state : entityState.values()) {
@@ -163,19 +137,14 @@ public class Entity extends Actor {
                 allTextures[index] = new Texture(filename);
                 allSprites[index] = new Sprite(allTextures[index]);
 
-//                System.out.println(allTextures[index]);
-//                System.out.println(allSprites[index]);
                 index++;
 
             } else if (characterState.equals("enemy") && state != entityState.HEAL) {
                 allTextures[index] = new Texture(filename);
                 allSprites[index] = new Sprite(allTextures[index]);
 
-                System.out.println(allTextures[index]);
-                System.out.println(allSprites[index]);
                 index++;
             }
-
 
         }
 
@@ -188,17 +157,14 @@ public class Entity extends Actor {
         TextureRegion currentFrame = currentAnimation.getKeyFrame(stateTime, true);
         batch.draw(currentFrame, (float) eX, (float) eY, (float) entityWidth, (float) entityHeight);
 
-        System.out.println(specialAnimation);
-
         if(specialAnimation)
-        {
-            Time += animationSpeed[animationIndex] * .10f;
-        }
+            Time += animationSpeed[animationIndex] * .1f;
 
-        if (Time > (animationSpeed[animationIndex] * (colsAndRows[animationIndex][0]) * (colsAndRows[animationIndex][1] - 1)))
+
+        if (Time > (animationSpeed[animationIndex] * (colsAndRows[animationIndex][0]) * (colsAndRows[animationIndex][1])))
         {
             Time = 0;
-            //animationIndex = 0;
+            animationIndex = 0;
             specialAnimation = false;
         }
 
@@ -284,10 +250,6 @@ public class Entity extends Actor {
             living = false;
         }
         return cHealth;
-    }
-
-    public int inflictWound() {
-        return 5 + str; //add real math
     }
 
     public int getCHealth() {
