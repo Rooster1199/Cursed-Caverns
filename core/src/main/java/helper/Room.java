@@ -34,7 +34,7 @@ public class Room {
             positionIndex = 0;
 
             for (int enemy = 0; enemy < enemyCount; enemy++) {
-                enemies.add(new Entity(world, enemyHealth, enemyStrength, potentialEnemyPositions[positionIndex][0], potentialEnemyPositions[positionIndex][1], false, "W", 240, 320, sizeFactor));
+                enemies.add(new Entity(world, enemyHealth, enemyStrength, potentialEnemyPositions[positionIndex][0], potentialEnemyPositions[positionIndex][1], false, "W", 120, 140, sizeFactor));
                 positionIndex = positionIndex > 5 ? 0 : positionIndex + 1;
             }
         } else if (roomType.equals("Chest"))

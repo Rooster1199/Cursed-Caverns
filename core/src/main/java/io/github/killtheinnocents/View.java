@@ -319,7 +319,7 @@ public class View extends ScreenAdapter {
         this.batch = new SpriteBatch();
 
         // Player + Health
-        player = new Entity(this.world, 100, 5, STARTX, STARTY, true,"E",240,320, 1);
+        player = new Entity(this.world, 100, 5, STARTX, STARTY, true,"E",120,140, 1);
         this.body = player.getBody();
         healthIndex = 0;
 
@@ -400,7 +400,6 @@ public class View extends ScreenAdapter {
         mapIndex = 0;
         settingIndex = 7;
         introIndex = 0;
-        roomIndex = 0;
 
         map = false;
         keyTime = 0;
@@ -409,7 +408,7 @@ public class View extends ScreenAdapter {
 
     private void createEnemies() {
 
-        Entity enemy1 = new Entity(world,15,2,410,20, false,"W",240,320, 1);
+        Entity enemy1 = new Entity(world,15,2,410,20, false,"W",120,140, 1);
         enemies1.add(enemy1);
 
     }
@@ -652,13 +651,12 @@ public class View extends ScreenAdapter {
                     e.ouchies(1);
                 }
             }
-            else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-                if (checkExecute(10))
+            else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            if (checkExecute(10))
                     player.specialChangeAnimation("Attack");
 
                 for (Entity enemy : enemies1) {
                     enemy.takeDamage(player);
-                    System.out.println(enemy.getCHealth());
                     break;
                 }
             }
@@ -805,7 +803,7 @@ public class View extends ScreenAdapter {
 
             }
             else if(EPLD >=800){
-                if((!(e.geteX() >= e.getStartX()-10) || !(e.geteX() <= e.getStartX()+10)) || (!(e.geteY() >= e.getStartY()-10) || !(e.geteY() <= e.getStartY()+10))){
+                if((!(e.geteX() >= e.getStartX()-20) || !(e.geteX() <= e.getStartX()+20)) || (!(e.geteY() >= e.getStartY()-20) || !(e.geteY() <= e.getStartY()+20))){
                 xMod = e.getStartX() - e.geteX();
                 yMod = e.getStartY() - e.geteY();
                 xMod = xMod/eStartD;
@@ -830,6 +828,8 @@ public class View extends ScreenAdapter {
 
                 else{
                     e.getDirection("W");
+                    xMod = 0;
+                    yMod= 0;
                 }
 
                 e.modPos((float) (xMod*eVelocity),(float) (yMod*eVelocity));
@@ -837,6 +837,7 @@ public class View extends ScreenAdapter {
             }
             if (EPLD <=200){
                 if (e.isAttackReady()){
+
                     e.updateAttackTime();
                     e.specialChangeAnimation("Attack");
                     player.takeDamage(e);
@@ -879,8 +880,9 @@ public class View extends ScreenAdapter {
             }
         }
         else if (checkOverlap(player.getyHit(),enemy.getyHit()) && checkOverlap(player.getxHit(),enemy.getxHit())){
-            System.out.println("overlap");
-            if(getOverlap(player.getxHit(),enemy.getxHit())>getOverlap(player.getyHit(),enemy.getyHit())){
+
+            if((getOverlap(player.getxHit(),enemy.getxHit()))>(getOverlap(player.getyHit(),enemy.getyHit()))){
+
                 if (player.geteX()>enemy.geteX()){
                     xMin= (float) (enemy.geteX() +(enemy.getESX()/2));
                 }
@@ -889,7 +891,7 @@ public class View extends ScreenAdapter {
 
                 }
             }
-            if(getOverlap(player.getxHit(),enemy.getxHit()) < getOverlap(player.getyHit(),enemy.getyHit())){
+            if((getOverlap(player.getxHit(),enemy.getxHit()))<(getOverlap(player.getyHit(),enemy.getyHit()))){
                 if (player.geteY()>enemy.geteY()){
                     yMin= (float) (enemy.geteY()+(enemy.getESY()/2));
                 }
