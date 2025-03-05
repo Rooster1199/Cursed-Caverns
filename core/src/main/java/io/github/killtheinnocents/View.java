@@ -396,11 +396,6 @@ public class View extends ScreenAdapter {
         map = false;
         keyTime = 0;
 
-        for(String[] array : introDialouge)
-        {
-            System.out.println(array.length);
-        }
-
     }
 
     private void createEnemies() {
@@ -429,7 +424,6 @@ public class View extends ScreenAdapter {
             time++;
             if (time % 11 == 0)
                 introArrayIndex = introArrayIndex > introIndicies[introIndex] ? introIndicies[introIndex] : introArrayIndex + 1;
-
 
         }
 
@@ -575,10 +569,6 @@ public class View extends ScreenAdapter {
 
         batch.setProjectionMatrix(camera.combined);
 
-//        if (player.state == entityState.WALKING_N) {
-//            player.position.add(player.velocity.x * deltaTime, player.velocity.y * deltaTime);
-//      }
-
         input();
 
     }
@@ -594,6 +584,9 @@ public class View extends ScreenAdapter {
     private void input() {
 
         keyTime++;
+
+        if (Gdx.input.isKeyPressed(Input.Keys.Y))
+            currentScreen = Screen.MENU;
 
         if (Gdx.input.isKeyPressed(Input.Keys.Q))
         {
@@ -618,8 +611,11 @@ public class View extends ScreenAdapter {
         // GAME OVER
         else if (currentScreen == Screen.GAME_OVER)
         {
-            if (Gdx.input.isKeyPressed(Input.Keys.R))
+            if (Gdx.input.isKeyPressed(Input.Keys.R)) {
+                elapsedTime = 0;
                 currentScreen = Screen.MENU;
+                System.out.println("R registered");
+            }
 
         }
         // MAIN_GAME
