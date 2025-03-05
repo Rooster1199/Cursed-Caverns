@@ -28,4 +28,8 @@ public class Room {
         }
     }
 
+    private Entity[] getEnemyArray() {
+        return enemies;
+    }
+
 }

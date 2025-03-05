@@ -232,7 +232,7 @@ public class View extends ScreenAdapter {
             {"S", "Sp", " Spa", "Spac", "Space", "Space ", "Space t", "Space to", "Space to ", "Space to c", "Space to co", "Space to con", "Space to cont", "Space to contin", "Space to continu", "Space to continue"}
         };
 
-    private int[] introIndicies = {23, 32, 42, 70, 40, 26, 17, 16};
+    private int[] introIndicies = {23, 32, 42, 70, 40, 26, 15,16};
 
     private int introIndex;
     private int introArrayIndex;
@@ -379,7 +379,7 @@ public class View extends ScreenAdapter {
 
         wizardSheet = new Texture(Gdx.files.internal("wizardSheet.png"));
         wizardSprite = new Sprite(wizardSheet);
-        wizardAnimation = new Animation<TextureRegion>(.5f, player.animationSplicer(wizardSheet,2, 2));
+        wizardAnimation = new Animation<TextureRegion>(.7f, player.animationSplicer(wizardSheet,2, 2));
 
         healthSheet = new Texture(Gdx.files.internal("HealthBar.png"));
         healthSprite = new Sprite(wizardSheet);
@@ -427,8 +427,8 @@ public class View extends ScreenAdapter {
 
         }
 
-        if (introArrayIndex >= introIndicies[introIndex] - 1 && introIndex <= 6) {
-            introIndex++;
+        if (introArrayIndex >= introIndicies[introIndex] - 1 && introIndex <= 5) {
+            introIndex = introIndex >= 7 ? 6 : introIndex + 1;
             introArrayIndex = 0;
         }
 
@@ -463,7 +463,7 @@ public class View extends ScreenAdapter {
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
             batch.begin();
 
-            font.draw(batch, introDialouge[introIndex][introArrayIndex], 50, 200 );
+            font.draw(batch, introDialouge[introIndex][introArrayIndex], 40, 40 );
 
             TextureRegion wizardFrame = wizardAnimation.getKeyFrame(stateTime, true);
             batch.draw(wizardFrame, -550, -300, 600, 600);
@@ -488,6 +488,8 @@ public class View extends ScreenAdapter {
                 mapIndex = 6;
 
             elapsedTime++;
+
+            font.draw(batch, "Press Enter to continue", -190, -350);
 
             batch.end();
         }
@@ -598,7 +600,7 @@ public class View extends ScreenAdapter {
         // MAP
         else if (currentScreen == Screen.MAP)
         {
-            if (elapsedTime > 90 && Gdx.input.isKeyPressed(Input.Keys.SPACE))
+            if (elapsedTime > 90 && Gdx.input.isKeyPressed(Input.Keys.ENTER))
                 currentScreen = Screen.MAIN_GAME;
         }
         // MENU

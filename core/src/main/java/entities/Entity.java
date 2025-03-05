@@ -154,6 +154,7 @@ public class Entity extends Actor {
 
     public void drawSprite(SpriteBatch batch, float stateTime)
     {
+        stateTime = specialAnimation ? Time : stateTime;
         TextureRegion currentFrame = currentAnimation.getKeyFrame(stateTime, true);
         batch.draw(currentFrame, (float) eX, (float) eY, (float) entityWidth, (float) entityHeight);
 
