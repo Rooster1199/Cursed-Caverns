@@ -241,23 +241,23 @@ public class View extends ScreenAdapter {
     // Assets
     private Animation<TextureRegion> executionAnimation;
     private Texture executionSheet;
-    private Sprite executionSprite;
     private Animation<TextureRegion> wizardAnimation;
     private Texture wizardSheet;
-    private Sprite wizardSprite;
-    private Animation<TextureRegion> mapAnimation;
     private Texture settingSheet;
-    private Sprite settingSprite;
     private Animation<TextureRegion> settingAnimation;
     private TextureRegion[] settingFrames;
     private Texture mapSheet;
-    private Sprite mapSprite;
+
+    private Animation<TextureRegion> mapAnimation;
     private TextureRegion[] mapFrames;
     private Texture settingsSheet;
     private Sprite settingsSprite;
 
     private Texture title;
-    private Sprite titleSprite;
+
+    // Inventory
+    private Texture inventoryBoxes;
+    private Texture[] inventory;
 
     // SOUND
     private Music music;
@@ -276,7 +276,6 @@ public class View extends ScreenAdapter {
     //Health Bar
     private Animation<TextureRegion> healthBarAnimation;
     private Texture healthSheet;
-    private Sprite healthSprite;
 
     // Animation Indexes
     private int healthIndex;
@@ -357,33 +356,28 @@ public class View extends ScreenAdapter {
         music.play();
 
         title = new Texture("cursed_cavern.png");
-        titleSprite = new Sprite(title);
 
         settingsSheet = new Texture("settings_cog.png");
         settingsSprite = new Sprite(settingsSheet);
 
         settingSheet = new Texture("settingsBG.png");
-        settingSprite = new Sprite(settingSheet);
         settingAnimation = new Animation<TextureRegion>(2f, player.animationSplicer(settingSheet, 4, 4));
         settingFrames = settingAnimation.getKeyFrames();
 
         mapSheet = new Texture("mapBG.png");
-        mapSprite = new Sprite(mapSheet);
         mapAnimation = new Animation<TextureRegion>(2f, player.animationSplicer(mapSheet, 2, 4));
         mapFrames = mapAnimation.getKeyFrames();
 
         executionSheet = new Texture("execution.png");
-        executionSprite = new Sprite(executionSheet);
         executionAnimation = new Animation<TextureRegion>(2f, player.animationSplicer(executionSheet, 4, 7));
 
         wizardSheet = new Texture(Gdx.files.internal("wizardSheet.png"));
-        wizardSprite = new Sprite(wizardSheet);
         wizardAnimation = new Animation<TextureRegion>(.7f, player.animationSplicer(wizardSheet,2, 2));
 
         healthSheet = new Texture(Gdx.files.internal("HealthBar.png"));
-        healthSprite = new Sprite(wizardSheet);
         healthBarAnimation = new Animation<TextureRegion>(.25f, player.animationSplicer(healthSheet,3, 6));
 
+        inventoryBoxes = new Texture(Gdx.files.internal("inventory_box.png"));
 
         // Logic Components
         gameRooms = new Room[6];
