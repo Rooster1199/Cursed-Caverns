@@ -283,6 +283,7 @@ public class View extends ScreenAdapter {
     private int deathIndex;
     private int mapIndex;
     private int settingIndex;
+    private int roomIndex;
 
     // Screens
     private enum Screen {
@@ -348,9 +349,7 @@ public class View extends ScreenAdapter {
 
     public void create() {
         // Assets
-
         // sfx Gdx.audio.newSound(Gdx.files.internal(name));
-        // music Gdx.audio.newMusic(Gdx.files.internal(name));
 
         music = Gdx.audio.newMusic(Gdx.files.internal("MenuSong.wav"));
         music.setVolume(musicVolume);
@@ -385,6 +384,21 @@ public class View extends ScreenAdapter {
         healthSprite = new Sprite(wizardSheet);
         healthBarAnimation = new Animation<TextureRegion>(.25f, player.animationSplicer(healthSheet,3, 6));
 
+
+        // Logic Components
+        gameRooms = new Room[6];
+        for (int i = 0; i < 5; i++)
+        {
+            if (i == 4)
+                gameRooms[i] = new Room(player, 0, "Chest", 1, 0, 0, world);
+            else if (i == 2)
+                gameRooms[i] = new Room(player, 2, "Normal", 1, 100, 2, world);
+
+            else
+                gameRooms[i] = new Room(player, 1, "Normal", 1, 100, 2, world);
+
+        }
+
         enemies1 = new Array<>();
         createEnemies();
 
@@ -392,6 +406,7 @@ public class View extends ScreenAdapter {
         mapIndex = 0;
         settingIndex = 7;
         introIndex = 0;
+        roomIndex = 0;
 
         map = false;
         keyTime = 0;
@@ -408,10 +423,14 @@ public class View extends ScreenAdapter {
     @Override
     public void render(float delta)
     {
-        checkDistance();
+        if (roomIndex != 4)
+        {
+            checkDistance();
+            clamp(player,enemies1.get(0));
+        }
+
         this.update();
         super.render(delta);
-        clamp(player,enemies1.get(0));
 
         logic();
         draw();
@@ -505,6 +524,9 @@ public class View extends ScreenAdapter {
 
             overlay.drawOverlay(this.batch);
 
+            if (roomIndex == 4)
+                gameRooms[roomIndex].drawClosedChest(batch);
+
             // Get current frame of player animation for the current stateTime
             player.drawSprite(batch, stateTime);
 
@@ -536,7 +558,7 @@ public class View extends ScreenAdapter {
 
             batch.end();
 
-            if (elapsedTime > 10 && deathIndex < 26)
+            if (elapsedTime > 10 && deathIndex <= 26)
             {
                 elapsedTime = 0;
                 deathIndex++;
@@ -573,6 +595,13 @@ public class View extends ScreenAdapter {
 
         input();
 
+    }
+
+    private void resetGameForNewRoom()
+    {
+        player.ouchies(- (player.getMaxHealth() - player.getCHealth()));
+        player.modPos((float) (-player.geteX() + STARTX), (float) (-player.geteY() + STARTY));
+        enemies1 = gameRooms[roomIndex].getEnemyArray();
     }
 
     // updates pos. of camera
@@ -624,11 +653,15 @@ public class View extends ScreenAdapter {
         else if (currentScreen == Screen.MAIN_GAME) {
 
             if (Gdx.input.isKeyPressed(Input.Keys.L)) {
-                currentScreen = Screen.MAP;
-                elapsedTime = 0;
-                map = false;
+                for (Entity e : enemies1)
+                {
+                    e.ouchies(1);
+                }
             }
             else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+                if (checkExecute(10))
+                    player.specialChangeAnimation("Attack");
+
                 for (Entity enemy : enemies1) {
                     enemy.takeDamage(player);
                     System.out.println(enemy.getCHealth());
@@ -653,9 +686,6 @@ public class View extends ScreenAdapter {
                 player.updatePosition(-1, 0);
                 player.getDirection("W");
                 player.attackBox();
-            } else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-                if (checkExecute(10))
-                    player.specialChangeAnimation("Attack");
             } else if (Gdx.input.isKeyPressed(Input.Keys.H)) {
                 if (checkExecute(10)) {
                     player.specialChangeAnimation("Heal");
@@ -719,7 +749,29 @@ public class View extends ScreenAdapter {
         {
             currentScreen = Screen.GAME_OVER;
         }
+
+        // next Room
+        if (isRoomBeaten()) {
+            currentScreen = Screen.MAP;
+            elapsedTime = 0;
+            map = false;
+            roomIndex = roomIndex > 5 ? 5 : roomIndex + 1;
+            resetGameForNewRoom();
+        }
     }
+
+    private boolean isRoomBeaten()
+    {
+        if (roomIndex != 4) {
+            for (Entity e : enemies1) {
+                if (e.isLiving())
+                    return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
 
     @Override
     public void dispose() {

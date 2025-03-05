@@ -1,6 +1,10 @@
 package helper;
 
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import entities.Entity;
 import helper.Constants.*;
 
@@ -9,27 +13,51 @@ import static helper.Constants.potentialEnemyPositions;
 public class Room {
 
     private Entity Player;
-    private Entity[] enemies;
-
-    private String enemyTypes;
+    private Array<Entity> enemies;
 
     private int positionIndex;
 
-    public Room (Entity givenPlayer, int enemyCount, String enemyTypes, int sizeFactor, int enemyHealth, int enemyStrength, World world)
+    private String roomType;
+
+    private Texture chestTexture;
+    private Sprite chestSprite;
+
+    private Texture openChestTexture;
+    private Sprite openChestSprite;
+
+    public Room (Entity givenPlayer, int enemyCount, String roomType, int sizeFactor, int enemyHealth, int enemyStrength, World world)
     {
         Player = givenPlayer;
-        enemies = new Entity[enemyCount];
-        positionIndex = 0;
 
-        for (int enemy = 0; enemy < enemyCount; enemy++)
+        if (roomType.equals("Normal")) {
+            enemies = new Array<>();
+            positionIndex = 0;
+
+            for (int enemy = 0; enemy < enemyCount; enemy++) {
+                enemies.add(new Entity(world, enemyHealth, enemyStrength, potentialEnemyPositions[positionIndex][0], potentialEnemyPositions[positionIndex][1], false, "W", 240, 320, sizeFactor));
+                positionIndex = positionIndex > 5 ? 0 : positionIndex + 1;
+            }
+        } else if (roomType.equals("Chest"))
         {
-            enemies[enemy] = new Entity(world,enemyHealth,enemyStrength, potentialEnemyPositions[positionIndex][0],potentialEnemyPositions[positionIndex][1], false,"W",240,320, sizeFactor);
-            positionIndex = positionIndex > 5 ? 0 : positionIndex + 1;
+            // TODO:
+            chestTexture = new Texture("closedchest.png");
+
+            openChestTexture = new Texture("openchest.png");
         }
     }
 
-    private Entity[] getEnemyArray() {
+    public Array<Entity> getEnemyArray() {
         return enemies;
     }
+
+    public void drawClosedChest(SpriteBatch batch) {
+        batch.draw(chestTexture, 0, 0, 400, 400);
+    }
+
+    public void drawOpenChest(SpriteBatch batch)
+    {
+        batch.draw(openChestTexture, 0, 0, 400, 400);
+    }
+
 
 }
