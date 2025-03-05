@@ -18,9 +18,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 //import com.github.tommyettinger.textratypist.FWSkin;
 //import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.github.tommyettinger.textra.FWSkin;
-import com.github.tommyettinger.textra.Font;
-import com.github.tommyettinger.textra.TypingLabel;
+//import com.github.tommyettinger.textra.FWSkin;
+//import com.github.tommyettinger.textra.Font;
+//import com.github.tommyettinger.textra.TypingLabel;
 import entities.Entity;
 import entities.Hitbox;
 import helper.GameScreen;
@@ -38,11 +38,11 @@ public class View extends ScreenAdapter {
 
     //Font
     BitmapFont font;
-    Font mainFont;
+    //Font mainFont;
     Texture font_texture;
-    FWSkin fontSkin;
+    //FWSkin fontSkin;
     Skin skin;
-    TypingLabel typingLabel;
+    //TypingLabel typingLabel;
     String[] introDialouge = {"[*@&!^#$]","Oh! \\n Welcome, Traveller...", "A great evil has befallen our land", "They hoard riches and steal our firstborns.", "You, O dragon hearted one, are the only one who can vanquish our enemy.", "Venture yonder into that cavern save us.", "Press ESC to view settings", "Space to continue" };
     private int introIndex;
 
@@ -129,7 +129,7 @@ public class View extends ScreenAdapter {
         this.batch = new SpriteBatch();
 
         // Player + Health
-        player = new Entity(this.world, 100, 5, STARTX, STARTY, true,"E",240,320, 1);
+        player = new Entity(this.world, 100, 5, STARTX, STARTY, true,"E",120,140, 1);
         this.body = player.getBody();
         healthIndex = 0;
 
@@ -195,7 +195,7 @@ public class View extends ScreenAdapter {
         healthSprite = new Sprite(wizardSheet);
         healthBarAnimation = new Animation<TextureRegion>(.25f, player.animationSplicer(healthSheet,3, 6));
 
-        mainFont = new Font(new BitmapFont(Gdx.files.internal("game_font.fnt")));
+        //mainFont = new Font(new BitmapFont(Gdx.files.internal("game_font.fnt")));
 
         enemies1 = new Array<>();
         createEnemies();
@@ -211,7 +211,7 @@ public class View extends ScreenAdapter {
 
     private void createEnemies() {
 
-        Entity enemy1 = new Entity(world,15,2,410,20, false,"W",240,320, 1);
+        Entity enemy1 = new Entity(world,15,2,410,20, false,"W",120,140, 1);
         enemies1.add(enemy1);
 
     }
@@ -265,8 +265,8 @@ public class View extends ScreenAdapter {
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
             batch.begin();
 
-            typingLabel = new TypingLabel(introDialouge[0], mainFont);
-            typingLabel.draw(batch, 0);
+            //typingLabel = new TypingLabel(introDialouge[0], mainFont);
+            //typingLabel.draw(batch, 0);
 
             TextureRegion wizardFrame = wizardAnimation.getKeyFrame(stateTime, true);
             batch.draw(wizardFrame, -500, -300, 600, 600);
@@ -425,10 +425,9 @@ public class View extends ScreenAdapter {
                 elapsedTime = 0;
                 map = false;
             }
-            else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
                 for (Entity enemy : enemies1) {
                     enemy.takeDamage(player);
-                    System.out.println(enemy.getCHealth());
                     break;
                 }
             }
@@ -550,7 +549,7 @@ public class View extends ScreenAdapter {
 
             }
             else if(EPLD >=800){
-                if((!(e.geteX() >= e.getStartX()-10) || !(e.geteX() <= e.getStartX()+10)) || (!(e.geteY() >= e.getStartY()-10) || !(e.geteY() <= e.getStartY()+10))){
+                if((!(e.geteX() >= e.getStartX()-20) || !(e.geteX() <= e.getStartX()+20)) || (!(e.geteY() >= e.getStartY()-20) || !(e.geteY() <= e.getStartY()+20))){
                 xMod = e.getStartX() - e.geteX();
                 yMod = e.getStartY() - e.geteY();
                 xMod = xMod/eStartD;
@@ -575,15 +574,20 @@ public class View extends ScreenAdapter {
 
                 else{
                     e.getDirection("W");
+                    xMod = 0;
+                    yMod= 0;
                 }
 
                 e.modPos((float) (xMod*eVelocity),(float) (yMod*eVelocity));
 
             }
-            if (EPLD <=200){
+            if (EPLD <=150){
                 if (e.isAttackReady()){
+
                     e.updateAttackTime();
-                    player.takeDamage(e);}
+                    player.takeDamage(e);
+                    System.out.println(player.getCHealth());
+                }
             }
 
         }
@@ -595,6 +599,7 @@ public class View extends ScreenAdapter {
         return h2.max - h1.min;
     }
     public static boolean checkOverlap(Hitbox h1, Hitbox h2){
+
         return h1.max >= h2.min && h2.max >= h1.min;
     }
     public void clamp(Entity player, Entity enemy){
@@ -602,7 +607,10 @@ public class View extends ScreenAdapter {
         xMax = (float) (Gdx.graphics.getWidth()) /2;
         yMin = (float) -Gdx.graphics.getHeight() /2;
         yMax = (float) Gdx.graphics.getHeight()/2;
+        System.out.println("Y: "+checkOverlap(player.getyHit(),enemy.getyHit()));
+        System.out.println("X: "+checkOverlap(player.getxHit(),enemy.getxHit()));
         if (checkOverlap(player.getxHit(),enemy.getxHit()) && !(checkOverlap(player.getyHit(),enemy.getyHit()))){
+
             if (player.geteY()>enemy.geteY()){
                 yMin= (float) (enemy.geteY()+(enemy.getESY()/2));
             }
@@ -622,8 +630,9 @@ public class View extends ScreenAdapter {
             }
         }
         else if (checkOverlap(player.getyHit(),enemy.getyHit()) && checkOverlap(player.getxHit(),enemy.getxHit())){
-            System.out.println("overlap");
-            if(getOverlap(player.getxHit(),enemy.getxHit())>getOverlap(player.getyHit(),enemy.getyHit())){
+
+            if(getOverlap(player.getxHit(),enemy.getxHit())/(enemy.getESX())>getOverlap(player.getyHit(),enemy.getyHit())/(enemy.getESY())){
+
                 if (player.geteX()>enemy.geteX()){
                     xMin= (float) (enemy.geteX() +(enemy.getESX()/2));
                 }
@@ -632,7 +641,7 @@ public class View extends ScreenAdapter {
 
                 }
             }
-            if(getOverlap(player.getxHit(),enemy.getxHit()) < getOverlap(player.getyHit(),enemy.getyHit())){
+            if(getOverlap(player.getxHit(),enemy.getxHit())/(enemy.getESX()) < getOverlap(player.getyHit(),enemy.getyHit())/(enemy.getESY())){
                 if (player.geteY()>enemy.geteY()){
                     yMin= (float) (enemy.geteY()+(enemy.getESY()/2));
                 }

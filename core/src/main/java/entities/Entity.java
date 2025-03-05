@@ -82,7 +82,7 @@ public class Entity extends Actor {
     public Entity(World world, int health, int strength, int x, int y, boolean isPlayer,String facing, double xS, double yS, double sizeFactor)
     {
         super();
-        updateAttackTime();
+
         getDirection(facing);
         xSize = xS;
         ySize = yS;
@@ -97,13 +97,14 @@ public class Entity extends Actor {
         startY = y;
         facX = 0;
         facY = 0;
-        xHit = new Hitbox(eX);
-        yHit = new Hitbox(eY);
-        xAttack = new Hitbox(eX);
-        yAttack = new Hitbox(eY);
+        xHit = new Hitbox(eX,xS/3);
+        yHit = new Hitbox(eY,yS/2.75);
+        xAttack = new Hitbox(eX,50*sizeFactor);
+        yAttack = new Hitbox(eY,50*sizeFactor);
 
         entityHeight = 100 * sizeFactor;
         entityWidth = 100 * sizeFactor;
+        lastAttackTime = System.currentTimeMillis();
 
         setBounds(x,y, allSprites[0].getWidth(), allSprites[0].getHeight());
 
@@ -144,9 +145,9 @@ public class Entity extends Actor {
         facY = yMod;
 
         eX = eX + xMod;
-        xHit.update(eX);
+        xHit.updateMod(eX,xSize/3);
         eY = eY + yMod;
-        yHit.update(eY);
+        yHit.updateMod(eY,ySize/2.75);
 
         changeAnimation();
     }
@@ -327,8 +328,8 @@ public class Entity extends Actor {
         return yHit;
     }
     public void forceHUpdate(double x, double y){
-        yHit.update(y);
-        xHit.update(x);
+        yHit.updateMod(eY,xSize/3);
+        xHit.updateMod(eX,ySize/2.75);
     }
     public void setPos(double x, double y){
         eX = x;
@@ -374,8 +375,7 @@ public class Entity extends Actor {
     public Hitbox getEAY(){return yAttack;}
     public int getStrength(){return str;}
     public void takeDamage(Entity enemy){
-        if(View.checkOverlap(xHit,enemy.getEAX()) || View.checkOverlap(enemy.getEAY(),yHit)){
-
+        if(View.checkOverlap(xHit,enemy.getEAX()) && View.checkOverlap(enemy.getEAY(),yHit)){
             if(cHealth+enemy.getStrength()>maxHealth){cHealth=maxHealth;}
             if(cHealth-enemy.getStrength()<=0){
                 living = false;
