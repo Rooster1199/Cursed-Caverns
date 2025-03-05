@@ -45,4 +45,13 @@ public class Constants {
                                                     .15f  // DEATH
                                                 };
 
+    public static int[][] potentialEnemyPositions = {
+                                                    {410, 20},
+                                                    {410, 90},
+                                                    {410, 160},
+                                                    {410, -50},
+                                                    {410, -120},
+                                                    {410, -190}
+                                                };
+
     }

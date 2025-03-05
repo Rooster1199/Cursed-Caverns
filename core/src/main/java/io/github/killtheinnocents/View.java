@@ -16,14 +16,10 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
-//import com.github.tommyettinger.textratypist.FWSkin;
-//import com.badlogic.gdx.scenes.scene2d.ui.*;
-//import com.github.tommyettinger.textra.FWSkin;
-//import com.github.tommyettinger.textra.Font;
-//import com.github.tommyettinger.textra.TypingLabel;
 import entities.Entity;
 import entities.Hitbox;
 import helper.GameScreen;
+import helper.Room;
 
 import static helper.Constants.*;
 
@@ -37,14 +33,209 @@ public class View extends ScreenAdapter {
     public Box2DDebugRenderer box2DDebugRenderer;
 
     //Font
-    BitmapFont font;
-    //Font mainFont;
-    Texture font_texture;
-    //FWSkin fontSkin;
-    Skin skin;
-    //TypingLabel typingLabel;
-    String[] introDialouge = {"[*@&!^#$]","Oh! \\n Welcome, Traveller...", "A great evil has befallen our land", "They hoard riches and steal our firstborns.", "You, O dragon hearted one, are the only one who can vanquish our enemy.", "Venture yonder into that cavern save us.", "Press ESC to view settings", "Space to continue" };
+    private BitmapFont font;
+
+    private String[][] introDialouge = {
+
+        {"O", "Oh", "Oh!", "Oh! ", "Oh! \n ",  "Oh! \n We", "Oh! \n Wel", "Oh! \n Welc", "Oh! \n Welco", "Oh! \n Welcom", "Oh! \n Welcome", "Oh! \n Welcome,", "Oh! \n Welcome, ", "Oh! \n Welcome, T", "Oh! \n Welcome, Tr", "Oh! \n Welcome, Tra", "Oh! \n Welcome, Trav", "Oh! \n Welcome, Trave", "Oh! \n Welcome, Travell", "Oh! \n Welcome, Traveller", "Oh! \n Welcome, Traveller.", "Oh! \n Welcome, Traveller..", "Oh! \n Welcome, Traveller..."},
+
+        {"A",
+            "A ",
+            "A g",
+            "A gr",
+            "A gre",
+            "A grea",
+            "A great",
+            "A great ",
+            "A great e",
+            "A great ev",
+            "A great evi",
+            "A great evil\n",
+            "A great evil \n",
+            "A great evil\n h",
+            "A great evil\n ha",
+            "A great evil\n has",
+            "A great evil\n has ",
+            "A great evil\n has b",
+            "A great evil\n has be",
+            "A great evil\n has bef",
+            "A great evil\n has befa",
+            "A great evil\n has befall",
+            "A great evil\n has befallen",
+            "A great evil\n has befallen ",
+            "A great evil\n has befallen o",
+            "A great evil\n has befallen ou",
+            "A great evil\n has befallen our",
+            "A great evil\n has befallen our ",
+            "A great evil\n has befallen our l",
+            "A great evil\n has befallen our la",
+            "A great evil\n has befallen our lan",
+            "A great evil\n has befallen our land"},
+
+        {"T",
+            "Th",
+            "The",
+            "They",
+            "They ",
+            "They h",
+            "They ho",
+            "They hoo",
+            "They hoar",
+            "They hoard",
+            "They hoard ",
+            "They hoard r",
+            "They hoard ri",
+            "They hoard ric",
+            "They hoard rich",
+            "They hoard riches\n",
+            "They hoard riches \n",
+            "They hoard riches\n a",
+            "They hoard riches\n an",
+            "They hoard riches\n and",
+            "They hoard riches\n and ",
+            "They hoard riches\n and s",
+            "They hoard riches\n and st",
+            "They hoard riches\n and ste",
+            "They hoard riches\n and stea",
+            "They hoard riches\n and steal",
+            "They hoard riches\n and steal ",
+            "They hoard riches\n and steal o",
+            "They hoard riches\n and steal ou",
+            "They hoard riches\n and steal our",
+            "They hoard riches\n and steal our ",
+            "They hoard riches\n and steal our f",
+            "They hoard riches\n and steal our fi",
+            "They hoard riches\n and steal our fir",
+            "They hoard riches\n and steal our firs",
+            "They hoard riches\n and steal our first",
+            "They hoard riches\n and steal our firstb",
+            "They hoard riches\n and steal our firstbo",
+            "They hoard riches\n and steal our firstbor",
+            "They hoard riches\n and steal our firstborn",
+            "They hoard riches\n and steal our firstborns",
+            "They hoard riches\n and steal our firstborns."},
+
+        {"Y",
+            "Yo",
+            "You",
+            "You,\n",
+            "You,\n ",
+            "You,\n O",
+            "You,\n O ",
+            "You,\n O d",
+            "You,\n O dr",
+            "You,\n O dra",
+            "You,\n O drag",
+            "You,\n O drago",
+            "You,\n O dragon",
+            "You,\n O dragon ",
+            "You,\n O dragon h",
+            "You,\n O dragon he",
+            "You,\n O dragon hea",
+            "You,\n O dragon hear",
+            "You,\n O dragon heart",
+            "You,\n O dragon hearte",
+            "You,\n O dragon hearted",
+            "You,\n O dragon hearted ",
+            "You,\n O dragon hearted o",
+            "You,\n O dragon hearted on",
+            "You,\n O dragon hearted one",
+            "You,\n O dragon hearted one,\n",
+            "You,\n O dragon hearted one,\n ",
+            "You,\n O dragon hearted one,\n a",
+            "You,\n O dragon hearted one,\n ar",
+            "You,\n O dragon hearted one,\n are",
+            "You,\n O dragon hearted one,\n are ",
+            "You,\n O dragon hearted one,\n are t",
+            "You,\n O dragon hearted one,\n are th",
+            "You,\n O dragon hearted one,\n are the",
+            "You,\n O dragon hearted one,\n are the ",
+            "You,\n O dragon hearted one,\n are the o",
+            "You,\n O dragon hearted one,\n are the on",
+            "You,\n O dragon hearted one,\n are the only",
+            "You,\n O dragon hearted one,\n are the only ",
+            "You,\n O dragon hearted one,\n are the only o",
+            "You,\n O dragon hearted one,\n are the only on",
+            "You,\n O dragon hearted one,\n are the only one",
+            "You,\n O dragon hearted one,\n are the only one ",
+            "You,\n O dragon hearted one,\n are the only one w",
+            "You,\n O dragon hearted one,\n are the only one wh",
+            "You,\n O dragon hearted one,\n are the only one who",
+            "You,\n O dragon hearted one,\n are the only one who ",
+            "You,\n O dragon hearted one,\n are the only one who c",
+            "You,\n O dragon hearted one,\n are the only one who ca",
+            "You,\n O dragon hearted one,\n are the only one who can\n",
+            "You,\n O dragon hearted one,\n are the only one who can\n ",
+            "You,\n O dragon hearted one,\n are the only one who can\n v",
+            "You,\n O dragon hearted one,\n are the only one who can\n va",
+            "You,\n O dragon hearted one,\n are the only one who can\n van",
+            "You,\n O dragon hearted one,\n are the only one who can\n vanq",
+            "You,\n O dragon hearted one,\n are the only one who can\n vanqu",
+            "You,\n O dragon hearted one,\n are the only one who can\n vanqui",
+            "You,\n O dragon hearted one,\n are the only one who can\n vanquis",
+            "You,\n O dragon hearted one,\n are the only one who can\n vanquish",
+            "You,\n O dragon hearted one,\n are the only one who can\n vanquish ",
+            "You,\n O dragon hearted one,\n are the only one who can\n vanquish o",
+            "You,\n O dragon hearted one,\n are the only one who can\n vanquish ou",
+            "You,\n O dragon hearted one,\n are the only one who can\n vanquish our",
+            "You,\n O dragon hearted one,\n are the only one who can\n vanquish our ",
+            "You,\n O dragon hearted one,\n are the only one who can\n vanquish our e",
+            "You,\n O dragon hearted one,\n are the only one who can\n vanquish our en",
+            "You,\n O dragon hearted one,\n are the only one who can\n vanquish our ene",
+            "You,\n O dragon hearted one,\n are the only one who can\n vanquish our enem",
+            "You,\n O dragon hearted one,\n are the only one who can\n vanquish our enemy",
+            "You,\n O dragon hearted one,\n are the only one who can\n vanquish our enemy."},
+
+        {"V",
+            "Ve",
+            "Ven",
+            "Vent",
+            "Ventu",
+            "Ventur",
+            "Venture",
+            "Venture ",
+            "Venture y",
+            "Venture yo",
+            "Venture yon",
+            "Venture yond",
+            "Venture yonde",
+            "Venture yonder\n",
+            "Venture yonder ",
+            "Venture yonder\n i",
+            "Venture yonder\n i",
+            "Venture yonder\n in",
+            "Venture yonder\n int",
+            "Venture yonder\n into",
+            "Venture yonder\n into ",
+            "Venture yonder\n into t",
+            "Venture yonder\n into th",
+            "Venture yonder\n into tha",
+            "Venture yonder\n into that",
+            "Venture yonder\n into that ",
+            "Venture yonder\n into that c",
+            "Venture yonder\n into that ca",
+            "Venture yonder\n into that cav",
+            "Venture yonder\n into that cave",
+            "Venture yonder\n into that cavern",
+            "Venture yonder\n into that cavern ",
+            "Venture yonder\n into that cavern \ns",
+            "Venture yonder\n into that cavern\n sa",
+            "Venture yonder\n into that cavern\n sav",
+            "Venture yonder\n into that cavern\n save",
+            "Venture yonder\n into that cavern\n save ",
+            "Venture yonder\n into that cavern\n save u",
+            "Venture yonder\n into that cavern\n save us",
+            "Venture yonder\n into that cavern\n save us."},
+
+            {"P", "Pr", "Pre", "Pres", "Press", "Press ", "Press E", "Press ES", "Press ESC", "Press ESC ", "Press ESC t", "Press ESC to", "Press ESC to ", "Press ESC to v", "Press ESC to vi", "Press ESC to vie", "Press ESC to view", "Press ESC to view ", "Press ESC to view s", "Press ESC to view se", "Press ESC to view set", "Press ESC to view sett", "Press ESC to view setti", "Press ESC to view settin", "Press ESC to view setting", "Press ESC to view settings"},
+
+            {"S", "Sp", " Spa", "Spac", "Space", "Space ", "Space t", "Space to", "Space to ", "Space to c", "Space to co", "Space to con", "Space to cont", "Space to contin", "Space to continu", "Space to continue"}
+        };
+
+    private int[] introIndicies = {23, 32, 42, 70, 40, 26, 15,16};
+
     private int introIndex;
+    private int introArrayIndex;
 
 
     // Assets
@@ -69,14 +260,14 @@ public class View extends ScreenAdapter {
     private Sprite titleSprite;
 
     // SOUND
-    Music music;
-    float musicVolume;
-    float sfxVolume;
+    private Music music;
+    private float musicVolume;
+    private float sfxVolume;
 
     // Logic Components
-    float stateTime; // time for animation
+    private float stateTime; // time for animation
     private Entity player;
-    Body body;
+    private Body body;
     private float deltaTime;
     private float time;
     private float elapsedTime;
@@ -94,7 +285,7 @@ public class View extends ScreenAdapter {
     private int settingIndex;
 
     // Screens
-    enum Screen {
+    private enum Screen {
         MENU, INTRO, MAP, MAIN_GAME, GAME_OVER, SETTINGS;
     }
     public Screen currentScreen = Screen.MENU;
@@ -102,24 +293,23 @@ public class View extends ScreenAdapter {
     private GameScreen homeScreen;
     private GameScreen dungeonScreen;
     private GameScreen gameOverScreen;
+    private Room[] gameRooms;
 
     // enemy
     public Array<Entity> enemies1;
     public Array<Sprite> enemies;
-    double eVelocity = 5;
-    double EPLD;
-    double eStartD;
-    //double EPLS;
-    //double EPLA;
-    double xMod;
-    double yMod;
+    private double eVelocity = 5;
+    private double EPLD;
+    private double eStartD;
+    private double xMod;
+    private double yMod;
 
 
-    float yMin;
-    float yMax;
-    float xMin;
-    float xMax;
-    boolean map;
+    private float yMin;
+    private float yMax;
+    private float xMin;
+    private float xMax;
+    private boolean map;
 
     public View(OrthographicCamera camera)
     {
@@ -189,7 +379,7 @@ public class View extends ScreenAdapter {
 
         wizardSheet = new Texture(Gdx.files.internal("wizardSheet.png"));
         wizardSprite = new Sprite(wizardSheet);
-        wizardAnimation = new Animation<TextureRegion>(.5f, player.animationSplicer(wizardSheet,2, 2));
+        wizardAnimation = new Animation<TextureRegion>(.7f, player.animationSplicer(wizardSheet,2, 2));
 
         healthSheet = new Texture(Gdx.files.internal("HealthBar.png"));
         healthSprite = new Sprite(wizardSheet);
@@ -206,7 +396,8 @@ public class View extends ScreenAdapter {
         introIndex = 0;
 
         map = false;
-        keyTime = 0; ;
+        keyTime = 0;
+
     }
 
     private void createEnemies() {
@@ -227,13 +418,22 @@ public class View extends ScreenAdapter {
         logic();
         draw();
 
-        if(currentScreen == Screen.INTRO && time > 500)
+        if(currentScreen == Screen.INTRO && introIndex == 6)
         {
             currentScreen = Screen.MAIN_GAME;
         } else if (currentScreen == Screen.INTRO)
         {
             time++;
+            if (time % 11 == 0)
+                introArrayIndex = introArrayIndex > introIndicies[introIndex] ? introIndicies[introIndex] : introArrayIndex + 1;
+
         }
+
+        if (introArrayIndex >= introIndicies[introIndex] - 1 && introIndex <= 5) {
+            introIndex = introIndex >= 7 ? 6 : introIndex + 1;
+            introArrayIndex = 0;
+        }
+
     }
 
 
@@ -265,11 +465,10 @@ public class View extends ScreenAdapter {
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
             batch.begin();
 
-            //typingLabel = new TypingLabel(introDialouge[0], mainFont);
-            //typingLabel.draw(batch, 0);
+            font.draw(batch, introDialouge[introIndex][introArrayIndex], 40, 40 );
 
             TextureRegion wizardFrame = wizardAnimation.getKeyFrame(stateTime, true);
-            batch.draw(wizardFrame, -500, -300, 600, 600);
+            batch.draw(wizardFrame, -550, -300, 600, 600);
 
             batch.end();
         }
@@ -291,6 +490,8 @@ public class View extends ScreenAdapter {
                 mapIndex = 6;
 
             elapsedTime++;
+
+            font.draw(batch, "Press Enter to continue", -190, -350);
 
             batch.end();
         }
@@ -328,14 +529,16 @@ public class View extends ScreenAdapter {
 
             gameOverScreen.drawbg(this.batch);
 
-            font.draw(batch, "Game Over", -300, -300);
+            font.draw(batch, "Game Over", -80, -275);
+            font.draw(batch, "Press R to restart", -160, -350);
+
 
             TextureRegion[] executionFrame = executionAnimation.getKeyFrames();
-            batch.draw(executionFrame[deathIndex], -600, -200, 1200, 600);
+            batch.draw(executionFrame[deathIndex], -570, -200, 1100, 550);
 
             batch.end();
 
-            if (elapsedTime > 15 && deathIndex < 27)
+            if (elapsedTime > 10 && deathIndex < 26)
             {
                 elapsedTime = 0;
                 deathIndex++;
@@ -370,10 +573,6 @@ public class View extends ScreenAdapter {
 
         batch.setProjectionMatrix(camera.combined);
 
-//        if (player.state == entityState.WALKING_N) {
-//            player.position.add(player.velocity.x * deltaTime, player.velocity.y * deltaTime);
-//      }
-
         input();
 
     }
@@ -390,6 +589,9 @@ public class View extends ScreenAdapter {
 
         keyTime++;
 
+        if (Gdx.input.isKeyPressed(Input.Keys.Y))
+            currentScreen = Screen.MENU;
+
         if (Gdx.input.isKeyPressed(Input.Keys.Q))
         {
             Gdx.app.exit();
@@ -400,7 +602,7 @@ public class View extends ScreenAdapter {
         // MAP
         else if (currentScreen == Screen.MAP)
         {
-            if (elapsedTime > 90 && Gdx.input.isKeyPressed(Input.Keys.SPACE))
+            if (elapsedTime > 90 && Gdx.input.isKeyPressed(Input.Keys.ENTER))
                 currentScreen = Screen.MAIN_GAME;
         }
         // MENU
@@ -413,8 +615,11 @@ public class View extends ScreenAdapter {
         // GAME OVER
         else if (currentScreen == Screen.GAME_OVER)
         {
-            if (deathIndex >= 27 && Gdx.input.isKeyPressed(Input.Keys.SPACE))
+            if (Gdx.input.isKeyPressed(Input.Keys.R)) {
+                elapsedTime = 0;
                 currentScreen = Screen.MENU;
+                System.out.println("R registered");
+            }
 
         }
         // MAIN_GAME
@@ -450,13 +655,19 @@ public class View extends ScreenAdapter {
                 player.getDirection("W");
                 player.attackBox();
             } else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-                player.specialChangeAnimation("Attack");
+                if (checkExecute(10))
+                    player.specialChangeAnimation("Attack");
             } else if (Gdx.input.isKeyPressed(Input.Keys.H)) {
-                player.specialChangeAnimation("Heal");
-                player.ouchies(-5);
+                if (checkExecute(10)) {
+                    player.specialChangeAnimation("Heal");
+                    player.ouchies(-5);
+                }
             } else {
                 player.updatePosition(0, 0);
             }
+
+            if (Gdx.input.isKeyPressed(Input.Keys.I))
+                player.ouchies(5);
             player.forceHUpdate(player.geteX(),player.geteY());
 
         }
@@ -585,8 +796,8 @@ public class View extends ScreenAdapter {
                 if (e.isAttackReady()){
 
                     e.updateAttackTime();
+                    e.specialChangeAnimation("Attack");
                     player.takeDamage(e);
-                    System.out.println(player.getCHealth());
                 }
             }
 
@@ -599,7 +810,6 @@ public class View extends ScreenAdapter {
         return h2.max - h1.min;
     }
     public static boolean checkOverlap(Hitbox h1, Hitbox h2){
-
         return h1.max >= h2.min && h2.max >= h1.min;
     }
     public void clamp(Entity player, Entity enemy){
@@ -610,7 +820,6 @@ public class View extends ScreenAdapter {
         System.out.println("Y: "+checkOverlap(player.getyHit(),enemy.getyHit()));
         System.out.println("X: "+checkOverlap(player.getxHit(),enemy.getxHit()));
         if (checkOverlap(player.getxHit(),enemy.getxHit()) && !(checkOverlap(player.getyHit(),enemy.getyHit()))){
-
             if (player.geteY()>enemy.geteY()){
                 yMin= (float) (enemy.geteY()+(enemy.getESY()/2));
             }
