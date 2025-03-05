@@ -866,8 +866,6 @@ public class View extends ScreenAdapter {
         xMax = (float) (Gdx.graphics.getWidth()) /2;
         yMin = (float) -Gdx.graphics.getHeight() /2;
         yMax = (float) Gdx.graphics.getHeight()/2;
-        System.out.println("Y: "+checkOverlap(player.getyHit(),enemy.getyHit()));
-        System.out.println("X: "+checkOverlap(player.getxHit(),enemy.getxHit()));
         if (checkOverlap(player.getxHit(),enemy.getxHit()) && !(checkOverlap(player.getyHit(),enemy.getyHit()))){
             if (player.geteY()>enemy.geteY()){
                 yMin= (float) (enemy.geteY()+(enemy.getESY()/2));
@@ -889,7 +887,7 @@ public class View extends ScreenAdapter {
         }
         else if (checkOverlap(player.getyHit(),enemy.getyHit()) && checkOverlap(player.getxHit(),enemy.getxHit())){
 
-            if(getOverlap(player.getxHit(),enemy.getxHit())/(enemy.getESX())>getOverlap(player.getyHit(),enemy.getyHit())/(enemy.getESY())){
+            if((getOverlap(player.getxHit(),enemy.getxHit()))>(getOverlap(player.getyHit(),enemy.getyHit()))){
 
                 if (player.geteX()>enemy.geteX()){
                     xMin= (float) (enemy.geteX() +(enemy.getESX()/2));
@@ -899,7 +897,7 @@ public class View extends ScreenAdapter {
 
                 }
             }
-            if(getOverlap(player.getxHit(),enemy.getxHit())/(enemy.getESX()) < getOverlap(player.getyHit(),enemy.getyHit())/(enemy.getESY())){
+            if((getOverlap(player.getxHit(),enemy.getxHit()))<(getOverlap(player.getyHit(),enemy.getyHit()))){
                 if (player.geteY()>enemy.geteY()){
                     yMin= (float) (enemy.geteY()+(enemy.getESY()/2));
                 }
