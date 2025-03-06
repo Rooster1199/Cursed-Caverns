@@ -52,6 +52,7 @@ public class Entity extends Actor {
     double entityHeight; double entityWidth;
 
     boolean specialAnimation;
+    boolean animationFinished;
     float Time = 0;
 
     public Entity(World world, int health, int strength, int x, int y, boolean isPlayer,String facing, double xS, double yS, double sizeFactor)
@@ -95,6 +96,7 @@ public class Entity extends Actor {
         maxHealth = health;
         living = true;
         specialAnimation = false;
+        animationFinished = false;
     }
 
 
@@ -153,11 +155,19 @@ public class Entity extends Actor {
 
     }
 
+    public boolean getAnimationFinished()
+    {
+        return animationFinished;
+    }
+
     public void drawSprite(SpriteBatch batch, float stateTime)
     {
+        if (!player && !living)
+            specialChangeAnimation("Death");
         stateTime = specialAnimation ? Time : stateTime;
         TextureRegion currentFrame = currentAnimation.getKeyFrame(stateTime, true);
-        batch.draw(currentFrame, (float) eX, (float) eY, (float) entityWidth, (float) entityHeight);
+        if (!animationFinished)
+            batch.draw(currentFrame, (float) eX, (float) eY, (float) entityWidth, (float) entityHeight);
 
         if(specialAnimation)
             Time += animationSpeed[animationIndex] * .1f;
@@ -165,9 +175,14 @@ public class Entity extends Actor {
 
         if (Time > (animationSpeed[animationIndex] * (colsAndRows[animationIndex][0]) * (colsAndRows[animationIndex][1])))
         {
-            Time = 0;
-            animationIndex = 0;
-            specialAnimation = false;
+            if (!player && !living){
+                batch.draw(animationSplicer(allTextures[7], colsAndRows[7][0], colsAndRows[7][1])[15], (float) eX, (float) eY, (float) entityWidth, (float) entityHeight);
+                animationFinished = true;
+            } else {
+                Time = 0;
+                animationIndex = 0;
+                specialAnimation = false;
+            }
         }
 
     }
@@ -335,7 +350,7 @@ public class Entity extends Actor {
     public int getStrength(){return str;}
     public void takeDamage(Entity enemy){
 
-        System.out.println(View.checkOverlap(xHit,enemy.getEAX()) + " L " + View.checkOverlap(enemy.getEAY(),yHit));
+        //System.out.println(View.checkOverlap(xHit,enemy.getEAX()) + " L " + View.checkOverlap(enemy.getEAY(),yHit));
         if(View.checkOverlap(xHit,enemy.getEAX()) && View.checkOverlap(enemy.getEAY(),yHit)){
             if(cHealth+enemy.getStrength()>maxHealth){cHealth=maxHealth;}
             if(cHealth-enemy.getStrength()<=0){

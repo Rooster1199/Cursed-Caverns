@@ -304,6 +304,7 @@ public class View extends ScreenAdapter {
     private Sprite settingsSprite;
 
     private Texture title;
+    private Texture potion;
 
     // Inventory
     private Texture inventoryBoxes;
@@ -336,7 +337,7 @@ public class View extends ScreenAdapter {
     private int transitionIndex;
     private int transitionArrayIndex;
 
-    // TODO: enemy death animation
+    // TODO: enemy death animation + new inventory items
 
     // Screens
     private enum Screen {
@@ -365,6 +366,9 @@ public class View extends ScreenAdapter {
     private float xMin;
     private float xMax;
     private boolean map;
+    private boolean chestOpened;
+    private boolean canHeal;
+    private boolean potionDrawn;
 
     public View(OrthographicCamera camera)
     {
@@ -411,6 +415,8 @@ public class View extends ScreenAdapter {
         music.setLooping(true);
         music.play();
 
+        potion = new Texture("potion.png");
+
         title = new Texture("cursed_cavern.png");
 
         settingsSheet = new Texture("settings_cog.png");
@@ -439,15 +445,15 @@ public class View extends ScreenAdapter {
         gameRooms = new Room[6];
         for (int i = 0; i < 5; i++)
         {
-            if (i == 4)
+            if (i == 3)
                 gameRooms[i] = new Room(player, 0, "Chest", 1, 0, 0, world);
         else
-                gameRooms[i] = new Room(player, 1, "Normal", 1, i* 10, 2 * i, world);
+                gameRooms[i] = new Room(player, 1, "Normal", 1, 40* (i - 1) + 10, 4 * i, world);
 
         }
 
         enemies1 = new Array<>();
-        if (roomIndex != 4)
+        if (roomIndex != 3)
         {
             createEnemies();
         }
@@ -458,6 +464,9 @@ public class View extends ScreenAdapter {
         settingIndex = 7;
         introIndex = 0;
 
+        chestOpened = false;
+        canHeal = false;
+        potionDrawn = false;
         map = false;
         keyTime = 0;
 
@@ -473,7 +482,7 @@ public class View extends ScreenAdapter {
     @Override
     public void render(float delta)
     {
-        if (roomIndex != 4)
+        if (roomIndex != 3)
         {
             checkDistance();
             clamp(player,enemies1.get(0));
@@ -618,8 +627,11 @@ public class View extends ScreenAdapter {
             TextureRegion[] healthFrame = healthBarAnimation.getKeyFrames();
             batch.draw(healthFrame[healthIndex], -580, -450, 300, 150);
 
-            if (roomIndex == 4) {
-                gameRooms[roomIndex].drawClosedChest(batch);
+            if (roomIndex == 3) {
+                if (!chestOpened)
+                    gameRooms[roomIndex].drawClosedChest(batch);
+                else
+                    gameRooms[roomIndex].drawOpenChest(batch);
                 font.getData().setScale(.5f);
                 font.draw(batch, "Press O to open chest", -70, -10);
                 font.getData().setScale(1f);
@@ -631,9 +643,15 @@ public class View extends ScreenAdapter {
                 }
             }
 
+            batch.draw(inventoryBoxes, -330, -393, 180, 38);
+            if (chestOpened)
+            {
+                batch.draw(potion, -334, -394, 40, 40);
+                potionDrawn = true;
+            }
+
             font.draw(batch, "Player", -520, -430);
 
-            batch.draw(inventoryBoxes, -330, -393, 180, 38);
 
             batch.end();
 
@@ -717,7 +735,7 @@ public class View extends ScreenAdapter {
         {
             Gdx.app.exit();
         }
-        else if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+        else if (currentScreen == Screen.MAIN_GAME && Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             currentScreen = Screen.SETTINGS;
         }
         // MAP
@@ -739,7 +757,7 @@ public class View extends ScreenAdapter {
             if (Gdx.input.isKeyPressed(Input.Keys.R)) {
                 elapsedTime = 0;
                 currentScreen = Screen.MENU;
-                System.out.println("R registered");
+                System.out.println("R registered. Regretably, the re-start Game Feature has not yet been implemented. Please re-load the program to replay.");
             }
 
         }
@@ -750,7 +768,7 @@ public class View extends ScreenAdapter {
                 if (checkExecute(10)) {
                     player.specialChangeAnimation("Attack");
 
-                    if (roomIndex != 4) {
+                    if (roomIndex != 3) {
                         for (Entity enemy : enemies1) {
                             enemy.takeDamage(player);
                             break;
@@ -776,17 +794,23 @@ public class View extends ScreenAdapter {
                 player.updatePosition(-1, 0);
                 player.getDirection("W");
                 player.attackBox();
-            } else if (Gdx.input.isKeyPressed(Input.Keys.H)) {
+            } else if (canHeal && Gdx.input.isKeyPressed(Input.Keys.H)) {
                 if (checkExecute(10)) {
                     player.specialChangeAnimation("Heal");
-                    player.ouchies(-5);
+                    player.ouchies(-50);
+                    canHeal = false;
                 }
-            } else {
+            } else if (roomIndex == 3 && Gdx.input.isKeyPressed(Input.Keys.O))
+            {
+                chestOpened = true;
+                canHeal = true;
+            }
+            else {
                 player.updatePosition(0, 0);
             }
 
-            if (Gdx.input.isKeyPressed(Input.Keys.I))
-                player.ouchies(5);
+            //if (Gdx.input.isKeyPressed(Input.Keys.I))
+            //    player.ouchies(5);
             player.forceHUpdate(player.geteX(),player.geteY());
 
         }
@@ -804,9 +828,10 @@ public class View extends ScreenAdapter {
                     settingIndex = (settingIndex >= 15) ? 15 : settingIndex + 1;
         }
         // FOR DEVELOPMENT PURPOSES
+        /*
         else if (Gdx.input.isKeyPressed(Input.Keys.P)) {
             currentScreen = Screen.MAIN_GAME;
-        }
+        } */
 
 
     }
@@ -823,7 +848,7 @@ public class View extends ScreenAdapter {
     }
 
     private void logic() {
-        if (roomIndex != 4) {
+        if (roomIndex != 3) {
             clamp(player, enemies1.get(0));
 
             for (Entity e : enemies1) {
@@ -851,15 +876,20 @@ public class View extends ScreenAdapter {
             roomIndex = roomIndex > 5 ? 5 : roomIndex + 1;
             resetGameForNewRoom();
         }
+
+
     }
 
     private boolean isRoomBeaten()
     {
-        if (roomIndex != 4) {
+        if (roomIndex != 3) {
             for (Entity e : enemies1) {
-                if (e.isLiving())
+                if (!e.getAnimationFinished())
                     return false;
             }
+            return true;
+        } else if (chestOpened && potionDrawn)
+        {
             return true;
         }
         return false;
@@ -941,6 +971,7 @@ public class View extends ScreenAdapter {
 
                     e.updateAttackTime();
                     e.specialChangeAnimation("Attack");
+                    player.ouchies(e.getStrength());
                     player.takeDamage(e);
                 }
             }
