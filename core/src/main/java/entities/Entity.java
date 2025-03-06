@@ -334,6 +334,8 @@ public class Entity extends Actor {
     public Hitbox getEAY(){return yAttack;}
     public int getStrength(){return str;}
     public void takeDamage(Entity enemy){
+
+        System.out.println(View.checkOverlap(xHit,enemy.getEAX()) + " L " + View.checkOverlap(enemy.getEAY(),yHit));
         if(View.checkOverlap(xHit,enemy.getEAX()) && View.checkOverlap(enemy.getEAY(),yHit)){
             if(cHealth+enemy.getStrength()>maxHealth){cHealth=maxHealth;}
             if(cHealth-enemy.getStrength()<=0){

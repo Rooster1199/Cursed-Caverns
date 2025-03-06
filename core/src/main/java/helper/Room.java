@@ -51,12 +51,12 @@ public class Room {
     }
 
     public void drawClosedChest(SpriteBatch batch) {
-        batch.draw(chestTexture, 0, 0, 400, 400);
+        batch.draw(chestTexture, -60, 0, 100, 100);
     }
 
     public void drawOpenChest(SpriteBatch batch)
     {
-        batch.draw(openChestTexture, 0, 0, 400, 400);
+        batch.draw(openChestTexture, -60, 0, 100, 100);
     }
 
 

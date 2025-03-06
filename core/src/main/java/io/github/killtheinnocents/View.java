@@ -37,7 +37,7 @@ public class View extends ScreenAdapter {
 
     private String[][] introDialouge = {
 
-        {"O", "Oh", "Oh!", "Oh! ", "Oh! \n ",  "Oh! \n We", "Oh! \n Wel", "Oh! \n Welc", "Oh! \n Welco", "Oh! \n Welcom", "Oh! \n Welcome", "Oh! \n Welcome,", "Oh! \n Welcome, ", "Oh! \n Welcome, T", "Oh! \n Welcome, Tr", "Oh! \n Welcome, Tra", "Oh! \n Welcome, Trav", "Oh! \n Welcome, Trave", "Oh! \n Welcome, Travell", "Oh! \n Welcome, Traveller", "Oh! \n Welcome, Traveller.", "Oh! \n Welcome, Traveller..", "Oh! \n Welcome, Traveller..."},
+        {"O", "Oh", "Oh!", "Oh! ", "Oh! \n ",  "Oh! \n We", "Oh! \n Wel", "Oh! \n Welc", "Oh! \n Welco", "Oh! \n Welcom", "Oh! \n Welcome", "Oh! \n Welcome,", "Oh! \n Welcome, ", "Oh! \n Welcome, T", "Oh! \n Welcome, Tr", "Oh! \n Welcome, Tra", "Oh! \n Welcome, Trav", "Oh! \n Welcome, Trave", "Oh! \n Welcome, Travell", "Oh! \n Welcome, Traveller", "Oh! \n Welcome, Traveller.", "Oh! \n Welcome, Traveller..", "Oh! \n Welcome, Traveller...", "Oh! \n Welcome, Traveller...", "Oh! \n Welcome, Traveller...", "Oh! \n Welcome, Traveller...", "Oh! \n Welcome, Traveller...", "Oh! \n Welcome, Traveller...", "Oh! \n Welcome, Traveller...", "Oh! \n Welcome, Traveller...", "Oh! \n Welcome, Traveller...", "Oh! \n Welcome, Traveller..."},
 
         {"A",
             "A ",
@@ -70,6 +70,16 @@ public class View extends ScreenAdapter {
             "A great evil\n has befallen our l",
             "A great evil\n has befallen our la",
             "A great evil\n has befallen our lan",
+            "A great evil\n has befallen our land",
+            "A great evil\n has befallen our land",
+            "A great evil\n has befallen our land",
+            "A great evil\n has befallen our land",
+            "A great evil\n has befallen our land",
+            "A great evil\n has befallen our land",
+            "A great evil\n has befallen our land",
+            "A great evil\n has befallen our land",
+            "A great evil\n has befallen our land",
+            "A great evil\n has befallen our land",
             "A great evil\n has befallen our land"},
 
         {"T",
@@ -113,6 +123,16 @@ public class View extends ScreenAdapter {
             "They hoard riches\n and steal our firstbor",
             "They hoard riches\n and steal our firstborn",
             "They hoard riches\n and steal our firstborns",
+            "They hoard riches\n and steal our firstborns.",
+            "They hoard riches\n and steal our firstborns.",
+            "They hoard riches\n and steal our firstborns.",
+            "They hoard riches\n and steal our firstborns.",
+            "They hoard riches\n and steal our firstborns.",
+            "They hoard riches\n and steal our firstborns.",
+            "They hoard riches\n and steal our firstborns.",
+            "They hoard riches\n and steal our firstborns.",
+            "They hoard riches\n and steal our firstborns.",
+            "They hoard riches\n and steal our firstborns.",
             "They hoard riches\n and steal our firstborns."},
 
         {"Y",
@@ -184,6 +204,16 @@ public class View extends ScreenAdapter {
             "You,\n O dragon hearted one,\n are the only one who can\n vanquish our ene",
             "You,\n O dragon hearted one,\n are the only one who can\n vanquish our enem",
             "You,\n O dragon hearted one,\n are the only one who can\n vanquish our enemy",
+            "You,\n O dragon hearted one,\n are the only one who can\n vanquish our enemy.",
+            "You,\n O dragon hearted one,\n are the only one who can\n vanquish our enemy.",
+            "You,\n O dragon hearted one,\n are the only one who can\n vanquish our enemy.",
+            "You,\n O dragon hearted one,\n are the only one who can\n vanquish our enemy.",
+            "You,\n O dragon hearted one,\n are the only one who can\n vanquish our enemy.",
+            "You,\n O dragon hearted one,\n are the only one who can\n vanquish our enemy.",
+            "You,\n O dragon hearted one,\n are the only one who can\n vanquish our enemy.",
+            "You,\n O dragon hearted one,\n are the only one who can\n vanquish our enemy.",
+            "You,\n O dragon hearted one,\n are the only one who can\n vanquish our enemy.",
+            "You,\n O dragon hearted one,\n are the only one who can\n vanquish our enemy.",
             "You,\n O dragon hearted one,\n are the only one who can\n vanquish our enemy."},
 
         {"V",
@@ -225,14 +255,34 @@ public class View extends ScreenAdapter {
             "Venture yonder\n into that cavern\n save ",
             "Venture yonder\n into that cavern\n save u",
             "Venture yonder\n into that cavern\n save us",
+            "Venture yonder\n into that cavern\n save us.",
+            "Venture yonder\n into that cavern\n save us.",
+            "Venture yonder\n into that cavern\n save us.",
+            "Venture yonder\n into that cavern\n save us.",
+            "Venture yonder\n into that cavern\n save us.",
+            "Venture yonder\n into that cavern\n save us.",
+            "Venture yonder\n into that cavern\n save us.",
+            "Venture yonder\n into that cavern\n save us.",
+            "Venture yonder\n into that cavern\n save us.",
+            "Venture yonder\n into that cavern\n save us.",
             "Venture yonder\n into that cavern\n save us."},
 
-            {"P", "Pr", "Pre", "Pres", "Press", "Press ", "Press E", "Press ES", "Press ESC", "Press ESC ", "Press ESC t", "Press ESC to", "Press ESC to ", "Press ESC to v", "Press ESC to vi", "Press ESC to vie", "Press ESC to view", "Press ESC to view ", "Press ESC to view s", "Press ESC to view se", "Press ESC to view set", "Press ESC to view sett", "Press ESC to view setti", "Press ESC to view settin", "Press ESC to view setting", "Press ESC to view settings"},
+            {"P", "Pr", "Pre", "Pres", "Press", "Press ", "Press E", "Press ES", "Press ESC", "Press ESC ", "Press ESC t", "Press ESC to", "Press ESC to ", "Press ESC to v", "Press ESC to vi", "Press ESC to vie", "Press ESC to view", "Press ESC to view ", "Press ESC to view s", "Press ESC to view se", "Press ESC to view set", "Press ESC to view sett", "Press ESC to view setti", "Press ESC to view settin", "Press ESC to view setting", "Press ESC to view settings", "Press ESC to view settings", "Press ESC to view settings", "Press ESC to view settings", "Press ESC to view settings", "Press ESC to view settings", "Press ESC to view settings", "Press ESC to view settings", "Press ESC to view settings", "Press ESC to view settings", "Press ESC to view settings"},
 
-            {"S", "Sp", " Spa", "Spac", "Space", "Space ", "Space t", "Space to", "Space to ", "Space to c", "Space to co", "Space to con", "Space to cont", "Space to contin", "Space to continu", "Space to continue"}
+            {"S", "Sp", " Spa", "Spac", "Space", "Space ", "Space t", "Space to", "Space to ", "Space to c", "Space to co", "Space to con", "Space to cont", "Space to contin", "Space to continu", "Space to continue","Space to continue", "Space to continue", "Space to continue", "Space to continue", "Space to continue", "Space to continue", "Space to continue", "Space to continue", "Space to continue", "Space to continue" }
         };
 
-    private int[] introIndicies = {23, 32, 42, 70, 40, 26, 15,16};
+    private int[] introIndicies = {33, 42, 52, 80, 50, 36, 25, 26};
+
+
+    private String[][] dungeonMessages = {
+        {"E", "En", "Ent", "Ente", "Enter", "Enteri", "Enterin", "Entering", "Entering ", "Entering D", "Entering Du", "Entering Dun", "Entering Dung", "Entering Dunge", "Entering Dungeo", "Entering Dungeon", "Entering Dungeon.", "Entering Dungeon..", "Entering Dungeon...", "Entering Dungeon...", "Entering Dungeon...", "Entering Dungeon...", "Entering Dungeon...", "Entering Dungeon...", "Entering Dungeon...", "Entering Dungeon...", "Entering Dungeon...", "Entering Dungeon...", "Entering Dungeon..."},
+        {"L", "Le", "Lev", "Leve", "Level", "Level ", "Level C", "Level Cl", "Level Cle", "Level Clea", "Level Clear", "Level Cleare", "Level Cleared", "Level Cleared!", "Level Cleared!", "Level Cleared!", "Level Cleared!", "Level Cleared!", "Level Cleared!", "Level Cleared!", "Level Cleared!", "Level Cleared!", "Level Cleared!", "Level Cleared!"}
+    };
+
+    private int[] dungeonTextPosition = { -425, -330 };
+
+    private int[] dungeonMessageIndicies = {29, 24};
 
     private int introIndex;
     private int introArrayIndex;
@@ -282,17 +332,22 @@ public class View extends ScreenAdapter {
     private int deathIndex;
     private int mapIndex;
     private int settingIndex;
-    private int roomIndex;
+    private int roomIndex = 0;
+    private int transitionIndex;
+    private int transitionArrayIndex;
+
+    // TODO: enemy death animation
 
     // Screens
     private enum Screen {
-        MENU, INTRO, MAP, MAIN_GAME, GAME_OVER, SETTINGS;
+        MENU, INTRO, TRANSITION_SCREEN, MAP, MAIN_GAME, GAME_OVER, SETTINGS;
     }
     public Screen currentScreen = Screen.MENU;
     private GameScreen overlay;
     private GameScreen homeScreen;
     private GameScreen dungeonScreen;
     private GameScreen gameOverScreen;
+    private GameScreen introOverlay;
     private Room[] gameRooms;
 
     // enemy
@@ -338,6 +393,7 @@ public class View extends ScreenAdapter {
         homeScreen = new GameScreen("home_screen.png");
         dungeonScreen = new GameScreen("dungeon_background.png");
         gameOverScreen = new GameScreen("deathBg.png");
+        introOverlay = new GameScreen("black_overlay.png");
 
         // Volume
         musicVolume = 0.5f;
@@ -385,16 +441,17 @@ public class View extends ScreenAdapter {
         {
             if (i == 4)
                 gameRooms[i] = new Room(player, 0, "Chest", 1, 0, 0, world);
-            else if (i == 2)
-                gameRooms[i] = new Room(player, 2, "Normal", 1, 100, 2, world);
-
-            else
-                gameRooms[i] = new Room(player, 1, "Normal", 1, 100, 2, world);
+        else
+                gameRooms[i] = new Room(player, 1, "Normal", 1, i* 10, 2 * i, world);
 
         }
 
         enemies1 = new Array<>();
-        createEnemies();
+        if (roomIndex != 4)
+        {
+            createEnemies();
+        }
+
 
         deathIndex = 0;
         mapIndex = 0;
@@ -430,11 +487,13 @@ public class View extends ScreenAdapter {
 
         if(currentScreen == Screen.INTRO && introIndex == 6)
         {
-            currentScreen = Screen.MAIN_GAME;
+            currentScreen = Screen.TRANSITION_SCREEN;
+            time = 0;
+            font.getData().setScale(2.5f);
         } else if (currentScreen == Screen.INTRO)
         {
             time++;
-            if (time % 11 == 0)
+            if (time % 4 == 0)
                 introArrayIndex = introArrayIndex > introIndicies[introIndex] ? introIndicies[introIndex] : introArrayIndex + 1;
 
         }
@@ -442,6 +501,27 @@ public class View extends ScreenAdapter {
         if (introArrayIndex >= introIndicies[introIndex] - 1 && introIndex <= 5) {
             introIndex = introIndex >= 7 ? 6 : introIndex + 1;
             introArrayIndex = 0;
+        }
+
+        if(currentScreen == Screen.TRANSITION_SCREEN && transitionIndex == dungeonMessageIndicies[transitionArrayIndex] - 1)
+        {
+            if (transitionArrayIndex == 0) {
+                currentScreen = Screen.MAIN_GAME;
+                transitionArrayIndex++;
+            }
+            else
+                currentScreen = Screen.MAP;
+            transitionIndex = 0;
+
+            time = 0;
+            font.getData().setScale(1f);
+
+        } else if (currentScreen == Screen.TRANSITION_SCREEN)
+        {
+            time++;
+            if (time % 4 == 0)
+                transitionIndex = transitionIndex > dungeonMessageIndicies[transitionArrayIndex] ? dungeonMessageIndicies[transitionArrayIndex] : transitionIndex + 1;
+
         }
 
     }
@@ -475,10 +555,25 @@ public class View extends ScreenAdapter {
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
             batch.begin();
 
+            homeScreen.drawbg(this.batch);
+            introOverlay.drawOverlay(this.batch);
+
             font.draw(batch, introDialouge[introIndex][introArrayIndex], 40, 40 );
 
             TextureRegion wizardFrame = wizardAnimation.getKeyFrame(stateTime, true);
             batch.draw(wizardFrame, -550, -300, 600, 600);
+
+            batch.end();
+        }
+
+        // TRANISITION SCREEN
+        else if(currentScreen == Screen.TRANSITION_SCREEN) {
+
+            Gdx.gl.glClearColor(0,0,0,1);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+            batch.begin();
+
+            font.draw(batch, dungeonMessages[transitionArrayIndex][transitionIndex], dungeonTextPosition[transitionArrayIndex], 0 );
 
             batch.end();
         }
@@ -517,19 +612,28 @@ public class View extends ScreenAdapter {
 
             overlay.drawOverlay(this.batch);
 
-            if (roomIndex == 4)
-                gameRooms[roomIndex].drawClosedChest(batch);
-
             // Get current frame of player animation for the current stateTime
             player.drawSprite(batch, stateTime);
 
             TextureRegion[] healthFrame = healthBarAnimation.getKeyFrames();
             batch.draw(healthFrame[healthIndex], -580, -450, 300, 150);
 
-            for(Entity enemy: enemies1)
-            {
-                enemy.drawSprite(batch, stateTime);
+            if (roomIndex == 4) {
+                gameRooms[roomIndex].drawClosedChest(batch);
+                font.getData().setScale(.5f);
+                font.draw(batch, "Press O to open chest", -70, -10);
+                font.getData().setScale(1f);
             }
+            else {
+                for(Entity enemy: enemies1)
+                {
+                    enemy.drawSprite(batch, stateTime);
+                }
+            }
+
+            font.draw(batch, "Player", -520, -430);
+
+            batch.draw(inventoryBoxes, -330, -393, 180, 38);
 
             batch.end();
 
@@ -609,9 +713,6 @@ public class View extends ScreenAdapter {
 
         keyTime++;
 
-        if (Gdx.input.isKeyPressed(Input.Keys.Y))
-            currentScreen = Screen.MENU;
-
         if (Gdx.input.isKeyPressed(Input.Keys.Q))
         {
             Gdx.app.exit();
@@ -645,19 +746,16 @@ public class View extends ScreenAdapter {
         // MAIN_GAME
         else if (currentScreen == Screen.MAIN_GAME) {
 
-            if (Gdx.input.isKeyPressed(Input.Keys.L)) {
-                for (Entity e : enemies1)
-                {
-                    e.ouchies(1);
-                }
-            }
-            else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            if (checkExecute(10))
+             if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                if (checkExecute(10)) {
                     player.specialChangeAnimation("Attack");
 
-                for (Entity enemy : enemies1) {
-                    enemy.takeDamage(player);
-                    break;
+                    if (roomIndex != 4) {
+                        for (Entity enemy : enemies1) {
+                            enemy.takeDamage(player);
+                            break;
+                        }
+                    }
                 }
             }
 
@@ -725,11 +823,13 @@ public class View extends ScreenAdapter {
     }
 
     private void logic() {
-        clamp(player,enemies1.get(0));
+        if (roomIndex != 4) {
+            clamp(player, enemies1.get(0));
 
-        for(Entity e : enemies1){
-            e.setX((float)MathUtils.clamp(e.geteX(), (double) -Gdx.graphics.getWidth() /2, (double) Gdx.graphics.getWidth() /2));
-            e.setY((float)MathUtils.clamp(e.geteY(), (double) -Gdx.graphics.getHeight() /2, (double) Gdx.graphics.getHeight() /2));
+            for (Entity e : enemies1) {
+                e.setX((float) MathUtils.clamp(e.geteX(), (double) -Gdx.graphics.getWidth() / 2, (double) Gdx.graphics.getWidth() / 2));
+                e.setY((float) MathUtils.clamp(e.geteY(), (double) -Gdx.graphics.getHeight() / 2, (double) Gdx.graphics.getHeight() / 2));
+            }
         }
 
         // Health Bar
@@ -744,7 +844,8 @@ public class View extends ScreenAdapter {
 
         // next Room
         if (isRoomBeaten()) {
-            currentScreen = Screen.MAP;
+            currentScreen = Screen.TRANSITION_SCREEN;
+            font.getData().setScale(2.5f);
             elapsedTime = 0;
             map = false;
             roomIndex = roomIndex > 5 ? 5 : roomIndex + 1;
