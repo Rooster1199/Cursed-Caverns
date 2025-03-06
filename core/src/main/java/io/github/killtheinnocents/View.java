@@ -368,7 +368,7 @@ public class View extends ScreenAdapter {
     private boolean map;
     private boolean chestOpened;
     private boolean canHeal;
-    private boolean potionDrawn;
+    private int potionDrawn;
 
     public View(OrthographicCamera camera)
     {
@@ -466,7 +466,7 @@ public class View extends ScreenAdapter {
 
         chestOpened = false;
         canHeal = false;
-        potionDrawn = false;
+        potionDrawn = 0;
         map = false;
         keyTime = 0;
 
@@ -647,7 +647,7 @@ public class View extends ScreenAdapter {
             if (chestOpened)
             {
                 batch.draw(potion, -334, -394, 40, 40);
-                potionDrawn = true;
+                potionDrawn++;
             }
 
             font.draw(batch, "Player", -520, -430);
@@ -888,7 +888,7 @@ public class View extends ScreenAdapter {
                     return false;
             }
             return true;
-        } else if (chestOpened && potionDrawn)
+        } else if (chestOpened && potionDrawn > 15)
         {
             return true;
         }
