@@ -367,7 +367,12 @@ public class View extends ScreenAdapter {
     private boolean chestOpened;
     private boolean canHeal;
     private int potionDrawn;
-
+    /**
+     * Constructs a View object, initializing the game world, rendering components, player entity, fonts,
+     * screens, volume settings, and assets.
+     *
+     * @param camera The orthographic camera used to render the game world.
+     */
     public View(OrthographicCamera camera)
     {
         this.camera = camera;
@@ -407,7 +412,9 @@ public class View extends ScreenAdapter {
 
         create();
     }
-
+    /**
+     * Initializes various game components such as world objects, textures, and other required assets.
+     */
     public void create() {
         // Assets
         // sfx Gdx.audio.newSound(Gdx.files.internal(name));
@@ -475,14 +482,19 @@ public class View extends ScreenAdapter {
         keyTime = 0;
 
     }
-
+    /**
+     * Creates enemy entities and adds them to the game world.
+     */
     private void createEnemies() {
 
         Entity enemy1 = new Entity(world,15,2,410,20, false,"W",120,140, 1);
         enemies1.add(enemy1);
 
     }
-
+    /**
+     * Renders the game view by updating the camera, drawing entities, and rendering game screens.
+     * @param delta The time elapsed since the last update.
+     */
     @Override
     public void render(float delta)
     {
@@ -538,7 +550,9 @@ public class View extends ScreenAdapter {
 
     }
 
-
+    /**
+     * Draws the current game state based on the active screen.
+     */
     public void draw() {
 
         stateTime += Gdx.graphics.getDeltaTime(); // Accumulate elapsed animation time
@@ -717,7 +731,10 @@ public class View extends ScreenAdapter {
         box2DDebugRenderer.render(world, camera.combined.scl(PPM));
     }
 
-    // updates screen, handles key movements
+    /**
+     * Updates the game state based on elapsed time and player interactions.
+     *
+     */
     private void update()
     {
         world.step(1 / 60f, 6, 2);
@@ -736,7 +753,9 @@ public class View extends ScreenAdapter {
         enemies1 = gameRooms[roomIndex].getEnemyArray();
     }
 
-    // updates pos. of camera
+    /**
+     * Adjusts the camera position based on player movement and world constraints.
+     */
     private void cameraUpdate()
     {
         camera.position.set(new Vector3(0,0,0));

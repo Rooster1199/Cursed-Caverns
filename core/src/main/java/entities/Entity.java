@@ -92,7 +92,7 @@ public class Entity extends Actor {
         startY = y;
         facX = 0;
         facY = 0;
-        xHit = new Hitbox(eX,xS/2.5);
+        xHit = new Hitbox(eX,xS/2);
         yHit = new Hitbox(eY,yS/2.75);
         xAttack = new Hitbox(eX,50*sizeFactor);
         yAttack = new Hitbox(eY,50*sizeFactor);
@@ -147,7 +147,7 @@ public class Entity extends Actor {
         facY = yMod;
 
         eX = eX + xMod;
-        xHit.updateMod(eX,xSize/2.5);
+        xHit.updateMod(eX,xSize/2);
         eY = eY + yMod;
         yHit.updateMod(eY,ySize/2.75);
 
@@ -430,7 +430,7 @@ public class Entity extends Actor {
      */
     public void forceHUpdate(double x, double y){
         yHit.updateMod(eY,ySize/2.75);
-        xHit.updateMod(eX,xSize/2.5);
+        xHit.updateMod(eX,xSize/2);
     }
 
     /**
