@@ -30,6 +30,8 @@ public class View extends ScreenAdapter {
 
     //Font
     private BitmapFont font;
+    private BitmapFont bigFont;
+    private BitmapFont smallFont;
 
     private String[][] introDialouge = {
 
@@ -334,7 +336,7 @@ public class View extends ScreenAdapter {
     private int transitionIndex;
     private int transitionArrayIndex;
 
-    // TODO: enemy death animation + new inventory items
+    // TODO: new inventory items + fix restarting
 
     // Screens
     private enum Screen {
@@ -382,6 +384,10 @@ public class View extends ScreenAdapter {
         Texture font_texture = new Texture("game_font.png");
         font_texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         font = new BitmapFont(Gdx.files.internal("game_font.fnt"), new TextureRegion(font_texture));
+        bigFont = new BitmapFont(Gdx.files.internal("game_font.fnt"), new TextureRegion(font_texture));
+        smallFont = new BitmapFont(Gdx.files.internal("game_font.fnt"), new TextureRegion(font_texture));
+        smallFont.getData().setScale(.5f);
+        bigFont.getData().setScale(2.5f);
         font.getData().setScale(1f);
 
         stateTime = 0f;
@@ -480,7 +486,6 @@ public class View extends ScreenAdapter {
     @Override
     public void render(float delta)
     {
-        System.out.println(roomIndex);
 
         if (roomIndex != 3)
         {
@@ -498,7 +503,6 @@ public class View extends ScreenAdapter {
         {
             currentScreen = Screen.TRANSITION_SCREEN;
             time = 0;
-            font.getData().setScale(2.5f);
         } else if (currentScreen == Screen.INTRO)
         {
             time++;
@@ -523,7 +527,6 @@ public class View extends ScreenAdapter {
             transitionIndex = 0;
 
             time = 0;
-            font.getData().setScale(1f);
 
         } else if (currentScreen == Screen.TRANSITION_SCREEN)
         {
@@ -582,7 +585,7 @@ public class View extends ScreenAdapter {
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
             batch.begin();
 
-            font.draw(batch, dungeonMessages[transitionArrayIndex][transitionIndex], dungeonTextPosition[transitionArrayIndex], 0 );
+            bigFont.draw(batch, dungeonMessages[transitionArrayIndex][transitionIndex], dungeonTextPosition[transitionArrayIndex], 0 );
 
             batch.end();
         }
@@ -636,15 +639,12 @@ public class View extends ScreenAdapter {
 
             font.draw(batch, "Player", -520, -430);
 
-            // TODO: Create new font per each size instead of resizing each time u use
             if (roomIndex == 3) {
                 if (!chestOpened)
                     gameRooms[roomIndex].drawClosedChest(batch);
                 else
                     gameRooms[roomIndex].drawOpenChest(batch);
-                font.getData().setScale(.5f);
-                font.draw(batch, "Press O to open chest", -70, -10);
-                font.getData().setScale(1f);
+                smallFont.draw(batch, "Press O to open chest", -70, -10);
             }
             else {
                 for(Entity enemy: enemies1)
@@ -688,11 +688,11 @@ public class View extends ScreenAdapter {
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
             batch.begin();
 
-            gameOverScreen.drawbg(this.batch);
+            batch.draw(crown, -300, -180, 600 ,600);
 
-            batch.draw(crown, 0, 0, 100 ,100);
-
-            font.draw(batch, "YOU WON!", -80, -275);
+            bigFont.getData().setScale(4f);
+            bigFont.draw(batch, "VICTORY!", -280, -105);
+            bigFont.getData().setScale(2.5f);
             font.draw(batch, "Press R to restart", -160, -350);
 
 
@@ -877,7 +877,7 @@ public class View extends ScreenAdapter {
         double approximation = 1.0 / 17;
         int percentHealthLost = (int) Math.floor((player.getCHealth() * 1.0 / player.getMaxHealth()) / approximation);
         healthIndex = 17 - percentHealthLost;
-        if (!player.isLiving())
+        if (!player.isLiving() && deathIndex < 20)
         {
             currentScreen = Screen.GAME_OVER;
         }
@@ -885,13 +885,13 @@ public class View extends ScreenAdapter {
         // next Room
         if (isRoomBeaten()) {
             currentScreen = Screen.TRANSITION_SCREEN;
-            font.getData().setScale(2.5f);
             elapsedTime = 0;
             map = false;
-            // TODO: FIX!
-            roomIndex = roomIndex >= 5 ? 5 : roomIndex + 1;
-            if (roomIndex == 5)
+            if (roomIndex == 5 && isRoomBeaten() && elapsedTime < 10) {
                 currentScreen = Screen.GAME_WIN;
+            }
+            else
+                roomIndex = roomIndex >= 5 ? 5 : roomIndex + 1;
             resetGameForNewRoom();
         }
 
