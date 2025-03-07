@@ -12,6 +12,10 @@ To play the game, first open the project in an IDE (preferably intelliJ). Then, 
 
 Controls for the game include WASD/Arrow Keys for movement, SPACE for attacking or starting the game, ENTER for entering the dungeon, and H for healing. More information about keybinds can be found in the settings screen, which is accessed through ESC.
 
+# 2D Array Usage
+
+In this program, 2D arrays are primarily used to facilitate the text and sprite animations. The Constants class is a great example of this implementation. It contains the 2D arrays for the Columns and Rows of the player and enemy animations. These 2D arrays are accessed and implemented in the Entity class within the entities package. There, the spritesheets are processed by the animationSplicer class and split into animation arraylists. Each instance of the Entity class stores its own 2D array of animations. 
+
 # Credit
 
 All sprites, animations, and music used in the game are created by RuneCodes.
