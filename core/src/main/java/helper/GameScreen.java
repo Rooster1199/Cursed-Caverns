@@ -23,8 +23,6 @@ public class GameScreen {
 
         background = new Texture(FileName);
         backgroundSprite = new Sprite(background);
-
-        // load screen
     }
 
     /**

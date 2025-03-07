@@ -23,42 +23,50 @@ public class Entity extends Actor {
 
     // Sprites + Textures
     private Animation<TextureRegion> currentAnimation;
-    Texture[] allTextures = new Texture[8];
-    Sprite[] allSprites = new Sprite[8];
-    int animationIndex = 0;
-    int[][] colsAndRows;
-    float[] animationSpeed;
+    private Texture[] allTextures = new Texture[8];
+    private Sprite[] allSprites = new Sprite[8];
+    private int animationIndex = 0;
+    private int[][] colsAndRows;
+    private float[] animationSpeed;
 
     private Body body;
     public float speed = 5 * TILE_SIZE;
     private Vector2 currentVelocity = new Vector2(0,0);
     public entityState state;
-    boolean player;
+    private boolean player;
 
-    double lastAttackTime;
+    private double lastAttackTime;
 
-    int maxHealth;
-    int str;
-    int cHealth;
-    boolean living;
-    double eX; double eY; double startX; double startY; // was double before, change back if issue!
-    float facX; float facY;
-    enum Facing{
+    private int maxHealth;
+    private int str;
+    private int cHealth;
+    private boolean living;
+    private double eX;
+    private double eY;
+    private double startX;
+    private double startY;
+    private float facX;
+    private float facY;
+    private enum Facing{
         NORTH,
         SOUTH,
         EAST,
         WEST
     }
-    Facing eDirection;
-    Hitbox xHit; Hitbox yHit;
-    Hitbox xAttack; Hitbox yAttack;
-    double xSize; double ySize;
+    private Facing eDirection;
+    private Hitbox xHit;
+    private Hitbox yHit;
+    private Hitbox xAttack;
+    private Hitbox yAttack;
+    private double xSize;
+    private double ySize;
 
-    double entityHeight; double entityWidth;
+    private double entityHeight;
+    private double entityWidth;
 
-    boolean specialAnimation;
-    boolean animationFinished;
-    float Time = 0;
+    private boolean specialAnimation;
+    private boolean animationFinished;
+    private float Time = 0;
 
     /**
      * Constructs an entity with the specified parameters, initializing its attributes, hitboxes, and animation.
@@ -264,7 +272,6 @@ public class Entity extends Actor {
      * Changes the current animation based on the entity's movement or state.
      */
     public void changeAnimation() {
-        //String animation = state.determineAnimation(this);
         if(!specialAnimation) {
 
             if (Math.abs(facX) < 0.01 && Math.abs(facY) < 0.01) {

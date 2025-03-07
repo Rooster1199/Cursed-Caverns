@@ -23,10 +23,10 @@ import static helper.Constants.*;
 
 public class View extends ScreenAdapter {
 
-    public OrthographicCamera camera;
-    public SpriteBatch batch;
-    public World world;
-    public Box2DDebugRenderer box2DDebugRenderer;
+    private OrthographicCamera camera;
+    private SpriteBatch batch;
+    private World world;
+    private Box2DDebugRenderer box2DDebugRenderer;
 
     //Font
     private BitmapFont font;
@@ -336,13 +336,13 @@ public class View extends ScreenAdapter {
     private int transitionIndex;
     private int transitionArrayIndex;
 
-    // TODO: new inventory items + fix restarting
+    // TODO: new inventory items
 
     // Screens
     private enum Screen {
         MENU, INTRO, TRANSITION_SCREEN, MAP, MAIN_GAME, GAME_OVER, GAME_WIN, SETTINGS;
     }
-    public Screen currentScreen = Screen.MENU;
+    private Screen currentScreen = Screen.MENU;
     private GameScreen overlay;
     private GameScreen homeScreen;
     private GameScreen dungeonScreen;
@@ -351,14 +351,12 @@ public class View extends ScreenAdapter {
     private Room[] gameRooms;
 
     // enemy
-    public Array<Entity> enemies1;
+    private Array<Entity> enemies1;
     private double eVelocity = 5;
     private double EPLD;
     private double eStartD;
     private double xMod;
     private double yMod;
-
-
     private float yMin;
     private float yMax;
     private float xMin;
@@ -367,6 +365,8 @@ public class View extends ScreenAdapter {
     private boolean chestOpened;
     private boolean canHeal;
     private int potionDrawn;
+    private boolean isReset;
+
     /**
      * Constructs a View object, initializing the game world, rendering components, player entity, fonts,
      * screens, volume settings, and assets.
@@ -484,6 +484,8 @@ public class View extends ScreenAdapter {
         mapIndex = 0;
         settingIndex = 7;
         introIndex = 0;
+        introArrayIndex = 0;
+        transitionIndex = 0;
 
     }
     /**
@@ -750,6 +752,11 @@ public class View extends ScreenAdapter {
 
     }
 
+    /**
+     * Resets the game state for a new room by restoring the player's health,
+     * repositioning the player to the starting coordinates, and retrieving
+     * the enemy array for the current room.
+     */
     private void resetGameForNewRoom()
     {
         player.ouchies(- (player.getMaxHealth() - player.getCHealth()));
@@ -766,7 +773,10 @@ public class View extends ScreenAdapter {
         camera.update();
     }
 
-    // key word
+    /**
+     * Handles user input for different game screens and updates the game state accordingly.
+     * This includes movement, attacking, healing, menu navigation, and quitting the game.
+     */
     private void input() {
 
         keyTime++;
@@ -870,6 +880,12 @@ public class View extends ScreenAdapter {
 
     }
 
+    /**
+     * Checks whether a specified time interval has passed before allowing an action to be executed.
+     *
+     * @param factor The time threshold for executing an action.
+     * @return true if the action can be executed, false otherwise.
+     */
     private boolean checkExecute(int factor)
     {
 
@@ -881,6 +897,10 @@ public class View extends ScreenAdapter {
         return false;
     }
 
+    /**
+     * Updates the game logic, including entity movement constraints, health tracking,
+     * and transitioning to different game screens based on conditions.
+     */
     private void logic() {
         if (roomIndex != 3) {
             clamp(player, enemies1.get(0));
@@ -916,6 +936,10 @@ public class View extends ScreenAdapter {
 
     }
 
+    /**
+     * Resets the game state, including room index, timers, and music settings.
+     * Also, calls the create() method to initialize a new game session.
+     */
     private void resetGame()
     {
 
@@ -931,6 +955,11 @@ public class View extends ScreenAdapter {
         create();
     }
 
+    /**
+     * Determines whether the current room has been cleared of enemies or if a chest has been opened.
+     *
+     * @return true if the room is considered beaten, false otherwise.
+     */
     private boolean isRoomBeaten()
     {
         if (roomIndex != 3) {
@@ -946,13 +975,18 @@ public class View extends ScreenAdapter {
         return false;
     }
 
-
+    /**
+     * Disposes of game resources to free memory when they are no longer needed.
+     */
     @Override
     public void dispose() {
         font.dispose();
     }
 
-
+    /**
+     * Calculates the distance between the player and enemies to determine their behavior.
+     * Enemies will move towards the player within a certain range and attack when close.
+     */
     public void checkDistance(){
         eVelocity = 1.5;
         for (Entity e: enemies1){
@@ -1030,6 +1064,13 @@ public class View extends ScreenAdapter {
         }
     }
 
+    /**
+     * Calculates the overlap distance between two hitboxes.
+     *
+     * @param h1 The first hitbox.
+     * @param h2 The second hitbox.
+     * @return The amount of overlap between the two hitboxes.
+     */
     public static double getOverlap(Hitbox h1, Hitbox h2){
         if(checkOverlap(h1,h2)){
             if(h1.max>h2.max){
@@ -1042,9 +1083,25 @@ public class View extends ScreenAdapter {
         return 0;
 
     }
+
+    /**
+     * Checks whether two hitboxes overlap.
+     *
+     * @param h1 The first hitbox.
+     * @param h2 The second hitbox.
+     * @return true if the hitboxes overlap, false otherwise.
+     */
     public static boolean checkOverlap(Hitbox h1, Hitbox h2){
         return h1.max >= h2.min && h2.max >= h1.min;
     }
+
+    /**
+     * Clamps the player's position within the game boundaries to prevent movement outside the screen.
+     * Also prevents the player from overlapping with an enemy.
+     *
+     * @param player The player entity.
+     * @param enemy  The enemy entity.
+     */
     public void clamp(Entity player, Entity enemy){
         xMin = (float) -(Gdx.graphics.getWidth()) /2;
         xMax = (float) (Gdx.graphics.getWidth()) /2;

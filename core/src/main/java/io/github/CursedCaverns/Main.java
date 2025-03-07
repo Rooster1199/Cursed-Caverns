@@ -12,16 +12,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
  * It initializes and manages the main game settings, including camera and sprite batch.
  */public class Main extends Game {
 
-    public static Main INSTANCE;
+    private static Main INSTANCE;
     private int screenWidth, screenHeight;
     private OrthographicCamera orthographicCamera;
 
-    private SpriteBatch batch;
-    private Texture image;
-
-    public Texture testTexture;
-    public SpriteBatch spriteBatch;
-    public Sprite textureSprite;
 
     /**
      * Constructor for the Main class, initializing the singleton instance.
