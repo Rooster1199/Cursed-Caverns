@@ -7,8 +7,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
-public class Main extends Game {
+/**
+ * Main class of the game, extending {@link com.badlogic.gdx.Game} and implementing the {@link com.badlogic.gdx.ApplicationListener}.
+ * It initializes and manages the main game settings, including camera and sprite batch.
+ */public class Main extends Game {
 
     public static Main INSTANCE;
     private int screenWidth, screenHeight;
@@ -21,10 +23,17 @@ public class Main extends Game {
     public SpriteBatch spriteBatch;
     public Sprite textureSprite;
 
+    /**
+     * Constructor for the Main class, initializing the singleton instance.
+     */
     public Main() {
         INSTANCE = this;
     }
 
+    /**
+     * {@inheritDoc}
+     * Initializes the game by setting the screen dimensions, camera, and the initial game screen.
+     */
     @Override
     public void create() {
 

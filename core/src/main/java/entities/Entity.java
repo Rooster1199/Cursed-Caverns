@@ -14,6 +14,11 @@ import io.github.killtheinnocents.View;
 
 import static helper.Constants.*;
 
+/**
+ * Represents an entity (such as a player or enemy) in the game, including attributes like health, strength,
+ * position, animation, and interaction with other entities. The entity can be controlled, move, attack, and
+ * take damage, with animations and hitboxes to reflect its actions and state.
+ */
 public class Entity extends Actor {
 
     // Sprites + Textures
@@ -55,6 +60,20 @@ public class Entity extends Actor {
     boolean animationFinished;
     float Time = 0;
 
+    /**
+     * Constructs an entity with the specified parameters, initializing its attributes, hitboxes, and animation.
+     *
+     * @param world The physics world where the entity resides.
+     * @param health The maximum health of the entity.
+     * @param strength The strength of the entity, used for dealing damage.
+     * @param x The initial X position of the entity.
+     * @param y The initial Y position of the entity.
+     * @param isPlayer Flag indicating if the entity is a player.
+     * @param facing The initial facing direction of the entity (N, S, E, W).
+     * @param xS The width of the entity.
+     * @param yS The height of the entity.
+     * @param sizeFactor The scaling factor for the entity's sprite.
+     */
     public Entity(World world, int health, int strength, int x, int y, boolean isPlayer,String facing, double xS, double yS, double sizeFactor)
     {
         super();
@@ -84,11 +103,6 @@ public class Entity extends Actor {
 
         setBounds(x,y, allSprites[0].getWidth(), allSprites[0].getHeight());
 
-//        this.body = BodyCreator.createBody(STARTX + 70, STARTY + 50, 50, 50, false, world);
-//        this.body.setUserData(this);
-
-//        addListener(new FreeRoamingMovementListener(this));
-
         state = entityState.STANDING;
 
         str = strength;
@@ -99,7 +113,12 @@ public class Entity extends Actor {
         animationFinished = false;
     }
 
-
+    /**
+     * Updates the position of the entity based on the movement factors.
+     *
+     * @param factorX The horizontal movement factor.
+     * @param factorY The vertical movement factor.
+     */
     public void updatePosition(float factorX, float factorY)
     {
         float speed = 160f;
@@ -116,6 +135,12 @@ public class Entity extends Actor {
         changeAnimation();
     }
 
+    /**
+     * Modifies the entity's position by the specified amounts in the X and Y axes.
+     *
+     * @param xMod The amount to modify the X position.
+     * @param yMod The amount to modify the Y position.
+     */
     public void modPos(float xMod, float yMod){
 
         facX = xMod;
@@ -129,6 +154,9 @@ public class Entity extends Actor {
         changeAnimation();
     }
 
+    /**
+     * Initializes all the sprites for the entity based on its state (e.g., walking, standing).
+     */
     public void initializeAllSprites() {
         String characterState = player ? "player" : "enemy";
         int index = 0;
@@ -155,11 +183,22 @@ public class Entity extends Actor {
 
     }
 
+    /**
+     * Checks if the current animation has finished playing.
+     *
+     * @return True if the animation has finished, false otherwise.
+     */
     public boolean getAnimationFinished()
     {
         return animationFinished;
     }
 
+    /**
+     * Draws the entity's current animation frame to the screen.
+     *
+     * @param batch The SpriteBatch used for drawing the entity.
+     * @param stateTime The elapsed time used for animation timing.
+     */
     public void drawSprite(SpriteBatch batch, float stateTime)
     {
         if (!player && !living)
@@ -188,6 +227,14 @@ public class Entity extends Actor {
     }
 
 
+    /**
+     * Splits the given texture into an array of texture regions for animation.
+     *
+     * @param texture The texture to split.
+     * @param COLS The number of columns in the sprite sheet.
+     * @param ROWS The number of rows in the sprite sheet.
+     * @return An array of texture regions representing the animation frames.
+     */
     public TextureRegion[] animationSplicer(Texture texture, int COLS, int ROWS)
     {
         TextureRegion[][] tmp = TextureRegion.split(texture,
@@ -204,10 +251,18 @@ public class Entity extends Actor {
         return walkFrames;
     }
 
+    /**
+     * Retrieves the body associated with the entity for collision detection.
+     *
+     * @return The entity's body.
+     */
     public Body getBody() {
         return this.body;
     }
 
+    /**
+     * Changes the current animation based on the entity's movement or state.
+     */
     public void changeAnimation() {
         //String animation = state.determineAnimation(this);
         if(!specialAnimation) {
@@ -236,6 +291,11 @@ public class Entity extends Actor {
 
     }
 
+    /**
+     * Changes the entity's animation based on a special modifier (e.g., attack, death).
+     *
+     * @param modifier The modifier determining the animation change (e.g., "Attack", "Death").
+     */
     public void specialChangeAnimation(String modifier) {
 
         if (!specialAnimation) {
@@ -257,6 +317,12 @@ public class Entity extends Actor {
 
     }
 
+    /**
+     * Modifies the entity's health by the specified damage amount.
+     *
+     * @param damage The amount of damage to deal to the entity.
+     * @return The entity's current health after taking damage.
+     */
     public int ouchies(int damage) {
         cHealth -= damage;
         if (cHealth > maxHealth) {
@@ -269,46 +335,120 @@ public class Entity extends Actor {
         return cHealth;
     }
 
+    /**
+     * Retrieves the entity's current health.
+     *
+     * @return The entity's current health.
+     */
     public int getCHealth() {
         return cHealth;
     }
 
+    /**
+     * Retrieves the entity's maximum health.
+     *
+     * @return The entity's maximum health.
+     */
     public int getMaxHealth() { return maxHealth; }
 
+    /**
+     * Checks if the entity is still alive.
+     *
+     * @return True if the entity is alive, false otherwise.
+     */
     public boolean isLiving() { return living; }
 
+    /**
+     * Retrieves the entity's X position.
+     *
+     * @return The entity's X position.
+     */
     public double geteX(){
         return eX;
     }
 
+    /**
+     * Retrieves the entity's Y position.
+     *
+     * @return The entity's Y position.
+     */
     public double geteY(){
         return eY;
     }
+
+    /**
+     * Retrieves the entity's initial X position.
+     *
+     * @return The entity's initial X position.
+     */
     public double getStartX(){
         return startX;
     }
+
+    /**
+     * Retrieves the entity's initial Y position.
+     *
+     * @return The entity's initial Y position.
+     */
     public double getStartY(){
         return startY;
     }
 
+    /**
+     * Checks if the entity is a player.
+     *
+     * @return True if the entity is a player, false otherwise.
+     */
     public boolean isPlayer(){
         return player;
 
     }
+
+    /**
+     * Retrieves the entity's X hitbox.
+     *
+     * @return The entity's X hitbox.
+     */
     public Hitbox getxHit(){
         return xHit;
     }
+
+    /**
+     * Retrieves the entity's Y hitbox.
+     *
+     * @return The entity's Y hitbox.
+     */
     public Hitbox getyHit(){
         return yHit;
     }
+
+    /**
+     * Forces an update to the entity's hitboxes with new X and Y positions.
+     *
+     * @param x The new X position.
+     * @param y The new Y position.
+     */
     public void forceHUpdate(double x, double y){
         yHit.updateMod(eY,xSize/3);
         xHit.updateMod(eX,ySize/2.75);
     }
+
+    /**
+     * Sets the entity's position to the specified X and Y coordinates.
+     *
+     * @param x The new X position.
+     * @param y The new Y position.
+     */
     public void setPos(double x, double y){
         eX = x;
         eY = y;
     }
+
+    /**
+     * Determines the entity's facing direction based on the provided string.
+     *
+     * @param direction The facing direction as a string (N, S, E, W).
+     */
     public void getDirection(String direction){
         switch (direction){
             case "N":
@@ -325,9 +465,19 @@ public class Entity extends Actor {
                 break;
         }
     }
+
+    /**
+     * Retrieves the entity's current facing direction.
+     *
+     * @return The entity's facing direction.
+     */
     public Facing getFacing(){
         return eDirection;
     }
+
+    /**
+     * Updates the entity's attack box based on its facing direction.
+     */
     public void attackBox(){
         switch (eDirection){
             case NORTH:
@@ -345,9 +495,33 @@ public class Entity extends Actor {
                 yAttack.updateMod(eY+ySize/2,ySize/4);
         }
     }
+
+    /**
+     * Retrieves the entity's attack hitbox along the X-axis.
+     *
+     * @return The entity's X attack hitbox.
+     */
     public Hitbox getEAX(){return xAttack;}
+
+    /**
+     * Retrieves the entity's attack hitbox along the Y-axis.
+     *
+     * @return The entity's Y attack hitbox.
+     */
     public Hitbox getEAY(){return yAttack;}
+
+    /**
+     * Retrieves the entity's strength.
+     *
+     * @return The entity's strength.
+     */
     public int getStrength(){return str;}
+
+    /**
+     * Handles the entity taking damage from another entity.
+     *
+     * @param enemy The entity dealing damage.
+     */
     public void takeDamage(Entity enemy){
 
         //System.out.println(View.checkOverlap(xHit,enemy.getEAX()) + " L " + View.checkOverlap(enemy.getEAY(),yHit));
@@ -359,12 +533,34 @@ public class Entity extends Actor {
             else{cHealth-=enemy.getStrength();}
             }
     }
+
+    /**
+     * Retrieves the entity's width along the X-axis.
+     *
+     * @return The entity's width.
+     */
     public double getESX(){return xSize;}
+
+    /**
+     * Retrieves the entity's height along the Y-axis.
+     *
+     * @return The entity's height.
+     */
     public double getESY(){return ySize;}
+
+    /**
+     * Checks if the entity's attack is ready to be performed based on cooldown.
+     *
+     * @return True if the attack is ready, false otherwise.
+     */
     public boolean isAttackReady(){
         int attackCooldown = 3000;
         return (System.currentTimeMillis() - lastAttackTime) > attackCooldown;
     }
+
+    /**
+     * Updates the timestamp of the last attack performed by the entity.
+     */
     public void updateAttackTime(){
         lastAttackTime = System.currentTimeMillis();
     }
