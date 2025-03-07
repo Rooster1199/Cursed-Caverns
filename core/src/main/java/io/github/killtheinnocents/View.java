@@ -828,10 +828,10 @@ public class View extends ScreenAdapter {
                     settingIndex = (settingIndex >= 15) ? 15 : settingIndex + 1;
         }
         // FOR DEVELOPMENT PURPOSES
-        /*
+
         else if (Gdx.input.isKeyPressed(Input.Keys.P)) {
             currentScreen = Screen.MAIN_GAME;
-        } */
+        }
 
 
     }
@@ -982,7 +982,16 @@ public class View extends ScreenAdapter {
         return 0;
     }
     public static double getOverlap(Hitbox h1, Hitbox h2){
-        return h2.max - h1.min;
+        if(checkOverlap(h1,h2)){
+            if(h1.max>h2.max){
+                return h2.max - h1.min;
+            }
+            if(h2.max>=h1.max){
+                return h1.max-h2.min;
+            }
+        }
+        return 0;
+
     }
     public static boolean checkOverlap(Hitbox h1, Hitbox h2){
         return h1.max >= h2.min && h2.max >= h1.min;
@@ -994,41 +1003,39 @@ public class View extends ScreenAdapter {
         yMax = (float) Gdx.graphics.getHeight()/2;
         if (checkOverlap(player.getxHit(),enemy.getxHit()) && !(checkOverlap(player.getyHit(),enemy.getyHit()))){
             if (player.geteY()>enemy.geteY()){
-                yMin= (float) (enemy.geteY()+(enemy.getESY()/2));
+                yMin= (float) (enemy.getyHit().max);
             }
-            if (player.geteY()<enemy.geteY()){
-                yMax= (float) (enemy.geteY()-(enemy.getESY()/2));
+            else if (player.geteY()<enemy.geteY()){
+                yMax= (float) (enemy.getyHit().min);
 
             }
         }
         else if (checkOverlap(player.getyHit(),enemy.getyHit()) && !(checkOverlap(player.getxHit(),enemy.getxHit()))){
             if (player.geteX()>enemy.geteX()){
-                xMin= (float) (enemy.geteX() +(enemy.getESX()/2));
+                xMin= (float) (enemy.getxHit().max);
             }
-            if (player.geteX()<enemy.geteX()){
-                xMax= (float) (enemy.geteX() -(enemy.getESX()/2));
+            else if (player.geteX()<enemy.geteX()){
+                xMax= (float) (enemy.getxHit().min);
 
 
             }
         }
         else if (checkOverlap(player.getyHit(),enemy.getyHit()) && checkOverlap(player.getxHit(),enemy.getxHit())){
-
-            if((getOverlap(player.getxHit(),enemy.getxHit()))>(getOverlap(player.getyHit(),enemy.getyHit()))){
-
+            if(getOverlap(player.getxHit(),enemy.getxHit())<getOverlap(player.getyHit(),enemy.getyHit())){
                 if (player.geteX()>enemy.geteX()){
-                    xMin= (float) (enemy.geteX() +(enemy.getESX()/2));
+                    xMin= (float) (enemy.getxHit().max);
                 }
                 if (player.geteX()<enemy.geteX()){
-                    xMax= (float) (enemy.geteX() -(enemy.getESX()/2));
+                    xMax= (float) (enemy.getxHit().min);
 
                 }
             }
-            if((getOverlap(player.getxHit(),enemy.getxHit()))<(getOverlap(player.getyHit(),enemy.getyHit()))){
+            if(getOverlap(player.getxHit(),enemy.getxHit()) > getOverlap(player.getyHit(),enemy.getyHit())){
                 if (player.geteY()>enemy.geteY()){
-                    yMin= (float) (enemy.geteY()+(enemy.getESY()/2));
+                    yMin= (float) (enemy.getyHit().max);
                 }
                 if (player.geteY()<enemy.geteY()){
-                    yMax= (float) (enemy.geteY()-(enemy.getESY()/2));
+                    yMax= (float) (enemy.getyHit().min);
 
                 }
             }

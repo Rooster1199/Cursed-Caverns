@@ -46,6 +46,7 @@ public class Room {
         }
     }
 
+
     public Array<Entity> getEnemyArray() {
         return enemies;
     }
