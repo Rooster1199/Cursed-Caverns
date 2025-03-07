@@ -368,6 +368,8 @@ public class View extends ScreenAdapter {
     private boolean canHeal;
     private int potionDrawn;
 
+    private boolean isReset;
+
     public View(OrthographicCamera camera)
     {
         this.camera = camera;
@@ -405,13 +407,11 @@ public class View extends ScreenAdapter {
         musicVolume = 0.5f;
         sfxVolume = 0.5f;
 
+        createAssets();
         create();
     }
 
-    public void create() {
-        // Assets
-        // sfx Gdx.audio.newSound(Gdx.files.internal(name));
-
+    public void createAssets() {
         music = Gdx.audio.newMusic(Gdx.files.internal("MenuSong.wav"));
         music.setVolume(musicVolume);
         music.setLooping(true);
@@ -444,8 +444,10 @@ public class View extends ScreenAdapter {
         healthBarAnimation = new Animation<TextureRegion>(.25f, player.animationSplicer(healthSheet,3, 6));
 
         inventoryBoxes = new Texture(Gdx.files.internal("inventory_box.png"));
+    }
 
-        // Logic Components
+    public void create() {
+
         gameRooms = new Room[6];
         for (int i = 0; i <= 5; i++)
         {
@@ -463,16 +465,17 @@ public class View extends ScreenAdapter {
         }
 
 
-        deathIndex = 0;
-        mapIndex = 0;
-        settingIndex = 7;
-        introIndex = 0;
-
         chestOpened = false;
         canHeal = false;
         potionDrawn = 0;
         map = false;
+        isReset = false;
         keyTime = 0;
+
+        deathIndex = 0;
+        mapIndex = 0;
+        settingIndex = 7;
+        introIndex = 0;
 
     }
 
@@ -768,13 +771,14 @@ public class View extends ScreenAdapter {
                 currentScreen = Screen.INTRO;
 
         }
-        // GAME OVER
-        else if (currentScreen == Screen.GAME_OVER)
+        // GAME OVER / GAME WIN
+        else if (currentScreen == Screen.GAME_OVER || currentScreen == Screen.GAME_WIN)
         {
             if (Gdx.input.isKeyPressed(Input.Keys.R)) {
-                elapsedTime = 0;
+                isReset = true;
                 currentScreen = Screen.MENU;
-                System.out.println("R registered. Regretably, the re-start Game Feature has not yet been implemented. Please re-load the program to replay.");
+
+                resetGame();
             }
 
         }
@@ -842,11 +846,6 @@ public class View extends ScreenAdapter {
                 if (checkExecute(15))
                     settingIndex = (settingIndex >= 15) ? 15 : settingIndex + 1;
         }
-        // FOR DEVELOPMENT PURPOSES
-        /*
-        else if (Gdx.input.isKeyPressed(Input.Keys.P)) {
-            currentScreen = Screen.MAIN_GAME;
-        } */
 
 
     }
@@ -877,7 +876,7 @@ public class View extends ScreenAdapter {
         double approximation = 1.0 / 17;
         int percentHealthLost = (int) Math.floor((player.getCHealth() * 1.0 / player.getMaxHealth()) / approximation);
         healthIndex = 17 - percentHealthLost;
-        if (!player.isLiving() && deathIndex < 20)
+        if (!player.isLiving() && deathIndex < 20 && !isReset)
         {
             currentScreen = Screen.GAME_OVER;
         }
@@ -895,7 +894,21 @@ public class View extends ScreenAdapter {
             resetGameForNewRoom();
         }
 
+    }
 
+    private void resetGame()
+    {
+
+        roomIndex = 0;
+        deltaTime = Gdx.graphics.getDeltaTime();
+        time = 0;
+        elapsedTime = 0;
+
+        music.setVolume(musicVolume);
+        music.setLooping(true);
+        music.play();
+
+        create();
     }
 
     private boolean isRoomBeaten()
