@@ -1,5 +1,4 @@
 package io.github.killtheinnocents;
-import java.io.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
@@ -14,7 +13,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import entities.Entity;
 import entities.Hitbox;
@@ -25,8 +23,6 @@ import static helper.Constants.*;
 
 public class View extends ScreenAdapter {
 
-    private static final int FRAME_COLS = 2, FRAME_ROWS = 2;
-
     public OrthographicCamera camera;
     public SpriteBatch batch;
     public World world;
@@ -34,6 +30,8 @@ public class View extends ScreenAdapter {
 
     //Font
     private BitmapFont font;
+    private BitmapFont bigFont;
+    private BitmapFont smallFont;
 
     private String[][] introDialouge = {
 
@@ -305,6 +303,7 @@ public class View extends ScreenAdapter {
 
     private Texture title;
     private Texture potion;
+    private Texture crown;
 
     // Inventory
     private Texture inventoryBoxes;
@@ -337,11 +336,11 @@ public class View extends ScreenAdapter {
     private int transitionIndex;
     private int transitionArrayIndex;
 
-    // TODO: enemy death animation + new inventory items
+    // TODO: new inventory items + fix restarting
 
     // Screens
     private enum Screen {
-        MENU, INTRO, TRANSITION_SCREEN, MAP, MAIN_GAME, GAME_OVER, SETTINGS;
+        MENU, INTRO, TRANSITION_SCREEN, MAP, MAIN_GAME, GAME_OVER, GAME_WIN, SETTINGS;
     }
     public Screen currentScreen = Screen.MENU;
     private GameScreen overlay;
@@ -353,7 +352,6 @@ public class View extends ScreenAdapter {
 
     // enemy
     public Array<Entity> enemies1;
-    public Array<Sprite> enemies;
     private double eVelocity = 5;
     private double EPLD;
     private double eStartD;
@@ -386,6 +384,10 @@ public class View extends ScreenAdapter {
         Texture font_texture = new Texture("game_font.png");
         font_texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         font = new BitmapFont(Gdx.files.internal("game_font.fnt"), new TextureRegion(font_texture));
+        bigFont = new BitmapFont(Gdx.files.internal("game_font.fnt"), new TextureRegion(font_texture));
+        smallFont = new BitmapFont(Gdx.files.internal("game_font.fnt"), new TextureRegion(font_texture));
+        smallFont.getData().setScale(.5f);
+        bigFont.getData().setScale(2.5f);
         font.getData().setScale(1f);
 
         stateTime = 0f;
@@ -415,6 +417,8 @@ public class View extends ScreenAdapter {
         music.setLooping(true);
         music.play();
 
+        crown = new Texture("crown.png");
+
         potion = new Texture("potion.png");
 
         title = new Texture("cursed_cavern.png");
@@ -443,7 +447,7 @@ public class View extends ScreenAdapter {
 
         // Logic Components
         gameRooms = new Room[6];
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i <= 5; i++)
         {
             if (i == 3)
                 gameRooms[i] = new Room(player, 0, "Chest", 1, 0, 0, world);
@@ -482,6 +486,7 @@ public class View extends ScreenAdapter {
     @Override
     public void render(float delta)
     {
+
         if (roomIndex != 3)
         {
             checkDistance();
@@ -498,7 +503,6 @@ public class View extends ScreenAdapter {
         {
             currentScreen = Screen.TRANSITION_SCREEN;
             time = 0;
-            font.getData().setScale(2.5f);
         } else if (currentScreen == Screen.INTRO)
         {
             time++;
@@ -508,7 +512,7 @@ public class View extends ScreenAdapter {
         }
 
         if (introArrayIndex >= introIndicies[introIndex] - 1 && introIndex <= 5) {
-            introIndex = introIndex >= 7 ? 6 : introIndex + 1;
+            introIndex = introIndex >= 6 ? 6 : introIndex + 1;
             introArrayIndex = 0;
         }
 
@@ -523,7 +527,6 @@ public class View extends ScreenAdapter {
             transitionIndex = 0;
 
             time = 0;
-            font.getData().setScale(1f);
 
         } else if (currentScreen == Screen.TRANSITION_SCREEN)
         {
@@ -582,7 +585,7 @@ public class View extends ScreenAdapter {
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
             batch.begin();
 
-            font.draw(batch, dungeonMessages[transitionArrayIndex][transitionIndex], dungeonTextPosition[transitionArrayIndex], 0 );
+            bigFont.draw(batch, dungeonMessages[transitionArrayIndex][transitionIndex], dungeonTextPosition[transitionArrayIndex], 0 );
 
             batch.end();
         }
@@ -627,22 +630,6 @@ public class View extends ScreenAdapter {
             TextureRegion[] healthFrame = healthBarAnimation.getKeyFrames();
             batch.draw(healthFrame[healthIndex], -580, -450, 300, 150);
 
-            if (roomIndex == 3) {
-                if (!chestOpened)
-                    gameRooms[roomIndex].drawClosedChest(batch);
-                else
-                    gameRooms[roomIndex].drawOpenChest(batch);
-                font.getData().setScale(.5f);
-                font.draw(batch, "Press O to open chest", -70, -10);
-                font.getData().setScale(1f);
-            }
-            else {
-                for(Entity enemy: enemies1)
-                {
-                    enemy.drawSprite(batch, stateTime);
-                }
-            }
-
             batch.draw(inventoryBoxes, -330, -393, 180, 38);
             if (chestOpened)
             {
@@ -652,6 +639,19 @@ public class View extends ScreenAdapter {
 
             font.draw(batch, "Player", -520, -430);
 
+            if (roomIndex == 3) {
+                if (!chestOpened)
+                    gameRooms[roomIndex].drawClosedChest(batch);
+                else
+                    gameRooms[roomIndex].drawOpenChest(batch);
+                smallFont.draw(batch, "Press O to open chest", -70, -10);
+            }
+            else {
+                for(Entity enemy: enemies1)
+                {
+                    enemy.drawSprite(batch, stateTime);
+                }
+            }
 
             batch.end();
 
@@ -680,6 +680,23 @@ public class View extends ScreenAdapter {
             }
 
             elapsedTime++;
+
+        }
+        // GAME WON
+        else if (currentScreen == Screen.GAME_WIN) {
+            Gdx.gl.glClearColor(0,0,0,1);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+            batch.begin();
+
+            batch.draw(crown, -300, -180, 600 ,600);
+
+            bigFont.getData().setScale(4f);
+            bigFont.draw(batch, "VICTORY!", -280, -105);
+            bigFont.getData().setScale(2.5f);
+            font.draw(batch, "Press R to restart", -160, -350);
+
+
+            batch.end();
 
         }
         // SETTINGS
@@ -809,8 +826,6 @@ public class View extends ScreenAdapter {
                 player.updatePosition(0, 0);
             }
 
-            //if (Gdx.input.isKeyPressed(Input.Keys.I))
-            //    player.ouchies(5);
             player.forceHUpdate(player.geteX(),player.geteY());
 
         }
@@ -862,7 +877,7 @@ public class View extends ScreenAdapter {
         double approximation = 1.0 / 17;
         int percentHealthLost = (int) Math.floor((player.getCHealth() * 1.0 / player.getMaxHealth()) / approximation);
         healthIndex = 17 - percentHealthLost;
-        if (!player.isLiving())
+        if (!player.isLiving() && deathIndex < 20)
         {
             currentScreen = Screen.GAME_OVER;
         }
@@ -870,10 +885,13 @@ public class View extends ScreenAdapter {
         // next Room
         if (isRoomBeaten()) {
             currentScreen = Screen.TRANSITION_SCREEN;
-            font.getData().setScale(2.5f);
             elapsedTime = 0;
             map = false;
-            roomIndex = roomIndex > 5 ? 5 : roomIndex + 1;
+            if (roomIndex == 5 && isRoomBeaten() && elapsedTime < 10) {
+                currentScreen = Screen.GAME_WIN;
+            }
+            else
+                roomIndex = roomIndex >= 5 ? 5 : roomIndex + 1;
             resetGameForNewRoom();
         }
 
@@ -888,7 +906,7 @@ public class View extends ScreenAdapter {
                     return false;
             }
             return true;
-        } else if (chestOpened && potionDrawn > 15)
+        } else if (chestOpened && potionDrawn > 100)
         {
             return true;
         }
@@ -978,9 +996,7 @@ public class View extends ScreenAdapter {
 
         }
     }
-    public float getDistance(float x1, float x2){
-        return 0;
-    }
+
     public static double getOverlap(Hitbox h1, Hitbox h2){
         if(checkOverlap(h1,h2)){
             if(h1.max>h2.max){
