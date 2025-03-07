@@ -1,4 +1,4 @@
-package io.github.killtheinnocents;
+package io.github.CursedCaverns;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;

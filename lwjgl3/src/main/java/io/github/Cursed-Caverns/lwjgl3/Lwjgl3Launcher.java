@@ -1,8 +1,8 @@
-package io.github.killtheinnocents.lwjgl3;
+package io.github.CursedCaverns.lwjgl3;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import io.github.killtheinnocents.Main;
+import io.github.CursedCaverns.Main;
 
 import static helper.Constants.HEIGHT;
 import static helper.Constants.WIDTH;
@@ -12,7 +12,7 @@ import static helper.Constants.WIDTH;
  */
 public class Lwjgl3Launcher {
     public static void main(String[] args) {
-        if (StartupHelper.startNewJvmIfRequired()) return; // This handles macOS support and helps on Windows.
+        if (io.github.CursedCaverns.lwjgl3.StartupHelper.startNewJvmIfRequired()) return; // This handles macOS support and helps on Windows.
         createApplication();
     }
 
@@ -22,7 +22,7 @@ public class Lwjgl3Launcher {
 
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {
         Lwjgl3ApplicationConfiguration configuration = new Lwjgl3ApplicationConfiguration();
-        configuration.setTitle("KillTheInnocents");
+        configuration.setTitle("Cursed Caverns");
         //// Vsync limits the frames per second to what your hardware can display, and helps eliminate
         //// screen tearing. This setting doesn't always work on Linux, so the line after is a safeguard.
         configuration.useVsync(true);
